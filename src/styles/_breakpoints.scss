@@ -1,0 +1,22 @@
+// Breakpoints simples baseados no Figma
+// Mobile: até 719px
+// Tablet: 720px até 1919px  
+// Desktop: 1920px+
+
+@mixin mobile {
+  @media (max-width: 719px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: 720px) and (max-width: 1919px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 1920px) {
+    @content;
+  }
+}

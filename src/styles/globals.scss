@@ -1,0 +1,26 @@
+@import './variables';
+@import './breakpoints';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-primary;
+  background-color: $color-bg-lighter;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
