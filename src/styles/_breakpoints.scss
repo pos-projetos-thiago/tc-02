@@ -3,6 +3,7 @@
 // Tablet: 720px até 1919px  
 // Desktop: 1920px+
 
+
 @mixin mobile {
   @media (max-width: 719px) {
     @content;
@@ -18,5 +19,23 @@
 @mixin desktop {
   @media (min-width: 1920px) {
     @content;
+  }
+}
+
+// Spacing lateral responsivo (baseado no Figma)
+$spacing-desktop: 360px;
+$spacing-tablet: 60px;
+$spacing-mobile: 24px;
+
+// Mixin para aplicar padding responsivo dos containers
+@mixin container-padding {
+  padding: 0 $spacing-desktop;
+
+  @include tablet {
+    padding: 0 $spacing-tablet;
+  }
+
+  @include mobile {
+    padding: 0 $spacing-mobile;
   }
 }

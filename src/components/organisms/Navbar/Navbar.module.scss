@@ -1,0 +1,46 @@
+@import '../../../styles/variables';
+@import '../../../styles/breakpoints';
+
+.navbar {
+  height: 96px;
+  width: 100%;
+  background-color: $color-black;
+  top: 0;
+}
+
+.container {
+  @include container-padding;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.links {
+  display: flex;
+  ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 0 72px;
+    font-size: 18px;
+
+    li {
+      a {
+        color: $color-green;
+        transition: opacity 0.2s;
+
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}

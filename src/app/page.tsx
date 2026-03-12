@@ -1,8 +1,13 @@
+import { Navbar } from '@/components/organisms/Navbar';
+import { Hero } from '@/components/organisms/Hero';
+import { Footer } from '@/components/organisms/Footer';
+
 export default function Home() {
   return (
-    <div>
-      <h1>Hello World</h1>
-      <p>TC-01</p>
-    </div>
+    <>
+      <Navbar />
+      <Hero />
+      <Footer />
+    </>
   );
 }

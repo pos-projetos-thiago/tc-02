@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Gerenciamento Financeiro",
-  description: "Aplicação de gerenciamento financeiro",
+  title: "Bytebank",
+  description: "Projeto realizado por Thiago Soares",
 };
 
 export default function RootLayout({

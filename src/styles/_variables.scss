@@ -1,19 +1,20 @@
-// Cores do projeto (Figma)
-$color-primary: #004D61;
+// Cores
+$color-primary-base: #004D61;
 $color-accent: #FF5031;
-$color-bg-light: #DEE9EA;
-$color-bg-lighter: #F8F8F8;
-$color-text-secondary: #8B8B8B;
+$color-gray-100: #F8F8F8;
+$color-gray-200: #DEE9EA;
+$color-gray-text-secondary: #8B8B8B;
 $color-error: #BF1313;
 $color-blue: #2567F9;
 $color-purple: #8F3CFF;
 $color-orange: #F1823D;
 $color-pink: #FF3C82;
-
-// Gradiente
-$gradient-primary: linear-gradient(180deg, #004D61 0%, #FFFFFF 100%);
+$color-green: #47A138;
+$color-white: #FFFFFF;
+$color-black: #000000;
+$gradient-primary: linear-gradient(180deg, $color-primary-base 0%, $color-white 100%);
 
 // Tipografia
-$font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-family-base: sans-serif;
 $font-size-base: 16px;
 $line-height-base: 1.5;
