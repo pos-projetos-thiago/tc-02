@@ -1,19 +1,95 @@
-@import '../../../styles/variables';
+@import '../../../styles/colors';
+@import '../../../styles/functions';
+@import '../../../styles/typography';
 @import '../../../styles/breakpoints';
 
 .hero {
-  min-height: calc(100dvh - 96px - 224px);
+  height: 87.8rem;
   width: 100%;
   background-image: $gradient-primary;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-bottom: 15rem;
 }
 
 .container {
+  @include container-padding;
   width: 100%;
-  height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 4rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.principal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 2.5rem 0;
+  gap: 7.5rem;
+
+  h1 {
+    max-width: 50rem;
+    color: $color-black;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.advantages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+
+  h2 {
+    color: $color-black;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.advantages-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3.2rem;
+  width: 100%;
+
+  @include tablet {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.4rem;
+  }
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.advantages-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+
+  p:first-of-type {
+    color: $color-green;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+  }
+
+  p:last-of-type {
+    color: $color-gray-400;
+    font-size: $font-size-sm;
+    line-height: $line-height-tight;
+    max-width: 28rem;
+    padding: 0 1rem;
+  }
 }

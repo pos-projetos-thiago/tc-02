@@ -1,4 +1,6 @@
-@import './variables';
+@import './colors';
+@import './functions';
+@import './typography';
 @import './breakpoints';
 
 * {
@@ -8,7 +10,7 @@
 }
 
 html {
-  height: 100%;
+  font-size: 62.5%;
   overflow-x: hidden;
   background-color: $color-black;
 }
@@ -16,14 +18,13 @@ html {
 body {
   min-height: 100vh;
   min-height: 100dvh;
+  font-family: $font-family-base;
   font-size: $font-size-base;
   line-height: $line-height-base;
-  color: $color-primary-base;
+  color: $color-primary;
   background-color: $color-black;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  position: relative;
-  overscroll-behavior-y: none;
 }
 
 a {

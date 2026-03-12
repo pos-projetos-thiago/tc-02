@@ -1,8 +1,10 @@
-@import '../../../styles/variables';
+@import '../../../styles/colors';
+@import '../../../styles/functions';
+@import '../../../styles/typography';
 @import '../../../styles/breakpoints';
 
 .navbar {
-  height: 96px;
+  height: 9.6rem;
   width: 100%;
   background-color: $color-black;
   top: 0;
@@ -13,10 +15,10 @@
   height: 100%;
   display: flex;
   align-items: center;
-  gap: 72px;
+  gap: 7.2rem;
 
   @include tablet {
-    gap: 56px;
+    gap: 5.6rem;
   }
 
   @include mobile {
@@ -64,11 +66,11 @@
     list-style: none;
     display: flex;
     align-items: center;
-    gap: 40px;
-    font-size: 18px;
+    gap: 4rem;
+    font-size: $font-size-md;
 
     @include tablet {
-      gap: 24px;
+      gap: 2.4rem;
     }
 
     li {
@@ -87,7 +89,7 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 1.6rem;
   margin-left: auto;
 
   @include mobile {
