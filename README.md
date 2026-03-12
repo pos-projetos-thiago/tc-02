@@ -5,8 +5,8 @@ Aplicação de gerenciamento financeiro com Next.js, TypeScript e SCSS.
 ## Rodar o projeto
 
 ```bash
-npm install
-npm run dev
+yarn install
+yarn dev
 ```
 
 Abre em http://localhost:3000
@@ -14,7 +14,7 @@ Abre em http://localhost:3000
 ## Storybook
 
 ```bash
-npm run storybook
+yarn storybook
 ```
 
 Abre em http://localhost:6006

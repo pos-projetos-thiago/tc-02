@@ -13,18 +13,63 @@
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 72px;
+
+  @include tablet {
+    gap: 56px;
+  }
+
+  @include mobile {
+    gap: 0;
+    justify-content: space-between;
+  }
+}
+
+.menu-button-wrapper {
+  display: none;
+
+  @include mobile {
+    display: block;
+  }
+}
+
+.logo-full {
+  display: block;
+
+  @include tablet {
+    display: none;
+  }
+}
+
+.logo-small {
+  display: none;
+
+  @include tablet {
+    display: block;
+  }
+
+  @include mobile {
+    display: none;
+  }
 }
 
 .links {
-  display: flex;
+  display: block;
+
+  @include mobile {
+    display: none;
+  }
+
   ul {
     list-style: none;
     display: flex;
     align-items: center;
     gap: 40px;
-    padding: 0 72px;
     font-size: 18px;
+
+    @include tablet {
+      gap: 24px;
+    }
 
     li {
       a {
@@ -43,4 +88,33 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  margin-left: auto;
+
+  @include mobile {
+    display: none;
+  }
+}
+
+.abrir-conta {
+  display: block;
+
+  @include tablet {
+    display: none;
+  }
+
+  @include mobile {
+    display: none;
+  }
+}
+
+.abrir-conta-tablet {
+  display: none;
+
+  @include tablet {
+    display: block;
+  }
+
+  @include mobile {
+    display: block;
+  }
 }
