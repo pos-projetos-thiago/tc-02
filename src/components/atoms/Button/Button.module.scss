@@ -41,3 +41,24 @@
     color: $color-white;
   }
 }
+
+.primaryMobile {
+  background-color: $color-black;
+  color: $color-white;
+  border: 0.2rem solid $color-black;
+
+  &:hover {
+    background-color: lighten($color-black, 15%);
+    border: 0.2rem solid lighten($color-black, 15%);
+  }
+}
+
+.secondaryMobile {
+  color: $color-black;
+  border: 0.2rem solid $color-black;
+
+  &:hover {
+    background-color: $color-gray-50;
+    color: $color-black;
+  }
+}

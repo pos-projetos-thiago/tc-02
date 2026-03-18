@@ -1,5 +1,6 @@
 import styles from './Hero.module.scss';
 import Image from 'next/image'
+import { Button } from '@/components/atoms/Button'
 
 export const Hero = () => {
   return (
@@ -7,13 +8,19 @@ export const Hero = () => {
       <div className={styles.container}>
         <div className={styles.principal}>
           <h1>Experimente mais liberdade no controle da sua vida financeira. Crie sua conta com a gente!</h1>
-          <Image
-            src="/Hero/grafico.svg"
-            alt="Gráfico ilustrativo de crescimento financeiro"
-            width={635}
-            height={435}
-            priority
-          />
+          <div className={styles.imageWrapper}>
+            <Image
+              src="/Hero/grafico.svg"
+              alt="Gráfico ilustrativo de crescimento financeiro"
+              width={635}
+              height={435}
+              priority
+            />
+          </div>
+          <div className={styles.mobileActions}>
+            <Button variant="primaryMobile">Abrir conta</Button>
+            <Button variant="secondaryMobile">Já tenho conta</Button>
+          </div>
         </div>
         <div className={styles.advantages}>
           <h2>Vantagens do nosso banco:</h2>

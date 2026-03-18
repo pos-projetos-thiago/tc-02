@@ -6,20 +6,33 @@
 .footer {
   height: 22rem;
   width: 100%;
+  padding: 2.8rem;
   background-color: $color-black;
   color: $color-white;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @include mobile {
+    height: auto;
+  }
 }
 
 .container {
   @include container-padding;
   width: 100%;
   height: 100%;
+  padding: 4rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @include mobile {
+    flex-direction: column;
+    gap: 3.2rem;
+    align-items: flex-start;
+    text-align: left;
+  }
 }
 
 .services,
@@ -46,6 +59,10 @@
 .info {
   gap: 2.4rem;
   align-items: center;
+
+  @include mobile {
+    align-items: flex-start;
+  }
 }
 
 .social {
@@ -53,4 +70,8 @@
   align-items: center;
   justify-content: center;
   gap: 2.4rem;
+
+  @include mobile {
+    justify-content: flex-start;
+  }
 }
