@@ -1,8 +1,4 @@
 // Breakpoints simples baseados no Figma
-// Mobile: até 719px
-// Tablet: 720px até 1919px  
-// Desktop: 1920px+
-
 @mixin mobile {
   @media (max-width: 719px) {
     @content;
@@ -18,5 +14,25 @@
 @mixin desktop {
   @media (min-width: 1920px) {
     @content;
+  }
+}
+
+// Spacing lateral
+$spacing-desktop: 36rem;
+$spacing-tablet: 6rem;
+$spacing-mobile: 2.4rem;
+$container-max-width: 192rem;
+
+@mixin container-padding {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $spacing-desktop;
+
+  @include tablet {
+    padding: 0 $spacing-tablet;
+  }
+
+  @include mobile {
+    padding: 0 $spacing-mobile;
   }
 }

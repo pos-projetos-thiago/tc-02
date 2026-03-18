@@ -1,0 +1,121 @@
+@import '../../../styles/colors';
+@import '../../../styles/functions';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+.navbar {
+  height: 9.6rem;
+  width: 100%;
+  background-color: $color-black;
+}
+
+.container {
+  @include container-padding;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 7.2rem;
+
+  @include tablet {
+    gap: 5.6rem;
+  }
+
+  @include mobile {
+    gap: 0;
+    justify-content: space-between;
+  }
+}
+
+.menu-button-wrapper {
+  display: none;
+
+  @include mobile {
+    display: block;
+  }
+}
+
+.logo-full {
+  display: block;
+
+  @include tablet {
+    display: none;
+  }
+}
+
+.logo-small {
+  display: none;
+
+  @include tablet {
+    display: block;
+  }
+
+  @include mobile {
+    display: none;
+  }
+}
+
+.links {
+  display: block;
+
+  @include mobile {
+    display: none;
+  }
+
+  ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    font-size: $font-size-md;
+
+    @include tablet {
+      gap: 2.4rem;
+    }
+
+    li {
+      a {
+        color: $color-green;
+        transition: opacity 0.2s;
+
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  margin-left: auto;
+
+  @include mobile {
+    display: none;
+  }
+}
+
+.abrir-conta {
+  display: block;
+
+  @include tablet {
+    display: none;
+  }
+
+  @include mobile {
+    display: none;
+  }
+}
+
+.abrir-conta-tablet {
+  display: none;
+
+  @include tablet {
+    display: block;
+  }
+
+  @include mobile {
+    display: block;
+  }
+}

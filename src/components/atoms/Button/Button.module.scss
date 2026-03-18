@@ -1,13 +1,13 @@
-@import '@/styles/variables';
+@import '@/styles/colors';
+@import '@/styles/functions';
+@import '@/styles/typography';
 @import '@/styles/breakpoints';
 
 .button {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
+  padding: 1.2rem 2.4rem;
+  border-radius: 0.8rem;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
   transition: all 0.2s;
 
   &:hover {
@@ -15,21 +15,50 @@
   }
 
   @include tablet {
-    padding: 14px 28px;
-  }
-
-  @include desktop {
-    padding: 16px 32px;
-    font-size: 18px;
+    padding: 1.5rem 2.8rem;
+    font-size: $font-size-sm;
   }
 }
 
 .primary {
-  background-color: $color-primary;
-  color: white;
+  background-color: $color-green;
+  color: $color-white;
+  border: 0.2rem solid $color-green;
+
+  &:hover {
+    background-color: darken($color-green, 8%);
+    border: 0.2rem solid darken($color-green, 8%);
+  }
 }
 
 .secondary {
-  background-color: $color-accent;
-  color: white;
+  background-color: transparent;
+  color: $color-green;
+  border: 0.2rem solid $color-green;
+
+  &:hover {
+    background-color: $color-green;
+    color: $color-white;
+  }
+}
+
+.primaryMobile {
+  background-color: $color-black;
+  color: $color-white;
+  border: 0.2rem solid $color-black;
+
+  &:hover {
+    background-color: lighten($color-black, 15%);
+    border: 0.2rem solid lighten($color-black, 15%);
+  }
+}
+
+.secondaryMobile {
+  color: $color-black;
+  border: 0.2rem solid $color-black;
+
+  &:hover {
+    background-color: $color-gray-50;
+    color: $color-black;
+  }
 }

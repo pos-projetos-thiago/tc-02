@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Gerenciamento Financeiro",
-  description: "Aplicação de gerenciamento financeiro",
+  title: "Bytebank",
+  description: "Projeto realizado por Thiago Soares",
 };
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body className={inter.className}>
         {children}
       </body>

@@ -1,4 +1,6 @@
-@import './variables';
+@import './colors';
+@import './functions';
+@import './typography';
 @import './breakpoints';
 
 * {
@@ -7,13 +9,24 @@
   padding: 0;
 }
 
-html,
+html {
+  font-size: 62.5%;
+  overflow-x: hidden;
+  background-color: $color-black;
+}
+
 body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: $font-family-base;
   font-size: $font-size-base;
   line-height: $line-height-base;
   color: $color-primary;
-  background-color: $color-bg-lighter;
+  background-color: $color-black;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
+
 
 a {
   text-decoration: none;
@@ -23,4 +36,6 @@ a {
 button {
   font-family: inherit;
   cursor: pointer;
+  border: none;
+  background: none;
 }
