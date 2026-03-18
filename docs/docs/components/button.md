@@ -1,41 +1,50 @@
 # Button
 
-Componente de botão reutilizável com duas variantes visuais.
+Componente de botão reutilizável com variantes semânticas e visuais.
 
 ## Variantes
 
 ### Primary (Primário)
-Botão com fundo verde, usado para ações principais.
+Ação principal. Fundo verde.
 
 ```tsx
 <Button variant="primary">Abrir minha conta</Button>
 ```
 
-**Características:**
-- Background: `$color-green` (#47A138)
-- Cor do texto: Branco
-- Borda: 0.2rem sólida verde
-- Hover: Background escurece 8%
-
 ### Secondary (Secundário)
-Botão com fundo transparente e borda verde, usado para ações secundárias.
+Ação secundária. Outline verde.
 
 ```tsx
 <Button variant="secondary">Já tenho conta</Button>
 ```
 
-**Características:**
-- Background: Transparente
-- Cor do texto: Verde
-- Borda: 0.2rem sólida verde
-- Hover: Background verde + texto branco
+### Accent (Destaque)
+Destaque ou alerta. Fundo laranja (ex: página 404).
+
+```tsx
+<Button variant="accent">Voltar ao início</Button>
+```
+
+### Primary Mobile
+Botões do Hero no mobile. Fundo preto.
+
+```tsx
+<Button variant="primaryMobile">Abrir conta</Button>
+```
+
+### Secondary Mobile
+Botões do Hero no mobile. Outline preto.
+
+```tsx
+<Button variant="secondaryMobile">Já tenho conta</Button>
+```
 
 ## Props
 
 | Prop | Tipo | Padrão | Descrição |
 |------|------|--------|-----------|
 | `children` | `React.ReactNode` | - | **Obrigatório**. Conteúdo do botão |
-| `variant` | `'primary' \| 'secondary'` | `'primary'` | Variante visual do botão |
+| `variant` | `'primary' \| 'secondary' \| 'accent' \| 'primaryMobile' \| 'secondaryMobile'` | `'primary'` | Variante visual do botão |
 | `onClick` | `() => void` | - | Função executada ao clicar |
 | `className` | `string` | - | Classes CSS adicionais |
 
@@ -97,7 +106,7 @@ O botão ajusta automaticamente seu tamanho em diferentes telas:
 // src/components/atoms/Button/Button.tsx
 export interface ButtonProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'accent' | 'primaryMobile' | 'secondaryMobile';
   onClick?: () => void;
   className?: string;
 }

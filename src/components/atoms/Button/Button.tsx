@@ -2,7 +2,7 @@ import styles from './Button.module.scss';
 
 export interface ButtonProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'primaryMobile' | 'secondaryMobile';
+  variant?: 'primary' | 'secondary' | 'accent' | 'primaryMobile' | 'secondaryMobile';
   onClick?: () => void;
   className?: string;
 }
