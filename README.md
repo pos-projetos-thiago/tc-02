@@ -1,5 +1,7 @@
 # Bytebank - Gerenciamento Financeiro
 
+[![CI](https://github.com/pos-projetos-thiago/tc-01/actions/workflows/ci.yml/badge.svg)](https://github.com/pos-projetos-thiago/tc-01/actions/workflows/ci.yml)
+
 Aplicação de gerenciamento financeiro com Next.js 16, TypeScript, SCSS e Material-UI.
 
 **Tech Challenge - Fase 1 | FIAP Pós-Tech**  
