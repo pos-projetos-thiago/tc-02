@@ -4,16 +4,13 @@ import styles from './Navbar.module.scss'
 import Image from 'next/image'
 import { Button } from '@/components/atoms/Button'
 import { MenuButton } from '@/components/atoms/MenuButton'
-import { useState } from 'react'
 
 export const Navbar = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
   return (
     <nav className={styles.navbar}>
       <div className={styles.container}>
         <div className={styles['menu-button-wrapper']}>
-          <MenuButton onClick={() => setMobileMenuOpen(!mobileMenuOpen)} />
+          <MenuButton />
         </div>
 
         <div className={styles['logo-full']}>
