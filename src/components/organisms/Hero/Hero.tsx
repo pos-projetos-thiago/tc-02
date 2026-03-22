@@ -15,6 +15,7 @@ export const Hero = () => {
               width={635}
               height={435}
               priority
+              className={styles.heroImage}
             />
           </div>
           <div className={styles.mobileActions}>

@@ -43,10 +43,10 @@ Seguindo Atomic Design:
 
 ```
 src/components/
-├── atoms/          # Componentes básicos (Button, Input, etc)
-├── molecules/      # Combinação de atoms (FormField, Card, etc)
-├── organisms/      # Seções complexas (Header, TransactionList, etc)
-└── templates/      # Layouts de páginas
+├── atoms/          # Componentes básicos (Button, MenuButton, etc)
+├── molecules/      # (será usado em fases futuras - FormField, Card, etc)
+├── organisms/      # Seções complexas (Navbar, Hero, Footer, NotFound, etc)
+└── templates/      # (será usado em fases futuras - layouts de páginas)
 ```
 
 ## 🎨 Design System
@@ -91,5 +91,6 @@ tc-01/
 ## 🔗 Links
 
 - **Repositório**: https://github.com/pos-projetos-thiago/tc-01
+- **Contribuir**: [CONTRIBUTING.md](./CONTRIBUTING.md)
 - **Deploy**: (em breve)
 - **Design**: [Figma](link-do-figma)
