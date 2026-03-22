@@ -49,7 +49,13 @@ export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
         </button>
         <nav className={styles.nav}>
           <div className={styles.menuItem}>
-            <Link href="#" className={styles.linkHighlight} onClick={onClose}>
+            <Link href="/" className={styles.linkHighlight} onClick={onClose}>
+              Início
+            </Link>
+            <span className={styles.separatorHighlight} />
+          </div>
+          <div className={styles.menuItem}>
+            <Link href="#" className={styles.link} onClick={onClose}>
               Abrir conta
             </Link>
             <span className={styles.separatorHighlight} />
