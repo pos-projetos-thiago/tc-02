@@ -38,8 +38,12 @@ export const Navbar = () => {
         </div>
 
         <div className={styles.actions}>
-          <Button variant="primary" className={styles['abrir-conta']}>Abrir minha conta</Button>
-          <Button variant="primary" className={styles['abrir-conta-tablet']}>Abrir conta</Button>
+          <span className={styles['abrir-conta']}>
+            <Button variant="primary">Abrir minha conta</Button>
+          </span>
+          <span className={styles['abrir-conta-tablet']}>
+            <Button variant="primary">Abrir conta</Button>
+          </span>
           <Button variant="secondary">Já tenho conta</Button>
         </div>
       </div>

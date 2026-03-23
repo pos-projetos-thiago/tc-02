@@ -96,26 +96,19 @@
   }
 }
 
+.abrir-conta,
+.abrir-conta-tablet {
+  display: none;
+}
+
 .abrir-conta {
-  display: block;
-
-  @include tablet {
-    display: none;
-  }
-
-  @include mobile {
-    display: none;
+  @include desktop {
+    display: inline-block;
   }
 }
 
 .abrir-conta-tablet {
-  display: none;
-
   @include tablet {
-    display: block;
-  }
-
-  @include mobile {
-    display: block;
+    display: inline-block;
   }
 }
