@@ -1,0 +1,121 @@
+@import '../../../styles/colors';
+@import '../../../styles/functions';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+$modal-width-mobile: 32rem;
+$modal-width-tablet: 50rem;
+$modal-width-desktop: 80rem;
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: $modal-width-mobile;
+
+  @include tablet {
+    width: $modal-width-tablet;
+  }
+
+  @include desktop {
+    width: $modal-width-desktop;
+  }
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  padding: 4rem 3.2rem;
+  padding-top: 4.8rem;
+  gap: 2.4rem;
+
+  @include mobile {
+    padding: 2.4rem;
+    padding-top: 4rem;
+    min-width: unset;
+  }
+}
+
+.signup .wrapper {
+  flex-direction: column;
+}
+
+.login .wrapper {
+  flex-direction: column;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 30rem;
+  height: 21.5rem;
+  flex-shrink: 0;
+
+  @include tablet {
+    width: 35.5rem;
+    height: 26rem;
+  }
+
+  @include desktop {
+    width: 35.5rem;
+    height: 26rem;
+  }
+
+  img {
+    object-fit: contain;
+    object-position: center;
+  }
+}
+
+.formWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 100%;
+}
+
+.title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+}
+
+.signup .title {
+  color: $color-primary;
+}
+
+.login .title {
+  color: $color-black;
+}
+
+.subtitle {
+  font-size: $font-size-sm;
+  color: $color-gray-400;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.input {
+  width: 100%;
+  padding: 1.2rem 1.6rem;
+  font-size: $font-size-base;
+  font-family: $font-family-base;
+  border: 0.2rem solid $color-gray-200;
+  border-radius: 0.8rem;
+  outline: none;
+
+  &::placeholder {
+    color: $color-gray-400;
+  }
+}
+
+.signup .input:focus {
+  border-color: $color-primary;
+}
+
+.login .input:focus {
+  border-color: $color-green;
+}

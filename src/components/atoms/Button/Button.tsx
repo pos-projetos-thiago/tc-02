@@ -7,9 +7,10 @@ export interface ButtonProps {
   onClick?: () => void;
   className?: string;
   href?: string;
+  type?: 'button' | 'submit' | 'reset';
 }
 
-export const Button = ({ children, variant = 'primary', onClick, className, href }: ButtonProps) => {
+export const Button = ({ children, variant = 'primary', onClick, className, href, type = 'button' }: ButtonProps) => {
   const classNames = `${styles.button} ${styles[variant]} ${className || ''}`.trim();
 
   if (href) {
@@ -21,7 +22,7 @@ export const Button = ({ children, variant = 'primary', onClick, className, href
   }
 
   return (
-    <button className={classNames} onClick={onClick} type="button">
+    <button className={classNames} onClick={onClick} type={type}>
       {children}
     </button>
   );

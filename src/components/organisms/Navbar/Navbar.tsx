@@ -6,9 +6,11 @@ import Image from 'next/image'
 import { Button } from '@/components/atoms/Button'
 import { MenuButton } from '@/components/atoms/MenuButton'
 import { MobileMenu } from '@/components/organisms/MobileMenu'
+import { AuthModal } from '@/components/organisms/AuthModal'
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [authModalVariant, setAuthModalVariant] = useState<'signup' | 'login' | null>(null)
 
   return (
     <>
@@ -39,16 +41,26 @@ export const Navbar = () => {
 
         <div className={styles.actions}>
           <span className={styles['abrir-conta']}>
-            <Button variant="primary">Abrir minha conta</Button>
+            <Button variant="primary" onClick={() => setAuthModalVariant('signup')}>Abrir minha conta</Button>
           </span>
           <span className={styles['abrir-conta-tablet']}>
-            <Button variant="primary">Abrir conta</Button>
+            <Button variant="primary" onClick={() => setAuthModalVariant('signup')}>Abrir conta</Button>
           </span>
-          <Button variant="secondary">Já tenho conta</Button>
+          <Button variant="secondary" onClick={() => setAuthModalVariant('login')}>Já tenho conta</Button>
         </div>
       </div>
     </nav>
-    <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+    <MobileMenu
+      isOpen={mobileMenuOpen}
+      onClose={() => setMobileMenuOpen(false)}
+      onOpenSignUp={() => { setMobileMenuOpen(false); setAuthModalVariant('signup'); }}
+      onOpenLogin={() => { setMobileMenuOpen(false); setAuthModalVariant('login'); }}
+    />
+    <AuthModal
+      isOpen={authModalVariant !== null}
+      onClose={() => setAuthModalVariant(null)}
+      variant={authModalVariant ?? 'signup'}
+    />
     </>
   )
 }
