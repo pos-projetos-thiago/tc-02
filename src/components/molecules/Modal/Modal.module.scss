@@ -32,7 +32,7 @@
   position: relative;
   max-width: 90vw;
   max-height: 90vh;
-  overflow-y: auto;
+  overflow: hidden;
   background-color: $color-white;
   border-radius: 1.2rem;
   box-shadow: 0 0.4rem 2.4rem rgba(0, 0, 0, 0.2);
@@ -54,14 +54,14 @@
   border: none;
   padding: 0.4rem;
   cursor: pointer;
-  color: $color-gray-400;
+  color: $color-black;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1;
 
   &:hover {
-    color: $color-black;
+    opacity: 0.7;
   }
 }
 

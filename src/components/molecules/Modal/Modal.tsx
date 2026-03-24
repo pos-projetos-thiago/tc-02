@@ -16,11 +16,23 @@ export interface ModalProps {
 export const Modal = ({ isOpen, onClose, children, contentClassName, ariaLabel, fullHeight }: ModalProps) => {
   useEffect(() => {
     if (isOpen) {
+      const scrollY = window.scrollY;
+      document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
       const handleEscape = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
       document.addEventListener('keydown', handleEscape);
       return () => {
+        document.documentElement.style.overflow = '';
         document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        window.scrollTo(0, scrollY);
         document.removeEventListener('keydown', handleEscape);
       };
     }
@@ -41,8 +53,12 @@ export const Modal = ({ isOpen, onClose, children, contentClassName, ariaLabel, 
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}
+        onClick={onClose}
       >
-        <div className={`${styles.content} ${fullHeight ? styles.contentFullHeight : ''} ${contentClassName || ''}`.trim()}>
+        <div
+          className={`${styles.content} ${fullHeight ? styles.contentFullHeight : ''} ${contentClassName || ''}`.trim()}
+          onClick={(e) => e.stopPropagation()}
+        >
           <button
             type="button"
             className={styles.closeButton}

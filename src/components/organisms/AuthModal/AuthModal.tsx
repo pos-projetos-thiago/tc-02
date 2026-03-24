@@ -18,18 +18,21 @@ const AUTH_CONFIG = {
     title: 'Preencha os campos abaixo para criar sua conta corrente!',
     imageSrc: '/Modal/signup.svg',
     imageAlt: 'Ilustração cadastro',
-    submitLabel: 'Cadastrar',
+    submitLabel: 'Criar conta',
+    buttonVariant: 'accent' as const,
+    privacyText: 'Li e estou ciente quanto às condições de tratamento dos meus dados conforme descrito na Política de Privacidade do banco.',
     inputs: [
-      { type: 'text', placeholder: 'Digite seu nome completo', ariaLabel: 'Digite seu nome completo' },
-      { type: 'email', placeholder: 'Digite seu email', ariaLabel: 'Digite seu email' },
-      { type: 'password', placeholder: 'Digite sua senha', ariaLabel: 'Digite sua senha' },
+      { type: 'text', placeholder: 'Digite seu nome completo', ariaLabel: 'Nome', label: 'Nome' },
+      { type: 'email', placeholder: 'Digite seu email', ariaLabel: 'Email', label: 'Email' },
+      { type: 'password', placeholder: 'Digite sua senha', ariaLabel: 'Senha', label: 'Senha' },
     ] as const,
   },
   login: {
     title: 'Login',
     imageSrc: '/Modal/login.svg',
     imageAlt: 'Ilustração login',
-    submitLabel: 'Entrar',
+    submitLabel: 'Acessar',
+    buttonVariant: 'primary' as const,
     inputs: [
       { type: 'email', placeholder: 'Digite seu email', ariaLabel: 'Digite seu email' },
       { type: 'password', placeholder: 'Digite sua senha', ariaLabel: 'Digite sua senha' },
@@ -61,15 +64,23 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
           <h2 className={styles.title}>{config.title}</h2>
           <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
             {config.inputs.map((input) => (
-              <input
-                key={input.ariaLabel}
-                type={input.type}
-                placeholder={input.placeholder}
-                className={styles.input}
-                aria-label={input.ariaLabel}
-              />
+              <div key={input.ariaLabel} className={styles.field}>
+                {'label' in input && <p className={styles.label}>{input.label}</p>}
+                <input
+                  type={input.type}
+                  placeholder={input.placeholder}
+                  className={styles.input}
+                  aria-label={input.ariaLabel}
+                />
+              </div>
             ))}
-            <Button variant="primary" type="submit">
+            {'privacyText' in config && (
+              <label className={styles.checkboxLabel}>
+                <input type="checkbox" className={styles.checkbox} />
+                <span className={styles.checkboxText}>{config.privacyText}</span>
+              </label>
+            )}
+            <Button variant={config.buttonVariant} type="submit" className={styles.submitButton}>
               {config.submitLabel}
             </Button>
           </form>
