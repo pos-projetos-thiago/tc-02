@@ -1,0 +1,57 @@
+@import '../../styles/colors';
+@import '../../styles/typography';
+
+.loading {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-base;
+  color: $color-white;
+  background-color: $color-black;
+}
+
+.main {
+  min-height: 100dvh;
+  background-color: $color-white;
+  color: $color-primary;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.6rem 2.4rem;
+  background-color: $color-black;
+}
+
+.brand {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-green;
+}
+
+.content {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 4rem 2.4rem;
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-black;
+  margin-bottom: 1.6rem;
+}
+
+.lead {
+  font-size: $font-size-base;
+  line-height: $line-height-relaxed;
+  color: $color-gray-500;
+  margin-bottom: 2.4rem;
+}
+
+.email {
+  font-size: $font-size-sm;
+  color: $color-gray-400;
+}

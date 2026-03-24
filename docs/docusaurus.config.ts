@@ -113,8 +113,8 @@ const config: Config = {
               href: 'https://github.com/pos-projetos-thiago/tc-01',
             },
             {
-              label: 'Contribuir',
-              href: 'https://github.com/pos-projetos-thiago/tc-01/blob/main/CONTRIBUTING.md',
+              label: 'README',
+              href: 'https://github.com/pos-projetos-thiago/tc-01/blob/main/README.md',
             },
           ],
         },

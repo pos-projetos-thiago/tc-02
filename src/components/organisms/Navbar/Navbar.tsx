@@ -16,12 +16,25 @@ export interface NavbarProps {
 export const Navbar = ({ authModalVariant: authModalVariantProp, onAuthModalChange }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [authModalVariantInternal, setAuthModalVariantInternal] = useState<'signup' | 'login' | null>(null)
+  const [authModalKey, setAuthModalKey] = useState(0)
 
   const isControlled = onAuthModalChange !== undefined
   const authModalVariant = isControlled ? authModalVariantProp ?? null : authModalVariantInternal
 
-  const openSignUp = () => (isControlled ? onAuthModalChange!('signup') : setAuthModalVariantInternal('signup'))
-  const openLogin = () => (isControlled ? onAuthModalChange!('login') : setAuthModalVariantInternal('login'))
+  const openSignUp = () => {
+    if (isControlled) onAuthModalChange!('signup')
+    else {
+      setAuthModalKey((k) => k + 1)
+      setAuthModalVariantInternal('signup')
+    }
+  }
+  const openLogin = () => {
+    if (isControlled) onAuthModalChange!('login')
+    else {
+      setAuthModalKey((k) => k + 1)
+      setAuthModalVariantInternal('login')
+    }
+  }
   const closeAuthModal = () => (isControlled ? onAuthModalChange!(null) : setAuthModalVariantInternal(null))
 
   return (
@@ -70,6 +83,7 @@ export const Navbar = ({ authModalVariant: authModalVariantProp, onAuthModalChan
     />
     {!isControlled && (
       <AuthModal
+        key={authModalKey}
         isOpen={authModalVariant !== null}
         onClose={closeAuthModal}
         variant={authModalVariant ?? 'signup'}
