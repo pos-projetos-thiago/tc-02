@@ -1,7 +1,6 @@
-## Descrição
-<!-- Descreva as alterações -->
+## O que foi feito
+<!-- Breve descrição das alterações -->
 
-## Checklist antes do merge
-- [ ] `yarn lint` passa sem erros
-- [ ] `yarn build` passa sem erros
-- [ ] CI está verde ✓
+## Antes de mergear
+- [ ] Rodei `yarn lint` e `yarn build` localmente
+- [ ] CI passou

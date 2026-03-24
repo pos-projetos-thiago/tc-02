@@ -1,7 +1,7 @@
-import Link from 'next/link';
 import { Navbar } from '@/components/organisms/Navbar';
 import { Footer } from '@/components/organisms/Footer';
-import Image from 'next/image'
+import { Button } from '@/components/atoms/Button';
+import Image from 'next/image';
 import styles from './NotFound.module.scss';
 
 export const NotFound = () => {
@@ -15,9 +15,9 @@ export const NotFound = () => {
             E olha que exploramos o universo procurando por ela!
             Que tal voltar e tentar novamente?
           </p>
-          <Link href="/" className={styles.link}>
+          <Button href="/" variant="accent">
             Voltar ao início
-          </Link>
+          </Button>
         </div>
         <div className={styles.imageWrapper}>
           <Image
