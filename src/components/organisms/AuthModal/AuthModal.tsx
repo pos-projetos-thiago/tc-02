@@ -33,9 +33,10 @@ const AUTH_CONFIG = {
     imageAlt: 'Ilustração login',
     submitLabel: 'Acessar',
     buttonVariant: 'primary' as const,
+    forgotPasswordText: 'Esqueci a senha!',
     inputs: [
-      { type: 'email', placeholder: 'Digite seu email', ariaLabel: 'Digite seu email' },
-      { type: 'password', placeholder: 'Digite sua senha', ariaLabel: 'Digite sua senha' },
+      { type: 'email', placeholder: 'Digite seu email', ariaLabel: 'Email', label: 'Email' },
+      { type: 'password', placeholder: 'Digite sua senha', ariaLabel: 'Senha', label: 'Senha' },
     ] as const,
   },
 };
@@ -63,7 +64,7 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
         <div className={styles.formWrapper}>
           <h2 className={styles.title}>{config.title}</h2>
           <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
-            {config.inputs.map((input) => (
+            {config.inputs.map((input, index) => (
               <div key={input.ariaLabel} className={styles.field}>
                 {'label' in input && <p className={styles.label}>{input.label}</p>}
                 <input
@@ -72,6 +73,12 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
                   className={styles.input}
                   aria-label={input.ariaLabel}
                 />
+                {'forgotPasswordText' in config &&
+                  index === config.inputs.length - 1 && (
+                    <a href="#" className={styles.forgotPassword}>
+                      {config.forgotPasswordText}
+                    </a>
+                  )}
               </div>
             ))}
             {'privacyText' in config && (

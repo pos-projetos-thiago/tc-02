@@ -31,13 +31,12 @@ $modal-width-desktop: 80rem;
   gap: 2.4rem;
 
   @include tablet {
-    padding-left: 10rem;
-    padding-right: 10rem;
+    padding-left: 7.5rem;
+    padding-right: 7.5rem;
   }
 
   @include mobile {
-    padding: 2.4rem;
-    padding-top: 4rem;
+    padding: 2.4rem 1.6rem 2.4rem;
     min-width: unset;
   }
 }
@@ -79,8 +78,9 @@ $modal-width-desktop: 80rem;
   width: 100%;
 }
 
-.signup .formWrapper {
-  gap: 3.2rem; // 32px entre título e primeiro campo (Nome)
+.signup .formWrapper,
+.login .formWrapper {
+  gap: 3.2rem;
 }
 
 .title {
@@ -95,6 +95,14 @@ $modal-width-desktop: 80rem;
 
 .signup .title {
   color: $color-black;
+
+  @include tablet {
+    text-align: left;
+  }
+
+  @include mobile {
+    text-align: left;
+  }
 }
 
 .login .title {
@@ -115,7 +123,7 @@ $modal-width-desktop: 80rem;
 .field {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem; // 8px
+  gap: 0.8rem;
 }
 
 .label {
@@ -149,7 +157,7 @@ $modal-width-desktop: 80rem;
 .checkbox {
   appearance: none;
   -webkit-appearance: none;
-  width: 2.4rem; // altura igual à linha do texto (1.6rem * 1.5)
+  width: 2.4rem;
   height: 2.4rem;
   flex-shrink: 0;
   border: 2px solid $color-green;
@@ -178,11 +186,22 @@ $modal-width-desktop: 80rem;
   align-self: flex-start;
 }
 
-.signup .submitButton {
+.signup .submitButton,
+.login .submitButton {
   align-self: center;
+}
+
+.signup .submitButton {
   width: 14.4rem;
   min-width: 14.4rem;
   height: 4.8rem;
+}
+
+.forgotPassword {
+  font-size: 1.6rem;
+  font-weight: $font-weight-regular;
+  color: $color-green;
+  text-decoration: underline;
 }
 
 .checkboxText {
