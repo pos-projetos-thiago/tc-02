@@ -40,16 +40,16 @@
   @include tablet {
     display: none;
   }
+
+  @include mobile {
+    display: block;
+  }
 }
 
 .logo-small {
   display: none;
 
   @include tablet {
-    display: block;
-  }
-
-  @include mobile {
     display: block;
   }
 }
