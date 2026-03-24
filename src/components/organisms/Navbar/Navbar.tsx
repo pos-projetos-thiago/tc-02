@@ -8,9 +8,21 @@ import { MenuButton } from '@/components/atoms/MenuButton'
 import { MobileMenu } from '@/components/organisms/MobileMenu'
 import { AuthModal } from '@/components/organisms/AuthModal'
 
-export const Navbar = () => {
+export interface NavbarProps {
+  authModalVariant?: 'signup' | 'login' | null
+  onAuthModalChange?: (variant: 'signup' | 'login' | null) => void
+}
+
+export const Navbar = ({ authModalVariant: authModalVariantProp, onAuthModalChange }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [authModalVariant, setAuthModalVariant] = useState<'signup' | 'login' | null>(null)
+  const [authModalVariantInternal, setAuthModalVariantInternal] = useState<'signup' | 'login' | null>(null)
+
+  const isControlled = onAuthModalChange !== undefined
+  const authModalVariant = isControlled ? authModalVariantProp ?? null : authModalVariantInternal
+
+  const openSignUp = () => (isControlled ? onAuthModalChange!('signup') : setAuthModalVariantInternal('signup'))
+  const openLogin = () => (isControlled ? onAuthModalChange!('login') : setAuthModalVariantInternal('login'))
+  const closeAuthModal = () => (isControlled ? onAuthModalChange!(null) : setAuthModalVariantInternal(null))
 
   return (
     <>
@@ -41,26 +53,28 @@ export const Navbar = () => {
 
         <div className={styles.actions}>
           <span className={styles['abrir-conta']}>
-            <Button variant="primary" onClick={() => setAuthModalVariant('signup')}>Abrir minha conta</Button>
+            <Button variant="primary" onClick={openSignUp}>Abrir minha conta</Button>
           </span>
           <span className={styles['abrir-conta-tablet']}>
-            <Button variant="primary" onClick={() => setAuthModalVariant('signup')}>Abrir conta</Button>
+            <Button variant="primary" onClick={openSignUp}>Abrir conta</Button>
           </span>
-          <Button variant="secondary" onClick={() => setAuthModalVariant('login')}>Já tenho conta</Button>
+          <Button variant="secondary" onClick={openLogin}>Já tenho conta</Button>
         </div>
       </div>
     </nav>
     <MobileMenu
       isOpen={mobileMenuOpen}
       onClose={() => setMobileMenuOpen(false)}
-      onOpenSignUp={() => { setMobileMenuOpen(false); setAuthModalVariant('signup'); }}
-      onOpenLogin={() => { setMobileMenuOpen(false); setAuthModalVariant('login'); }}
+      onOpenSignUp={() => { setMobileMenuOpen(false); openSignUp(); }}
+      onOpenLogin={() => { setMobileMenuOpen(false); openLogin(); }}
     />
-    <AuthModal
-      isOpen={authModalVariant !== null}
-      onClose={() => setAuthModalVariant(null)}
-      variant={authModalVariant ?? 'signup'}
-    />
+    {!isControlled && (
+      <AuthModal
+        isOpen={authModalVariant !== null}
+        onClose={closeAuthModal}
+        variant={authModalVariant ?? 'signup'}
+      />
+    )}
     </>
   )
 }
