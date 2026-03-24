@@ -141,6 +141,10 @@ $modal-width-desktop: 80rem;
   border-radius: 0.8rem;
   outline: none;
 
+  &:focus {
+    border-color: $color-green;
+  }
+
   &::placeholder {
     color: $color-gray-400;
   }
