@@ -127,8 +127,9 @@
 
   h2 {
     color: $color-black;
-    font-size: $font-size-xl;
+    font-size: 2rem;
     font-weight: $font-weight-bold;
+    white-space: nowrap;
   }
 }
 

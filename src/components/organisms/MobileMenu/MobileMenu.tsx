@@ -8,9 +8,11 @@ import styles from './MobileMenu.module.scss';
 export interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenSignUp?: () => void;
+  onOpenLogin?: () => void;
 }
 
-export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
+export const MobileMenu = ({ isOpen, onClose, onOpenSignUp, onOpenLogin }: MobileMenuProps) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -55,15 +57,23 @@ export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
             <span className={styles.separatorHighlight} />
           </div>
           <div className={styles.menuItem}>
-            <Link href="#" className={styles.link} onClick={onClose}>
+            <button
+              type="button"
+              className={styles.link}
+              onClick={() => { onClose(); onOpenSignUp?.(); }}
+            >
               Abrir conta
-            </Link>
+            </button>
             <span className={styles.separatorHighlight} />
           </div>
           <div className={styles.menuItem}>
-            <Link href="#" className={styles.link} onClick={onClose}>
+            <button
+              type="button"
+              className={styles.link}
+              onClick={() => { onClose(); onOpenLogin?.(); }}
+            >
               Já tenho conta
-            </Link>
+            </button>
           </div>
         </nav>
       </aside>

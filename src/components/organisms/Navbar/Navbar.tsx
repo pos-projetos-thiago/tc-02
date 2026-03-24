@@ -6,9 +6,36 @@ import Image from 'next/image'
 import { Button } from '@/components/atoms/Button'
 import { MenuButton } from '@/components/atoms/MenuButton'
 import { MobileMenu } from '@/components/organisms/MobileMenu'
+import { AuthModal } from '@/components/organisms/AuthModal'
 
-export const Navbar = () => {
+export interface NavbarProps {
+  authModalVariant?: 'signup' | 'login' | null
+  onAuthModalChange?: (variant: 'signup' | 'login' | null) => void
+}
+
+export const Navbar = ({ authModalVariant: authModalVariantProp, onAuthModalChange }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [authModalVariantInternal, setAuthModalVariantInternal] = useState<'signup' | 'login' | null>(null)
+  const [authModalKey, setAuthModalKey] = useState(0)
+
+  const isControlled = onAuthModalChange !== undefined
+  const authModalVariant = isControlled ? authModalVariantProp ?? null : authModalVariantInternal
+
+  const openSignUp = () => {
+    if (isControlled) onAuthModalChange!('signup')
+    else {
+      setAuthModalKey((k) => k + 1)
+      setAuthModalVariantInternal('signup')
+    }
+  }
+  const openLogin = () => {
+    if (isControlled) onAuthModalChange!('login')
+    else {
+      setAuthModalKey((k) => k + 1)
+      setAuthModalVariantInternal('login')
+    }
+  }
+  const closeAuthModal = () => (isControlled ? onAuthModalChange!(null) : setAuthModalVariantInternal(null))
 
   return (
     <>
@@ -39,16 +66,29 @@ export const Navbar = () => {
 
         <div className={styles.actions}>
           <span className={styles['abrir-conta']}>
-            <Button variant="primary">Abrir minha conta</Button>
+            <Button variant="primary" onClick={openSignUp}>Abrir minha conta</Button>
           </span>
           <span className={styles['abrir-conta-tablet']}>
-            <Button variant="primary">Abrir conta</Button>
+            <Button variant="primary" onClick={openSignUp}>Abrir conta</Button>
           </span>
-          <Button variant="secondary">Já tenho conta</Button>
+          <Button variant="secondary" onClick={openLogin}>Já tenho conta</Button>
         </div>
       </div>
     </nav>
-    <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+    <MobileMenu
+      isOpen={mobileMenuOpen}
+      onClose={() => setMobileMenuOpen(false)}
+      onOpenSignUp={() => { setMobileMenuOpen(false); openSignUp(); }}
+      onOpenLogin={() => { setMobileMenuOpen(false); openLogin(); }}
+    />
+    {!isControlled && (
+      <AuthModal
+        key={authModalKey}
+        isOpen={authModalVariant !== null}
+        onClose={closeAuthModal}
+        variant={authModalVariant ?? 'signup'}
+      />
+    )}
     </>
   )
 }

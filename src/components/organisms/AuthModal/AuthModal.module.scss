@@ -1,0 +1,231 @@
+@import '../../../styles/colors';
+@import '../../../styles/functions';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+$modal-width-mobile: 32rem;
+$modal-width-tablet: 50rem;
+$modal-width-desktop: 80rem;
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: $modal-width-mobile;
+
+  @include tablet {
+    width: $modal-width-tablet;
+  }
+
+  @include desktop {
+    width: $modal-width-desktop;
+  }
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  padding: 4rem 10rem;
+  padding-top: 4.8rem;
+  gap: 2.4rem;
+
+  @include tablet {
+    padding-left: 7.5rem;
+    padding-right: 7.5rem;
+  }
+
+  @include mobile {
+    padding: 2.4rem 1.6rem 2.4rem;
+    min-width: unset;
+  }
+}
+
+.signup .wrapper {
+  flex-direction: column;
+}
+
+.login .wrapper {
+  flex-direction: column;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 30rem;
+  height: 21.5rem;
+  flex-shrink: 0;
+
+  @include tablet {
+    width: 35.5rem;
+    height: 26rem;
+  }
+
+  @include desktop {
+    width: 35.5rem;
+    height: 26rem;
+  }
+
+  img {
+    object-fit: contain;
+    object-position: center;
+  }
+}
+
+.formWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 100%;
+}
+
+.signup .formWrapper,
+.login .formWrapper {
+  gap: 3.2rem;
+}
+
+.title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  text-align: center;
+
+  @include desktop {
+    font-size: 2rem;
+  }
+}
+
+.signup .title {
+  color: $color-black;
+
+  @include tablet {
+    text-align: left;
+  }
+
+  @include mobile {
+    text-align: left;
+  }
+}
+
+.login .title {
+  color: $color-black;
+}
+
+.subtitle {
+  font-size: $font-size-sm;
+  color: $color-gray-400;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 3.2rem;
+}
+
+.formError {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-error;
+  line-height: $line-height-base;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.label {
+  display: block;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $color-black;
+}
+
+.input {
+  width: 100%;
+  padding: 1.2rem 1.6rem;
+  font-size: $font-size-base;
+  font-family: $font-family-base;
+  border: 0.2rem solid $color-gray-200;
+  border-radius: 0.8rem;
+  outline: none;
+
+  &:focus {
+    border-color: $color-green;
+  }
+
+  &::placeholder {
+    color: $color-gray-400;
+  }
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  cursor: pointer;
+  font-family: $font-family-base;
+}
+
+.checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 2.4rem;
+  height: 2.4rem;
+  flex-shrink: 0;
+  border: 2px solid $color-green;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  background: $color-white;
+
+  &:checked {
+    background: $color-green;
+
+    &::before {
+      content: '';
+      width: 0.6rem;
+      height: 1rem;
+      border: solid $color-white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      margin-bottom: 0.2rem;
+    }
+  }
+}
+
+.submitButton {
+  align-self: flex-start;
+}
+
+.signup .submitButton,
+.login .submitButton {
+  align-self: center;
+}
+
+.signup .submitButton {
+  width: 14.4rem;
+  min-width: 14.4rem;
+  height: 4.8rem;
+}
+
+.forgotPassword {
+  align-self: flex-start;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: 1.6rem;
+  font-weight: $font-weight-regular;
+  color: $color-green;
+  text-decoration: underline;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.checkboxText {
+  font-size: 1.6rem;
+  color: $color-black;
+  line-height: 1.5;
+}

@@ -2,7 +2,12 @@ import styles from './Hero.module.scss';
 import Image from 'next/image'
 import { Button } from '@/components/atoms/Button'
 
-export const Hero = () => {
+export interface HeroProps {
+  onOpenSignUp?: () => void
+  onOpenLogin?: () => void
+}
+
+export const Hero = ({ onOpenSignUp, onOpenLogin }: HeroProps) => {
   return (
     <section className={styles.hero}>
       <div className={styles.container}>
@@ -19,8 +24,8 @@ export const Hero = () => {
             />
           </div>
           <div className={styles.mobileActions}>
-            <Button variant="primaryMobile">Abrir conta</Button>
-            <Button variant="secondaryMobile">Já tenho conta</Button>
+            <Button variant="primaryMobile" onClick={onOpenSignUp}>Abrir conta</Button>
+            <Button variant="secondaryMobile" onClick={onOpenLogin}>Já tenho conta</Button>
           </div>
         </div>
         <div className={styles.advantages}>

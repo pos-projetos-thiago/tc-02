@@ -78,6 +78,10 @@ $drawer-bg: $color-mint-bg;
   line-height: 1.89;
   text-decoration: none;
   transition: color 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 
   &:hover {
     color: $color-green;
