@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import {
   createContext,
@@ -6,57 +6,54 @@ import {
   useContext,
   useMemo,
   useSyncExternalStore,
-  type ReactNode,
-} from 'react';
+  type ReactNode
+} from 'react'
 import {
   getAuthSnapshot,
   getServerAuthSnapshot,
   loginWithCredentials,
   registerUser,
   setSessionUser,
-  subscribeAuth,
-} from '@/lib/auth/auth-store';
-import { DEMO_EMAIL, DEMO_PASSWORD } from '@/lib/auth/mock-storage';
-import type { SessionUser } from '@/lib/auth/mock-storage';
+  subscribeAuth
+} from '@/lib/auth/auth-store'
+import { DEMO_EMAIL, DEMO_PASSWORD } from '@/lib/auth/mock-storage'
+import type { SessionUser } from '@/lib/auth/mock-storage'
 
 type AuthContextValue = {
-  user: SessionUser | null;
-  login: (email: string, password: string) => void;
-  signUp: (name: string, email: string, password: string) => void;
-  logout: () => void;
-};
+  user: SessionUser | null
+  login: (email: string, password: string) => void
+  signUp: (name: string, email: string, password: string) => void
+  logout: () => void
+}
 
-const AuthContext = createContext<AuthContextValue | null>(null);
+const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const user = useSyncExternalStore(subscribeAuth, getAuthSnapshot, getServerAuthSnapshot);
+  const user = useSyncExternalStore(subscribeAuth, getAuthSnapshot, getServerAuthSnapshot)
 
   const login = useCallback((email: string, password: string) => {
-    loginWithCredentials(email, password);
-  }, []);
+    loginWithCredentials(email, password)
+  }, [])
 
   const signUp = useCallback((name: string, email: string, password: string) => {
-    registerUser(name, email, password);
-  }, []);
+    registerUser(name, email, password)
+  }, [])
 
   const logout = useCallback(() => {
-    setSessionUser(null);
-  }, []);
+    setSessionUser(null)
+  }, [])
 
-  const value = useMemo(
-    () => ({ user, login, signUp, logout }),
-    [user, login, signUp, logout],
-  );
+  const value = useMemo(() => ({ user, login, signUp, logout }), [user, login, signUp, logout])
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext);
+  const ctx = useContext(AuthContext)
   if (!ctx) {
-    throw new Error('useAuth deve ser usado dentro de AuthProvider');
+    throw new Error('useAuth deve ser usado dentro de AuthProvider')
   }
-  return ctx;
+  return ctx
 }
 
-export { DEMO_EMAIL, DEMO_PASSWORD };
+export { DEMO_EMAIL, DEMO_PASSWORD }
