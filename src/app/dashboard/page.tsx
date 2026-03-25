@@ -4,17 +4,15 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardNavbar } from '@/components/organisms/DashboardNavbar';
-import { Button } from '@/components/atoms/Button';
+import { DashboardSidebar } from '@/components/organisms/DashboardSidebar';
+import { DashboardHeader } from '@/components/organisms/DashboardHeader';
+import { DashboardServices } from '@/components/organisms/DashboardServices';
+import { DashboardExtract } from '@/components/organisms/DashboardExtract';
 import styles from './dashboard.module.scss';
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
-
-  const handleLogout = () => {
-    logout();
-    router.replace('/');
-  };
 
   useEffect(() => {
     if (!user) {
@@ -32,24 +30,29 @@ export default function DashboardPage() {
 
   return (
     <>
-      <DashboardNavbar
-        userName={user.name}
-      />
+      <DashboardNavbar userName={user.name} />
       <main className={styles.main}>
-        <section className={styles.content}>
-          <h1 className={styles.title}>Olá, {user.name}!</h1>
-          <p className={styles.lead}>
-            Você está autenticado. Em breve esta área exibirá saldo, extrato e transações conforme o Tech
-            Challenge.
-          </p>
-          <p className={styles.email}>Conta: {user.email}</p>
-          
-          <div style={{ marginTop: '2.4rem' }}>
-            <Button type="button" variant="secondary" onClick={handleLogout}>
-              Sair (temporário)
-            </Button>
+        <div className={styles.dashboardGrid}>
+          <div className={styles.gridSidebar}>
+            <DashboardSidebar />
           </div>
-        </section>
+
+          <div className={styles.gridHeader}>
+            <DashboardHeader
+              userName={user.name}
+              balance={2500.75}
+              accountNumber="12345-6"
+            />
+          </div>
+
+          <div className={styles.gridServices}>
+            <DashboardServices />
+          </div>
+
+          <div className={styles.gridExtract}>
+            <DashboardExtract />
+          </div>
+        </div>
       </main>
     </>
   );

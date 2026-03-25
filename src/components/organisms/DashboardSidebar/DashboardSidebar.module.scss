@@ -1,0 +1,69 @@
+@import '../../../styles/colors';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+.sidebar {
+  background-color: #F5F5F5;
+  border-radius: 0.8rem;
+  padding: 3.2rem;
+  height: 100%;
+  min-height: 40rem;
+  width: 20rem;
+}
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+}
+
+.menuItem {
+  position: relative;
+  
+  &:last-child {
+    .separatorHighlight {
+      display: none;
+    }
+  }
+}
+
+.link {
+  display: block;
+  width: 100%;
+  padding: 1.6rem 0;
+  color: $color-black;
+  text-decoration: none;
+  font-size: 1.6rem;
+  font-weight: $font-weight-regular;
+  background: none;
+  border: none;
+  text-align: center;
+  cursor: pointer;
+  
+  &:hover {
+    color: $color-green;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.linkHighlight {
+  @extend .link;
+  color: $color-green;
+  font-weight: $font-weight-semibold;
+}
+
+.separatorHighlight {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: $color-black;
+  margin-top: 1.6rem;
+}
+
+@include mobile {
+  .sidebar {
+    width: 100%;
+    padding: 2.4rem;
+  }
+}
