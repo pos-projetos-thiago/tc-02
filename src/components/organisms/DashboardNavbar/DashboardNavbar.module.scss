@@ -1,0 +1,51 @@
+@import '../../../styles/colors';
+@import '../../../styles/functions';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+.navbar {
+  height: 7.2rem;
+  width: 100%;
+  background-color: $color-primary;
+}
+
+.container {
+  @include container-padding;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+
+  @include mobile {
+    gap: 1.2rem;
+  }
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+
+  @include mobile {
+    display: none;
+  }
+}
+
+.userName {
+  font-size: 1.3rem; // 13px
+  font-weight: $font-weight-semibold;
+  color: $color-white;
+  line-height: 1.2;
+}
+
+.avatarImage {
+  border-radius: 50%;
+  object-fit: cover;
+}

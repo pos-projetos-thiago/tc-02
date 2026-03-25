@@ -12,23 +12,9 @@
 }
 
 .main {
-  min-height: 100dvh;
+  min-height: calc(100dvh - 7.2rem); // Subtract navbar height
   background-color: $color-white;
   color: $color-primary;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.6rem 2.4rem;
-  background-color: $color-black;
-}
-
-.brand {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-bold;
-  color: $color-green;
 }
 
 .content {
