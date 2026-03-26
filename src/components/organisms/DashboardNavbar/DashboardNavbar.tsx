@@ -15,18 +15,18 @@ export const DashboardNavbar = ({
   return (
     <nav className={styles.navbar}>
       <div className={styles.container}>
-        <div className={styles.userSection}>
-          <div className={styles.userInfo}>
-            <span className={styles.userName}>{userName}</span>
+        <div className={styles['user-section']}>
+          <div className={styles['user-info']}>
+            <span className={styles['user-name']}>{userName}</span>
           </div>
-
+          
           <div className={styles.avatar}>
-            <Image
-              src={avatarSrc}
+            <Image 
+              src={avatarSrc} 
               alt={`Avatar de ${userName}`}
               width={40}
               height={40}
-              className={styles.avatarImage}
+              className={styles['avatar-image']}
             />
           </div>
         </div>

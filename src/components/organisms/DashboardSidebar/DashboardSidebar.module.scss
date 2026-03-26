@@ -16,11 +16,11 @@
   flex-direction: column;
 }
 
-.menuItem {
+.menu-item {
   position: relative;
   
   &:last-child {
-    .separatorHighlight {
+    .separator-highlight {
       display: none;
     }
   }
@@ -45,13 +45,13 @@
   }
 }
 
-.linkHighlight {
+.link-highlight {
   @extend .link;
   color: $color-green;
   font-weight: $font-weight-semibold;
 }
 
-.separatorHighlight {
+.separator-highlight {
   position: absolute;
   bottom: 0;
   left: 0;

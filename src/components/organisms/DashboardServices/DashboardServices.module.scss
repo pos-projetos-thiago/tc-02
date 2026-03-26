@@ -1,0 +1,91 @@
+@import '../../../styles/colors';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+.services {
+  background-color: $color-white;
+  border-radius: 1.6rem;
+  padding: 2.4rem;
+  height: 100%;
+  min-height: 20rem;
+  border: 1px solid $color-gray-200;
+}
+
+.header {
+  margin-bottom: 2.4rem;
+}
+
+.title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-black;
+}
+
+.service-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 1.6rem;
+  margin: 0;
+  padding: 0;
+  
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+  
+  li {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.service-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.6rem;
+  padding: 2rem;
+  border-radius: 1.2rem;
+  border: 1px solid $color-gray-200;
+  background-color: $color-white;
+  transition: all 0.2s;
+  cursor: pointer;
+  
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: 0 4px 12px rgba($color-primary, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  &[role="button"] {
+    &:focus {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.service-icon {
+  font-size: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4rem;
+  height: 4rem;
+}
+
+.service-content {
+  flex: 1;
+}
+
+.service-title {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-black;
+  margin-bottom: 0.4rem;
+}
+
+.service-description {
+  font-size: $font-size-sm;
+  color: $color-gray-500;
+  line-height: $line-height-relaxed;
+}

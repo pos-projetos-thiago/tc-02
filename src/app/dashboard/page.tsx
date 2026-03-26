@@ -32,24 +32,23 @@ export default function DashboardPage() {
     <>
       <DashboardNavbar userName={user.name} />
       <main className={styles.main}>
-        <div className={styles.dashboardGrid}>
-          <div className={styles.gridSidebar}>
+        <div className={styles['dashboard-grid']}>
+          <div className={styles['grid-sidebar']}>
             <DashboardSidebar />
           </div>
 
-          <div className={styles.gridHeader}>
+          <div className={styles['grid-header']}>
             <DashboardHeader
               userName={user.name}
               balance={2500.75}
-              accountNumber="12345-6"
             />
           </div>
 
-          <div className={styles.gridServices}>
+          <div className={styles['grid-services']}>
             <DashboardServices />
           </div>
 
-          <div className={styles.gridExtract}>
+          <div className={styles['grid-extract']}>
             <DashboardExtract />
           </div>
         </div>
