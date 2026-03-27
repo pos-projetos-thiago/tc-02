@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardNavbar } from '@/components/organisms/DashboardNavbar';
 import { DashboardSidebar } from '@/components/organisms/DashboardSidebar';
-import { DashboardHeader } from '@/components/organisms/DashboardHeader';
+import { DashboardHero } from '@/components/organisms/DashboardHero';
 import { DashboardServices } from '@/components/organisms/DashboardServices';
 import { DashboardExtract } from '@/components/organisms/DashboardExtract';
 import styles from './dashboard.module.scss';
@@ -38,7 +38,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={styles['grid-header']}>
-            <DashboardHeader
+            <DashboardHero
               userName={user.name}
               balance={2500.75}
             />

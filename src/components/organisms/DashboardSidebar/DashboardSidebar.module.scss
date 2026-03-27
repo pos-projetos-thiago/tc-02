@@ -18,7 +18,7 @@
 
 .menu-item {
   position: relative;
-  
+
   &:last-child {
     .separator-highlight {
       display: none;
@@ -38,10 +38,12 @@
   border: none;
   text-align: center;
   cursor: pointer;
-  
+
   &:hover {
     color: $color-green;
     font-weight: $font-weight-semibold;
+    transition: ease-in-out 0.2s;
+    transform: scale(1.05);
   }
 }
 
