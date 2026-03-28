@@ -41,8 +41,7 @@ export const DashboardHero = ({
       month: '2-digit',
       day: '2-digit'
     });
-
-    // Capta a primeira letra da data
+    
     return dateString.charAt(0).toUpperCase() + dateString.slice(1);
   };
 

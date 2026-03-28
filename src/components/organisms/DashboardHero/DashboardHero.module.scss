@@ -7,7 +7,9 @@
   border-radius: 1.6rem;
   color: $color-white;
   height: 100%;
-  min-height: 18rem;
+  min-height: 20rem;
+  position: relative;
+  overflow: hidden;
 }
 
 .content {
@@ -29,6 +31,8 @@
   flex-direction: column;
   gap: 2.4rem;
   flex: 1;
+  position: relative;
+  z-index: 2;
 }
 
 .greeting-section {
@@ -38,28 +42,34 @@
 }
 
 .illustration {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  position: absolute;
+  right: 10rem;
+  bottom: -25rem;
   max-width: 70rem;
-  margin-left: 8rem;
-  margin-top: 2rem;
+  z-index: 0;
+  pointer-events: none;
   
   @include mobile {
+    position: relative;
+    right: auto;
+    bottom: auto;
     max-width: 24rem;
     margin-top: 1.6rem;
-    margin-left: 0;
+    z-index: 1;
+    pointer-events: auto;
   }
 }
 
 .illustration-img {
   width: 100%;
   height: auto;
-  max-width: 70rem;
-  opacity: 1;
+  max-width: 55rem;
+  opacity: 0.9;
+  object-fit: contain;
   
   @include mobile {
     max-width: 20rem;
+    opacity: 1;
   }
 }
 
@@ -83,6 +93,8 @@
   margin-top: 9.5rem;
   margin-right: 10rem;
   width: 20rem; // largura fixa para evitar movimento da linha
+  position: relative;
+  z-index: 2;
   
   @include mobile {
     margin-right: 1.6rem;
