@@ -1,17 +1,17 @@
 'use client';
 
 import Image from 'next/image';
-import styles from './DashboardNavbar.module.scss';
+import styles from './UserProfile.module.scss';
 
-export interface DashboardNavbarProps {
+export interface UserProfileProps {
   userName: string;
   avatarSrc?: string;
 }
 
-export const DashboardNavbar = ({
+export const UserProfile = ({
   userName,
-  avatarSrc = '/DashboardNavbar/avatar.svg'
-}: DashboardNavbarProps) => {
+  avatarSrc = '/UserProfile/avatar.svg'
+}: UserProfileProps) => {
   return (
     <nav className={styles.navbar}>
       <div className={styles.container}>

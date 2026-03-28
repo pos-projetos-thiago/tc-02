@@ -1,15 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { TransactionItem, type Transaction } from '@/components/molecules/TransactionItem';
 import styles from './DashboardExtract.module.scss';
-
-export interface Transaction {
-  id: string;
-  type: 'deposit' | 'withdrawal' | 'transfer';
-  amount: number;
-  description: string;
-  date: string;
-}
 
 export interface DashboardExtractProps {
   transactions?: Transaction[];
@@ -44,36 +36,6 @@ export const DashboardExtract = ({
   transactions = mockTransactions, 
   maxItems = 5 
 }: DashboardExtractProps) => {
-  const [isHydrated, setIsHydrated] = useState(() => false);
-
-  useEffect(() => {
-    // Usando timeout para evitar cascading renders
-    const timer = setTimeout(() => {
-      setIsHydrated(true);
-    }, 0);
-    
-    return () => clearTimeout(timer);
-  }, []);
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(Math.abs(value));
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  };
-
-  const getMonthName = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      month: 'long'
-    });
-  };
 
   const limitedTransactions = transactions.slice(0, maxItems);
 
@@ -83,23 +45,7 @@ export const DashboardExtract = ({
 
       <div className={styles['transaction-list']}>
         {limitedTransactions.map((transaction) => (
-          <div key={transaction.id} className={styles['transaction-item']}>
-            <div className={styles['month-name']}>
-              {isHydrated ? getMonthName(transaction.date) : ''}
-            </div>
-            <div className={styles['description-row']}>
-              <div className={styles['transaction-description']}>
-                Depósito
-              </div>
-              <div className={styles['transaction-date']}>
-                {isHydrated ? formatDate(transaction.date) : ''}
-              </div>
-            </div>
-            <div className={styles['transaction-amount']}>
-              {formatCurrency(transaction.amount)}
-            </div>
-            <div className={styles['transaction-divider']}></div>
-          </div>
+          <TransactionItem key={transaction.id} transaction={transaction} />
         ))}
 
         {limitedTransactions.length === 0 && (

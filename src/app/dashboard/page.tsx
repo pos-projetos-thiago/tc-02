@@ -3,8 +3,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { DashboardNavbar } from '@/components/organisms/DashboardNavbar';
-import { DashboardSidebar } from '@/components/organisms/DashboardSidebar';
+import { UserProfile } from '@/components/molecules/UserProfile';
+import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';
 import { DashboardServices } from '@/components/organisms/DashboardServices';
 import { DashboardExtract } from '@/components/organisms/DashboardExtract';
@@ -30,11 +30,11 @@ export default function DashboardPage() {
 
   return (
     <>
-      <DashboardNavbar userName={user.name} />
+      <UserProfile userName={user.name} />
       <main className={styles.main}>
         <div className={styles['dashboard-grid']}>
           <div className={styles['grid-sidebar']}>
-            <DashboardSidebar />
+            <DashboardNav />
           </div>
 
           <div className={styles['grid-header']}>

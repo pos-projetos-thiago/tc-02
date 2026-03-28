@@ -1,5 +1,5 @@
-import { NotFound } from '@/components/organisms/NotFound';
+import { NotFoundTemplate } from '@/components/templates/NotFoundTemplate';
 
 export default function NotFoundPage() {
-  return <NotFound />;
+  return <NotFoundTemplate />;
 }

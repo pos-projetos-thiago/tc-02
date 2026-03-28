@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import styles from './DashboardSidebar.module.scss';
+import styles from './DashboardNav.module.scss';
 
-export const DashboardSidebar = () => {
+export const DashboardNav = () => {
   return (
     <aside className={styles.sidebar}>
       <nav className={styles.navigation}>

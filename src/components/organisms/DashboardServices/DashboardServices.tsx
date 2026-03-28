@@ -1,5 +1,6 @@
 'use client';
 
+import { ServiceCard } from '@/components/molecules/ServiceCard';
 import styles from './DashboardServices.module.scss';
 
 export interface Service {
@@ -63,25 +64,12 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
       <ul className={styles['service-grid']}>
         {services.map((service) => (
           <li key={service.id}>
-            <article
-              className={styles['service-card']}
+            <ServiceCard
+              title={service.title}
+              description={service.description}
+              icon={service.icon}
               onClick={service.action}
-              role={service.action ? "button" : undefined}
-              tabIndex={service.action ? 0 : undefined}
-            >
-              <div className={styles['service-icon']} aria-hidden="true">
-                <img 
-                  src={service.icon} 
-                  alt=""
-                  width={60}
-                  height={60}
-                />
-              </div>
-              <div className={styles['service-content']}>
-                <h3 className={styles['service-title']}>{service.title}</h3>
-                <p className={styles['service-description']}>{service.description}</p>
-              </div>
-            </article>
+            />
           </li>
         ))}
       </ul>
