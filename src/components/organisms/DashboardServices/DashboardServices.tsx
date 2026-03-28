@@ -17,21 +17,39 @@ export interface DashboardServicesProps {
 const defaultServices: Service[] = [
   {
     id: '1',
-    title: 'Nova Transação',
-    description: 'Depósito, transferência ou saque',
-    icon: '💰'
+    title: 'Empréstimo',
+    description: '',
+    icon: '/DashboardServices/emprestimo.svg'
   },
   {
     id: '2',
-    title: 'Extrato Completo',
-    description: 'Visualize todas suas transações',
-    icon: '📋'
+    title: 'Meus cartões',
+    description: '',
+    icon: '/DashboardServices/cartao.svg'
   },
   {
     id: '3',
-    title: 'Configurações',
-    description: 'Gerencie sua conta e preferências',
-    icon: '⚙️'
+    title: 'Doações',
+    description: '',
+    icon: '/DashboardServices/doacoes.svg'
+  },
+  {
+    id: '4',
+    title: 'Pix',
+    description: '',
+    icon: '/DashboardServices/pix.svg'
+  },
+  {
+    id: '5',
+    title: 'Seguros',
+    description: '',
+    icon: '/DashboardServices/seguros.svg'
+  },
+  {
+    id: '6',
+    title: 'Crédito celular',
+    description: '',
+    icon: '/DashboardServices/celular.svg'
   }
 ];
 
@@ -52,7 +70,12 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
               tabIndex={service.action ? 0 : undefined}
             >
               <div className={styles['service-icon']} aria-hidden="true">
-                {service.icon}
+                <img 
+                  src={service.icon} 
+                  alt=""
+                  width={60}
+                  height={60}
+                />
               </div>
               <div className={styles['service-content']}>
                 <h3 className={styles['service-title']}>{service.title}</h3>

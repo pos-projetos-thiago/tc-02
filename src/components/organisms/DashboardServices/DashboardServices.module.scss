@@ -5,32 +5,46 @@
 .services {
   background-color: $color-gray-300;
   border-radius: 1.6rem;
-  padding: 2.4rem;
+  padding: 0 0 1.6rem 0;
   height: 100%;
   min-height: 20rem;
   border: 1px solid $color-gray-200;
+  
+  @media (min-height: 1025px) {
+    padding-bottom: 2.4rem;
+  }
 }
 
 .header {
-  margin-bottom: 2.4rem;
+  margin-bottom: 1.6rem;
 }
 
 .title {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
-  color: $color-black;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #000000;
+  margin-top: 2.4rem;
+  margin-left: 3.2rem;
 }
 
 .service-grid {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-  gap: 1.6rem;
-  margin: 0;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3.2rem;
+  margin: 0 3.2rem;
   padding: 0;
   
   @include mobile {
     grid-template-columns: 1fr;
+  }
+  
+  @media (min-width: 1200px) {
+    margin-top: 2.4rem;
+  }
+  
+  @media (min-width: 1900px) and (min-height: 1060px) {
+    margin-top: 5rem;
   }
   
   li {
@@ -41,19 +55,23 @@
 
 .service-card {
   display: flex;
-  align-items: flex-start;
-  gap: 1.6rem;
-  padding: 2rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2.4rem 1.2rem;
   border-radius: 1.2rem;
   border: 1px solid $color-gray-200;
   background-color: $color-white;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  text-align: center;
   
   &:hover {
-    border-color: $color-primary;
-    box-shadow: 0 4px 12px rgba($color-primary, 0.1);
-    transform: translateY(-2px);
+    background-color: rgba($color-gray-50, 0.6);
+    box-shadow: 0 6px 20px rgba($color-green, 0.08);
+    transform: translateY(-3px) scale(1.005);
+    border-color: rgba($color-green, 0.2);
   }
   
   &[role="button"] {
@@ -62,30 +80,39 @@
       outline-offset: 2px;
     }
   }
+  
+  @media (min-width: 1200px) {
+    padding: 3rem 1.2rem;
+  }
 }
 
 .service-icon {
-  font-size: 2.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 4rem;
-  height: 4rem;
+  min-width: 6rem;
+  height: 6rem;
+  
+  img, svg {
+    width: 6rem;
+    height: 6rem;
+    object-fit: contain;
+  }
 }
 
 .service-content {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .service-title {
-  font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  color: $color-black;
-  margin-bottom: 0.4rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #000000;
+  margin: 0;
 }
 
 .service-description {
-  font-size: $font-size-sm;
-  color: $color-gray-500;
-  line-height: $line-height-relaxed;
+  display: none;
 }
