@@ -53,55 +53,42 @@ export const DashboardExtract = ({
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
-      month: '2-digit'
+      month: '2-digit',
+      year: 'numeric'
     });
   };
 
-  const getTransactionIcon = (type: Transaction['type']) => {
-    switch (type) {
-      case 'deposit': return '↗️';
-      case 'withdrawal': return '↙️';
-      case 'transfer': return '↔️';
-      default: return '💰';
-    }
+  const getMonthName = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      month: 'long'
+    });
   };
 
   const limitedTransactions = transactions.slice(0, maxItems);
 
   return (
     <aside className={styles.extract}>
-      <header className={styles.header}>
-        <h2 className={styles.title}>Extrato</h2>
-        <button className={styles['view-all-btn']} type="button">Ver tudo</button>
-      </header>
+      <h2 className={styles.title}>Extrato</h2>
       
-      <ul className={styles['transaction-list']}>
+      <div className={styles['transaction-list']}>
         {limitedTransactions.map((transaction) => (
-          <li key={transaction.id}>
-            <article className={styles['transaction-item']}>
-              <div className={styles['transaction-icon']} aria-hidden="true">
-                {getTransactionIcon(transaction.type)}
+          <div key={transaction.id} className={styles['transaction-item']}>
+            <div className={styles['month-name']}>
+              {getMonthName(transaction.date)}
+            </div>
+            <div className={styles['description-row']}>
+              <div className={styles['transaction-description']}>
+                Depósito
               </div>
-              
-              <div className={styles['transaction-info']}>
-                <h3 className={styles['transaction-description']}>
-                  {transaction.description}
-                </h3>
-                <time 
-                  className={styles['transaction-date']}
-                  dateTime={transaction.date}
-                >
-                  {formatDate(transaction.date)}
-                </time>
+              <div className={styles['transaction-date']}>
+                {formatDate(transaction.date)}
               </div>
-              
-              <div className={`${styles['transaction-amount']} ${
-                transaction.amount > 0 ? styles.positive : styles.negative
-              }`}>
-                {transaction.amount > 0 ? '+' : '-'}{formatCurrency(transaction.amount)}
-              </div>
-            </article>
-          </li>
+            </div>
+            <div className={styles['transaction-amount']}>
+              {formatCurrency(transaction.amount)}
+            </div>
+            <div className={styles['transaction-divider']}></div>
+          </div>
         ))}
         
         {limitedTransactions.length === 0 && (
@@ -109,7 +96,7 @@ export const DashboardExtract = ({
             <p>Nenhuma transação recente</p>
           </div>
         )}
-      </ul>
+      </div>
     </aside>
   );
 };

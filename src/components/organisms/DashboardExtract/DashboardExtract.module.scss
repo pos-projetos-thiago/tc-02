@@ -5,106 +5,67 @@
 .extract {
   background-color: $color-white;
   border-radius: 1.6rem;
-  padding: 2.4rem;
+  padding: 3.2rem 2.4rem 2.4rem 2.4rem;
   height: 100%;
   min-height: 40rem;
   border: 1px solid $color-gray-200;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2.4rem;
-}
-
 .title {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
+  font-size: 2.5rem;
+  font-weight: $font-weight-bold;
   color: $color-black;
-}
-
-.view-all-btn {
-  background: none;
-  border: none;
-  color: $color-primary;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: opacity 0.2s;
-  
-  &:hover {
-    opacity: 0.7;
-  }
+  margin: 0 0 2.4rem 0;
 }
 
 .transaction-list {
-  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 1.6rem;
-  margin: 0;
-  padding: 0;
-  
-  li {
-    margin: 0;
-    padding: 0;
-  }
+  gap: 2.4rem;
 }
 
 .transaction-item {
   display: flex;
-  align-items: flex-start;
-  gap: 1.2rem;
-  padding: 1.6rem;
-  border-radius: 1.2rem;
-  background-color: $color-gray-50;
-  transition: background-color 0.2s;
-  
-  &:hover {
-    background-color: $color-gray-200;
-  }
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
-.transaction-icon {
-  font-size: 2rem;
+.month-name {
+  font-size: 1.3rem;
+  font-weight: $font-weight-semibold;
+  color: $color-green;
+  text-transform: capitalize;
+}
+
+.description-row {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  min-width: 3.2rem;
-  height: 3.2rem;
-}
-
-.transaction-info {
-  flex: 1;
-  min-width: 0;
 }
 
 .transaction-description {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
+  font-size: $font-size-base;
+  font-weight: $font-weight-regular;
   color: $color-black;
-  margin-bottom: 0.4rem;
-  word-wrap: break-word;
 }
 
 .transaction-date {
-  font-size: $font-size-xs;
+  font-size: 1.3rem;
+  font-weight: $font-weight-regular;
   color: $color-gray-500;
 }
 
 .transaction-amount {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
-  white-space: nowrap;
-  
-  &.positive {
-    color: $color-green;
-  }
-  
-  &.negative {
-    color: $color-accent;
-  }
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-black;
+}
+
+.transaction-divider {
+  width: 18rem;
+  height: 0.1rem;
+  background-color: $color-green;
+  opacity: 0.5;
 }
 
 .empty-state {
