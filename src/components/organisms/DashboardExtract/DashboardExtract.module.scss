@@ -4,7 +4,7 @@
 
 .extract {
   background-color: $color-white;
-  border-radius: 1.6rem;
+  border-radius: 0.8rem;
   padding: 3.2rem 2.4rem 2.4rem 2.4rem;
   height: 100%;
   min-height: 40rem;
@@ -28,6 +28,20 @@
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+  padding: 1.6rem;
+  border-radius: 0.8rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: rgba($color-gray-50, 0.8);
+    box-shadow: 0 2px 8px rgba($color-green, 0.08);
+    transform: translateY(-1px);
+    
+    .transaction-divider {
+      opacity: 0.8;
+    }
+  }
 }
 
 .month-name {

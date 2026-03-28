@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import styles from './DashboardExtract.module.scss';
 
 export interface Transaction {
@@ -24,7 +25,7 @@ const mockTransactions: Transaction[] = [
     date: '2026-03-25'
   },
   {
-    id: '2', 
+    id: '2',
     type: 'withdrawal',
     amount: -250.50,
     description: 'Compra no supermercado',
@@ -43,6 +44,16 @@ export const DashboardExtract = ({
   transactions = mockTransactions, 
   maxItems = 5 
 }: DashboardExtractProps) => {
+  const [isHydrated, setIsHydrated] = useState(() => false);
+
+  useEffect(() => {
+    // Usando timeout para evitar cascading renders
+    const timer = setTimeout(() => {
+      setIsHydrated(true);
+    }, 0);
+    
+    return () => clearTimeout(timer);
+  }, []);
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -69,19 +80,19 @@ export const DashboardExtract = ({
   return (
     <aside className={styles.extract}>
       <h2 className={styles.title}>Extrato</h2>
-      
+
       <div className={styles['transaction-list']}>
         {limitedTransactions.map((transaction) => (
           <div key={transaction.id} className={styles['transaction-item']}>
             <div className={styles['month-name']}>
-              {getMonthName(transaction.date)}
+              {isHydrated ? getMonthName(transaction.date) : ''}
             </div>
             <div className={styles['description-row']}>
               <div className={styles['transaction-description']}>
                 Depósito
               </div>
               <div className={styles['transaction-date']}>
-                {formatDate(transaction.date)}
+                {isHydrated ? formatDate(transaction.date) : ''}
               </div>
             </div>
             <div className={styles['transaction-amount']}>
@@ -90,7 +101,7 @@ export const DashboardExtract = ({
             <div className={styles['transaction-divider']}></div>
           </div>
         ))}
-        
+
         {limitedTransactions.length === 0 && (
           <div className={styles['empty-state']}>
             <p>Nenhuma transação recente</p>
