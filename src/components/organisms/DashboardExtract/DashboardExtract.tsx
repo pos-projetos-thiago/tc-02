@@ -3,6 +3,8 @@
 import { TransactionItem, type Transaction } from '@/components/molecules/TransactionItem';
 import styles from './DashboardExtract.module.scss';
 
+export type { Transaction };
+
 export interface DashboardExtractProps {
   transactions?: Transaction[];
   maxItems?: number;

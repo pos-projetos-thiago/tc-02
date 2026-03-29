@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import Image from 'next/image';
 import { BalanceCard } from '@/components/molecules/BalanceCard';
 import styles from './DashboardHero.module.scss';
@@ -14,9 +14,7 @@ export const DashboardHero = ({
   balance = 0,
   userName = "Usuário"
 }: DashboardHeroProps) => {
-  const [currentDate, setCurrentDate] = useState<string>('');
-
-  useEffect(() => {
+  const currentDate = useMemo(() => {
     const today = new Date();
     const dateString = today.toLocaleDateString('pt-BR', {
       weekday: 'long',
@@ -25,7 +23,7 @@ export const DashboardHero = ({
       day: '2-digit'
     });
     
-    setCurrentDate(dateString.charAt(0).toUpperCase() + dateString.slice(1));
+    return dateString.charAt(0).toUpperCase() + dateString.slice(1);
   }, []);
 
   return (

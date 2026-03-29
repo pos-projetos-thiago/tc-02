@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useDashboard, type DashboardSection } from '@/contexts/DashboardContext';
 import styles from './DashboardNav.module.scss';
 
