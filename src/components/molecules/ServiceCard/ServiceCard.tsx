@@ -18,10 +18,10 @@ export const ServiceCard = ({ title, description, icon, onClick }: ServiceCardPr
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
-      <div className={styles['service-icon']} aria-hidden="true">
+      <div className={styles['service-icon']}>
         <Image 
           src={icon} 
-          alt=""
+          alt={`Ícone do serviço ${title}`}
           width={50}
           height={50}
         />

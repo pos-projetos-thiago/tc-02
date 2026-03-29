@@ -7,8 +7,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
-  padding: 1.8rem 1.2rem;
+  gap: 2rem;
+  padding: 2rem 1.2rem;
   border-radius: 1.2rem;
   border: 1px solid $color-gray-200;
   background-color: $color-white;
@@ -29,7 +29,11 @@
       outline-offset: 2px;
     }
   }
-  
+
+  @media (min-width: 1920px) and (min-height: 1024px) {
+    gap: 3rem;
+    padding: 3rem 1rem;
+  }
 }
 
 .service-icon {
