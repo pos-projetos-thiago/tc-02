@@ -1,41 +1,41 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import styles from './Navbar.module.scss'
-import Image from 'next/image'
-import { Button } from '@/components/atoms/Button'
-import { MenuButton } from '@/components/atoms/MenuButton'
-import { MobileMenu } from '@/components/organisms/MobileMenu'
-import { AuthModal } from '@/components/organisms/AuthModal'
+import { useState } from 'react';
+import styles from './Navbar.module.scss';
+import Image from 'next/image';
+import { Button } from '@/components/atoms/Button';
+import { MenuButton } from '@/components/atoms/MenuButton';
+import { MobileMenu } from '@/components/organisms/MobileMenu';
+import { AuthModal } from '@/components/organisms/AuthModal';
 
 export interface NavbarProps {
-  authModalVariant?: 'signup' | 'login' | null
-  onAuthModalChange?: (variant: 'signup' | 'login' | null) => void
+  authModalVariant?: 'signup' | 'login' | null;
+  onAuthModalChange?: (variant: 'signup' | 'login' | null) => void;
 }
 
 export const Navbar = ({ authModalVariant: authModalVariantProp, onAuthModalChange }: NavbarProps) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [authModalVariantInternal, setAuthModalVariantInternal] = useState<'signup' | 'login' | null>(null)
-  const [authModalKey, setAuthModalKey] = useState(0)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [authModalVariantInternal, setAuthModalVariantInternal] = useState<'signup' | 'login' | null>(null);
+  const [authModalKey, setAuthModalKey] = useState(0);
 
-  const isControlled = onAuthModalChange !== undefined
-  const authModalVariant = isControlled ? authModalVariantProp ?? null : authModalVariantInternal
+  const isControlled = onAuthModalChange !== undefined;
+  const authModalVariant = isControlled ? authModalVariantProp ?? null : authModalVariantInternal;
 
   const openSignUp = () => {
-    if (isControlled) onAuthModalChange!('signup')
+    if (isControlled) onAuthModalChange!('signup');
     else {
-      setAuthModalKey((k) => k + 1)
-      setAuthModalVariantInternal('signup')
+      setAuthModalKey((k) => k + 1);
+      setAuthModalVariantInternal('signup');
     }
-  }
+  };
   const openLogin = () => {
-    if (isControlled) onAuthModalChange!('login')
+    if (isControlled) onAuthModalChange!('login');
     else {
-      setAuthModalKey((k) => k + 1)
-      setAuthModalVariantInternal('login')
+      setAuthModalKey((k) => k + 1);
+      setAuthModalVariantInternal('login');
     }
-  }
-  const closeAuthModal = () => (isControlled ? onAuthModalChange!(null) : setAuthModalVariantInternal(null))
+  };
+  const closeAuthModal = () => (isControlled ? onAuthModalChange!(null) : setAuthModalVariantInternal(null));
 
   return (
     <>
@@ -90,5 +90,5 @@ export const Navbar = ({ authModalVariant: authModalVariantProp, onAuthModalChan
       />
     )}
     </>
-  )
-}
+  );
+};

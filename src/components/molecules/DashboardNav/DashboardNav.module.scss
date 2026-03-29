@@ -1,0 +1,77 @@
+@import '../../../styles/colors';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+.sidebar {
+  background-color: $color-gray-50;
+  border-radius: 0.8rem;
+  padding: 3.2rem;
+  height: 100%;
+  min-height: 40rem;
+  width: 20rem;
+}
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item {
+  position: relative;
+
+  &:last-child {
+    .separator-highlight {
+      display: none;
+    }
+  }
+}
+
+.link {
+  display: block;
+  width: 100%;
+  padding: 1.6rem 0;
+  color: $color-black;
+  text-decoration: none;
+  font-size: 1.6rem;
+  font-weight: $font-weight-regular;
+  background: none;
+  border: none;
+  text-align: center;
+  cursor: pointer;
+
+  &:hover {
+    color: $color-green;
+    font-weight: $font-weight-semibold;
+    transition: ease-in-out 0.2s;
+    transform: scale(1.05);
+  }
+}
+
+.link-highlight {
+  @extend .link;
+  color: $color-green;
+  font-weight: $font-weight-semibold;
+}
+
+.link-active {
+  @extend .link;
+  color: $color-green;
+  font-weight: $font-weight-semibold;
+}
+
+.separator-highlight {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: $color-black;
+  margin-top: 1.6rem;
+}
+
+@include mobile {
+  .sidebar {
+    width: 100%;
+    padding: 2.4rem;
+  }
+}

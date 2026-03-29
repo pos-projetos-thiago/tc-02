@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import IconButton from '@mui/material/IconButton'
-import MenuIcon from '@mui/icons-material/Menu'
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
 
 export interface MenuButtonProps {
-  onClick?: () => void
+  onClick?: () => void;
 }
 
 export const MenuButton = ({ onClick }: MenuButtonProps) => {
@@ -23,5 +23,5 @@ export const MenuButton = ({ onClick }: MenuButtonProps) => {
     >
       <MenuIcon sx={{ fontSize: 32 }} />
     </IconButton>
-  )
-}
+  );
+};

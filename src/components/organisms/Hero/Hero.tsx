@@ -1,10 +1,10 @@
 import styles from './Hero.module.scss';
-import Image from 'next/image'
-import { Button } from '@/components/atoms/Button'
+import Image from 'next/image';
+import { Button } from '@/components/atoms/Button';
 
 export interface HeroProps {
-  onOpenSignUp?: () => void
-  onOpenLogin?: () => void
+  onOpenSignUp?: () => void;
+  onOpenLogin?: () => void;
 }
 
 export const Hero = ({ onOpenSignUp, onOpenLogin }: HeroProps) => {

@@ -2,19 +2,18 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/atoms/Button';
+import { DashboardProvider } from '@/contexts/DashboardContext';
+import { UserProfile } from '@/components/molecules/UserProfile';
+import { DashboardNav } from '@/components/molecules/DashboardNav';
+import { DashboardHero } from '@/components/organisms/DashboardHero';
+import { DashboardServices } from '@/components/organisms/DashboardServices';
+import { DashboardExtract } from '@/components/organisms/DashboardExtract';
 import styles from './dashboard.module.scss';
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
-
-  const handleLogout = () => {
-    logout();
-    router.replace('/');
-  };
 
   useEffect(() => {
     if (!user) {
@@ -31,23 +30,30 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className={styles.main}>
-      <header className={styles.header}>
-        <Link href="/dashboard" className={styles.brand}>
-          Bytebank
-        </Link>
-        <Button type="button" variant="secondary" onClick={handleLogout}>
-          Sair
-        </Button>
-      </header>
-      <section className={styles.content}>
-        <h1 className={styles.title}>Olá, {user.name}!</h1>
-        <p className={styles.lead}>
-          Você está autenticado. Em breve esta área exibirá saldo, extrato e transações conforme o Tech
-          Challenge.
-        </p>
-        <p className={styles.email}>Conta: {user.email}</p>
-      </section>
-    </main>
+    <DashboardProvider>
+      <UserProfile userName={user.name} />
+      <main className={styles.main}>
+        <div className={styles['dashboard-grid']}>
+          <div className={styles['grid-sidebar']}>
+            <DashboardNav />
+          </div>
+
+          <div className={styles['grid-header']}>
+            <DashboardHero
+              userName={user.name}
+              balance={2500.75}
+            />
+          </div>
+
+          <div className={styles['grid-services']}>
+            <DashboardServices />
+          </div>
+
+          <div className={styles['grid-extract']}>
+            <DashboardExtract />
+          </div>
+        </div>
+      </main>
+    </DashboardProvider>
   );
 }
