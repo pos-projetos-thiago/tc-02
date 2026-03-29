@@ -53,6 +53,12 @@
   font-weight: $font-weight-semibold;
 }
 
+.link-active {
+  @extend .link;
+  color: $color-green;
+  font-weight: $font-weight-semibold;
+}
+
 .separator-highlight {
   position: absolute;
   bottom: 0;

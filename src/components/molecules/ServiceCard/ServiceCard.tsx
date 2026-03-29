@@ -22,8 +22,8 @@ export const ServiceCard = ({ title, description, icon, onClick }: ServiceCardPr
         <Image 
           src={icon} 
           alt=""
-          width={60}
-          height={60}
+          width={50}
+          height={50}
         />
       </div>
       <div className={styles['service-content']}>

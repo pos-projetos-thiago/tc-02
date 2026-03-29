@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { DashboardProvider } from '@/contexts/DashboardContext';
 import { UserProfile } from '@/components/molecules/UserProfile';
 import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';
@@ -29,7 +30,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <>
+    <DashboardProvider>
       <UserProfile userName={user.name} />
       <main className={styles.main}>
         <div className={styles['dashboard-grid']}>
@@ -53,6 +54,6 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
-    </>
+    </DashboardProvider>
   );
 }
