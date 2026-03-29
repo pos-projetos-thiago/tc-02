@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { BalanceCard } from '@/components/molecules/BalanceCard';
 import styles from './DashboardHero.module.scss';
@@ -13,8 +14,9 @@ export const DashboardHero = ({
   balance = 0,
   userName = "Usuário"
 }: DashboardHeroProps) => {
+  const [currentDate, setCurrentDate] = useState<string>('');
 
-  const getCurrentDate = () => {
+  useEffect(() => {
     const today = new Date();
     const dateString = today.toLocaleDateString('pt-BR', {
       weekday: 'long',
@@ -23,8 +25,8 @@ export const DashboardHero = ({
       day: '2-digit'
     });
     
-    return dateString.charAt(0).toUpperCase() + dateString.slice(1);
-  };
+    setCurrentDate(dateString.charAt(0).toUpperCase() + dateString.slice(1));
+  }, []);
 
   return (
     <section className={styles.header}>
@@ -32,7 +34,7 @@ export const DashboardHero = ({
         <div className={styles['account-info']}>
           <div className={styles['greeting-section']}>
             <h1 className={styles.greeting}>Olá, {userName} :&#41;</h1>
-            <time className={styles.date}>{getCurrentDate()}</time>
+            <time className={styles.date}>{currentDate}</time>
           </div>
 
           <div className={styles['illustration']}>
@@ -41,6 +43,8 @@ export const DashboardHero = ({
               alt="Ilustração do dashboard financeiro"
               width={690}
               height={400}
+              loading="eager"
+              priority
               className={styles['illustration-img']}
             />
           </div>

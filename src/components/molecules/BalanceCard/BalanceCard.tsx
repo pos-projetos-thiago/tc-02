@@ -11,18 +11,17 @@ export interface BalanceCardProps {
 
 export const BalanceCard = ({ balance }: BalanceCardProps) => {
   const [isBalanceVisible, setIsBalanceVisible] = useState(true);
-  const [isChanging, setIsChanging] = useState(false);
+  const [isBalanceChanging, setIsBalanceChanging] = useState(false);
 
   const toggleBalanceVisibility = () => {
-    setIsChanging(true);
+    setIsBalanceChanging(true);
     setTimeout(() => {
       setIsBalanceVisible(!isBalanceVisible);
       setTimeout(() => {
-        setIsChanging(false);
+        setIsBalanceChanging(false);
       }, 50);
     }, 150);
   };
-
 
   return (
     <div className={styles['balance-card']}>
@@ -47,7 +46,7 @@ export const BalanceCard = ({ balance }: BalanceCardProps) => {
 
       <div className={styles['account-info-section']}>
         <p className={styles['account-type']}>Conta Corrente</p>
-        <span className={`${styles['balance-value']} ${isChanging ? styles.changing : ''}`}>
+        <span className={`${styles['balance-value']} ${isBalanceChanging ? styles.changing : ''}`}>
           {isBalanceVisible ? formatCurrency(balance) : '••••••'}
         </span>
       </div>
