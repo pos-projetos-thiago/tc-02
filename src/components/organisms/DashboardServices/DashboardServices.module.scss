@@ -27,6 +27,92 @@
   margin-left: 3.2rem;
 }
 
+.transaction-title {
+  color: $color-text-secondary;
+}
+
+.transaction-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  margin-top: 24px;
+  margin-left: 3.2rem;
+  margin-right: 3.2rem;
+  
+  @media (max-width: 1024px) {
+    gap: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+    margin-left: 3.2rem;
+    margin-right: 0;
+    justify-content: flex-start;
+    align-items: stretch;
+  }
+}
+
+.transaction-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  max-width: 400px;
+  
+  @media (max-width: 768px) {
+    max-width: none;
+  }
+}
+
+.transaction-illustration {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.illustration-image {
+  width: 380px;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  
+  @media (max-width: 1400px) {
+    width: 350px;
+  }
+  
+  @media (max-width: 1200px) {
+    width: 320px;
+  }
+  
+  @media (max-width: 1024px) {
+    width: 280px;
+  }
+  
+  @media (max-width: 900px) {
+    width: 240px;
+  }
+}
+
+.value-section {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.value-title {
+  color: $color-text-secondary;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
 .service-grid {
   list-style: none;
   display: grid;

@@ -1,5 +1,11 @@
 'use client';
 
+import { useState } from 'react';
+import Image from 'next/image';
+
+import { Dropdown, type DropdownOption } from '@/components/atoms/Dropdown';
+import { CurrencyInput } from '@/components/atoms/Input';
+import { TransactionButton } from '@/components/atoms/TransactionButton';
 import { ServiceCard } from '@/components/molecules/ServiceCard';
 import { useDashboard } from '@/contexts/DashboardContext';
 import styles from './DashboardServices.module.scss';
@@ -55,8 +61,37 @@ const defaultServices: Service[] = [
   }
 ];
 
+const transactionOptions: DropdownOption[] = [
+  { value: 'deposit', label: 'Depósito' },
+  { value: 'withdrawal', label: 'Saque' },
+  { value: 'investment', label: 'Investimento' }
+];
+
 export const DashboardServices = ({ services = defaultServices }: DashboardServicesProps) => {
-  const { activeSection } = useDashboard();
+  const { activeSection, addTransaction } = useDashboard();
+  const [selectedType, setSelectedType] = useState('');
+  const [amount, setAmount] = useState('');
+
+  const isValidAmount = (value: string): boolean => {
+    if (!value || value.trim() === '') return false;
+    const numericValue = parseFloat(value.replace(',', '.'));
+    return !isNaN(numericValue) && numericValue > 0;
+  };
+
+  const handleTransaction = () => {
+    if (!selectedType || !amount) return;
+    
+    const numericAmount = parseFloat(amount.replace(',', '.'));
+    
+    if (!numericAmount || numericAmount <= 0) {
+      return;
+    }
+
+    addTransaction(selectedType, numericAmount);
+
+    setSelectedType('');
+    setAmount('');
+  };
 
   const renderContent = () => {
     switch (activeSection) {
@@ -85,15 +120,44 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
         return (
           <>
             <header className={styles.header}>
-              <h2 className={styles.title}>Transferências</h2>
+              <h2 className={`${styles.title} ${styles['transaction-title']}`}>Nova transação</h2>
             </header>
-            <div className={styles['empty-state']}>
-              <p className={styles['empty-message']}>
-                Área de transferências em desenvolvimento...
-              </p>
-              <p className={styles['empty-subtitle']}>
-                Em breve você poderá realizar PIX, TED, DOC e transferências internas.
-              </p>
+            <div className={styles['transaction-container']}>
+              <div className={styles['transaction-form']}>
+                <Dropdown
+                  options={transactionOptions}
+                  placeholder="Selecione o tipo de transação"
+                  value={selectedType}
+                  onChange={setSelectedType}
+                />
+
+                <div className={styles['value-section']}>
+                  <h3 className={styles['value-title']}>Valor</h3>
+                  <CurrencyInput
+                    placeholder="0,00"
+                    value={amount}
+                    onChange={setAmount}
+                  />
+                </div>
+
+                <TransactionButton 
+                  onClick={handleTransaction}
+                  disabled={!selectedType || !isValidAmount(amount)}
+                >
+                  Concluir transação
+                </TransactionButton>
+              </div>
+              
+              <div className={styles['transaction-illustration']}>
+                <Image 
+                  src="/Transference/transference.svg" 
+                  alt="Ilustração de transferência financeira"
+                  width={328}
+                  height={231}
+                  className={styles['illustration-image']}
+                  priority
+                />
+              </div>
             </div>
           </>
         );

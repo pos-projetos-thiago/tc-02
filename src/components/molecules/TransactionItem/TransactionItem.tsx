@@ -6,7 +6,7 @@ import styles from './TransactionItem.module.scss';
 
 export interface Transaction {
   id: string;
-  type: 'deposit' | 'withdrawal' | 'transfer';
+  type: 'deposit' | 'withdrawal' | 'transfer' | 'investment';
   amount: number;
   description: string;
   date: string;
@@ -46,7 +46,8 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
     const typeLabels = {
       deposit: 'Depósito',
       withdrawal: 'Saque',
-      transfer: 'Transferência'
+      transfer: 'Transferência',
+      investment: 'Investimento'
     };
     return typeLabels[type] || 'Transação';
   };
