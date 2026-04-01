@@ -18,6 +18,7 @@ export default function DashboardPage() {
   useEffect(() => {
     // Se não está carregando e não tem usuário, redireciona
     if (!isLoading && !user) {
+      console.log('🏠 Dashboard: Usuário não autenticado, redirecionando para home');
       router.replace('/');
     }
   }, [user, isLoading, router]);

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/components/molecules/Modal';
 import { Button } from '@/components/atoms/Button';
-import { useAuth } from '@/contexts/AuthContext';
+import { signUpUser, signInUser } from '@/lib/auth/supabase-client-actions';
 import styles from './AuthModal.module.scss';
 
 export type AuthModalVariant = 'signup' | 'login';
@@ -14,6 +14,7 @@ export interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   variant: AuthModalVariant;
+  errorMessage?: string | null;
 }
 
 type FieldKey = 'name' | 'email' | 'password';
@@ -42,7 +43,7 @@ const AUTH_CONFIG = {
       {
         type: 'password' as const,
         fieldKey: 'password' as const,
-        placeholder: 'Digite sua senha',
+        placeholder: 'Digite sua senha (mín. 6 caracteres)',
         label: 'Senha',
       },
     ],
@@ -77,75 +78,63 @@ const emptyValues: Record<FieldKey, string> = {
   password: '',
 };
 
-export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
+export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: AuthModalProps) => {
   const config = AUTH_CONFIG[variant];
-  const { login, signUp } = useAuth();
   const router = useRouter();
   const [values, setValues] = useState(emptyValues);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = useCallback((key: FieldKey, value: string) => {
     setValues((prev) => ({ ...prev, [key]: value }));
-    setError(null);
+    setError(null); // Limpar erro quando usuário digita
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    
+    // Validações client-side
+    if (variant === 'signup' && !privacyAccepted) {
+      setError('É necessário aceitar a política de privacidade.');
+      return;
+    }
 
-    const email = values.email.trim();
-    const password = values.password;
-    const name = values.name.trim();
-
+    setIsLoading(true);
+    
     try {
+      let result;
+      
       if (variant === 'signup') {
-        if (!name || !email || !password) {
-          setError('Preencha nome, e-mail e senha.');
-          return;
-        }
-        if (!privacyAccepted) {
-          setError('É necessário aceitar a política de privacidade.');
-          return;
-        }
-        
-        signUp(name, email, password);
-        
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
+        result = await signUpUser(values.name.trim(), values.email.trim(), values.password);
+      } else {
+        result = await signInUser(values.email.trim(), values.password);
+      }
+      
+      if (result.success) {
+        // Sucesso - fechar modal e redirecionar
         onClose();
         setValues(emptyValues);
         setPrivacyAccepted(false);
-        router.push('/dashboard');
-        return;
+        setError(null);
+        
+        // Pequeno delay para garantir que o auth state seja atualizado
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 100);
+      } else {
+        // Mostrar erro
+        setError(result.error || 'Erro desconhecido');
       }
-
-      if (!email || !password) {
-        setError('Preencha e-mail e senha.');
-        return;
-      }
-      
-      console.log('🚪 Iniciando processo de login...');
-      login(email, password);
-      console.log('🚪 Login executado, aguardando...');
-      
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      console.log('🚪 Fechando modal...');
-      onClose();
-      setValues(emptyValues);
-      console.log('🚪 Navegando para dashboard...');
-      router.push('/dashboard');
-      console.log('🚪 Processo de login concluído!');
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 
-        variant === 'signup' ? 'Não foi possível criar a conta.' : 'Não foi possível entrar.';
-      setError(message);
+    } catch (error) {
+      setError('Erro interno. Tente novamente.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const dialogLabel =
-    variant === 'login' ? 'Login' : 'Criar conta corrente';
+  const dialogLabel = variant === 'login' ? 'Login' : 'Criar conta corrente';
 
   return (
     <Modal
@@ -169,9 +158,9 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
             {config.title}
           </h2>
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
-            {error && (
+            {(error || errorMessage) && (
               <p className={styles.formError} role="alert">
-                {error}
+                {error || (errorMessage ? decodeURIComponent(errorMessage) : '')}
               </p>
             )}
             {config.inputs.map((input, index) => {
@@ -188,6 +177,7 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
                     className={styles.input}
                     value={values[input.fieldKey]}
                     onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
+                    disabled={isLoading}
                     autoComplete={
                       input.fieldKey === 'password'
                         ? variant === 'signup'
@@ -197,13 +187,14 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
                           ? 'email'
                           : 'name'
                     }
+                    required
                   />
                   {'forgotPasswordText' in config &&
                     index === config.inputs.length - 1 && (
                       <button
                         type="button"
                         className={styles.forgotPassword}
-                        onClick={() => setError('Fluxo de recuperação de senha não está disponível nesta demonstração.')}
+                        disabled={isLoading}
                       >
                         {config.forgotPasswordText}
                       </button>
@@ -217,16 +208,20 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
                   type="checkbox"
                   className={styles.checkbox}
                   checked={privacyAccepted}
-                  onChange={(e) => {
-                    setPrivacyAccepted(e.target.checked);
-                    setError(null);
-                  }}
+                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                  disabled={isLoading}
+                  required
                 />
                 <span className={styles.checkboxText}>{config.privacyText}</span>
               </label>
             )}
-            <Button variant={config.buttonVariant} type="submit" className={styles.submitButton}>
-              {config.submitLabel}
+            <Button 
+              variant={config.buttonVariant} 
+              type="submit" 
+              className={styles.submitButton}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Processando...' : config.submitLabel}
             </Button>
           </form>
         </div>
