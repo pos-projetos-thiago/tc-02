@@ -1,6 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
+
+// Forçar página dinâmica para evitar prerender no build
+export const dynamic = 'force-dynamic';
 import { useRouter } from 'next/navigation';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { DashboardProvider, useDashboard } from '@/contexts/DashboardContext';
