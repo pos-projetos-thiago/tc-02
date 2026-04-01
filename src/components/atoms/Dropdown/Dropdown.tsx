@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { Select, MenuItem, FormControl } from '@mui/material';
-import { KeyboardArrowDown } from '@mui/icons-material';
+import { useState, useRef, useEffect } from 'react';
 import styles from './Dropdown.module.scss';
 
 export interface DropdownOption {
@@ -24,39 +22,81 @@ export const Dropdown = ({
   className = ''
 }: DropdownProps) => {
   const [selectedValue, setSelectedValue] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleChange = (newValue: string) => {
-    setSelectedValue(newValue);
-    onChange?.(newValue);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleSelect = (value: string) => {
+    setSelectedValue(value);
+    setIsOpen(false);
+    onChange?.(value);
   };
 
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const getDisplayText = () => {
+    if (!selectedValue) return placeholder;
+    const option = options.find(opt => opt.value === selectedValue);
+    return option?.label || placeholder;
+  };
+
+  const isPlaceholder = !selectedValue;
+
   return (
-    <FormControl className={`${styles.dropdown} ${className}`}>
-      <Select
-        value={selectedValue}
-        onChange={(e) => handleChange(e.target.value as string)}
-        displayEmpty
-        IconComponent={KeyboardArrowDown}
-        className={styles.select}
-        MenuProps={{
-          PaperProps: {
-            className: styles.menu
-          }
-        }}
+    <div className={`${styles.dropdown} ${className}`} ref={dropdownRef}>
+      <button
+        type="button"
+        className={styles.trigger}
+        onClick={handleToggle}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
       >
-        <MenuItem value="" disabled className={styles.placeholder}>
-          {placeholder}
-        </MenuItem>
-        {options.map((option) => (
-          <MenuItem 
-            key={option.value} 
-            value={option.value}
-            className={styles.option}
+        <span className={`${styles.text} ${isPlaceholder ? styles.placeholder : ''}`}>
+          {getDisplayText()}
+        </span>
+        <span className={`${styles.arrow} ${isOpen ? styles.open : ''}`}>
+          ▼
+        </span>
+      </button>
+
+      {isOpen && (
+        <div className={styles.menu} role="listbox">
+          <div
+            className={`${styles.option} ${selectedValue === '' ? styles.selected : ''}`}
+            onClick={() => handleSelect('')}
+            role="option"
+            aria-selected={selectedValue === ''}
           >
-            {option.label}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+            {placeholder}
+          </div>
+          
+          {options.map((option) => (
+            <div
+              key={option.value}
+              className={`${styles.option} ${selectedValue === option.value ? styles.selected : ''}`}
+              onClick={() => handleSelect(option.value)}
+              role="option"
+              aria-selected={selectedValue === option.value}
+            >
+              {option.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
