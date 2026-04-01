@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/pos-projetos-thiago/tc-01/actions/workflows/ci.yml/badge.svg)](https://github.com/pos-projetos-thiago/tc-01/actions/workflows/ci.yml)
 
-Aplicação de gerenciamento financeiro com Next.js 16, TypeScript, SCSS e Material-UI.
+Aplicação de gerenciamento financeiro com Next.js 16, TypeScript, SCSS e autenticação real via Supabase.
 
 **Tech Challenge - Fase 1 | FIAP Pós-Tech**  
 Desenvolvido por: **Thiago Soares**
@@ -18,13 +18,22 @@ yarn dev
 
 Abre em http://localhost:3000
 
-### Autenticação (mock, sem backend)
+### Autenticação (Supabase)
 
-- **Conta de demonstração:** `demo@bytebank.com` / `123456` (não grava cadastro; só entra).
-- **Cadastro pelo app:** os dados vão para o **localStorage** do navegador, chave **`bytebank-users`** (array JSON com `name`, `email`, `password`). Para ver quem se cadastrou: DevTools → **Aplicativo** / **Application** → **Armazenamento local** → seu origin → inspecione `bytebank-users`.
-- **Sessão logada:** chave **`bytebank-session`** (objeto com `name` e `email`). **Sair** remove só a sessão; os cadastros em `bytebank-users` continuam até você limpar o armazenamento ou apagar a chave manualmente.
+- **Banco real:** PostgreSQL via Supabase
+- **Persistência:** Funciona entre navegadores e dispositivos
+- **Segurança:** JWT tokens, Row Level Security (RLS)
+- **Cadastro:** Crie sua conta pelo app
+- **Login:** Use email/senha criados
 
-Código: `src/lib/auth/mock-storage.ts`, `src/lib/auth/auth-store.ts`, `src/contexts/AuthContext.tsx`.
+**Configuração:**
+1. Configure as variáveis em `.env.local`:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=sua_url_aqui
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_aqui
+```
+
+Código: `src/lib/supabase/`, `src/lib/auth/supabase-client-actions.ts`, `src/hooks/useSupabaseAuth.ts`.
 
 ### Documentação do Design System (Docusaurus)
 
@@ -39,6 +48,7 @@ Abre em http://localhost:4000. A documentação do design system fica na pasta `
 - **Next.js 16** - Framework React
 - **TypeScript** - Tipagem estática
 - **SCSS Modules** - Estilização com escopo local
+- **Supabase** - Banco PostgreSQL e autenticação
 - **Material-UI** - Componentes e ícones
 - **Docusaurus** - Documentação do Design System
 - **Atomic Design** - Metodologia de organização
@@ -82,8 +92,11 @@ tc-01/
 ├── public/             # Assets estáticos
 ├── src/
 │   ├── app/            # Pages Next.js (/, /dashboard)
-│   ├── contexts/       # AuthProvider (sessão mock)
-│   ├── lib/auth/       # Mock de usuários e sessão (localStorage)
+│   ├── contexts/       # DashboardContext (state management)
+│   ├── hooks/          # useSupabaseAuth (autenticação)
+│   ├── lib/
+│   │   ├── auth/       # Supabase authentication actions
+│   │   └── supabase/   # Supabase client configuration
 │   ├── components/     # Atomic Design
 │   │   ├── atoms/     
 │   │   ├── molecules/ 

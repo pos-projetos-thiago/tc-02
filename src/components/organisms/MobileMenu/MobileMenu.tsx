@@ -43,20 +43,20 @@ export const MobileMenu = ({ isOpen, onClose, onOpenSignUp, onOpenLogin }: Mobil
       >
         <button
           type="button"
-          className={styles.closeButton}
+          className={styles["close-button"]}
           onClick={onClose}
           aria-label="Fechar menu"
         >
           <CloseIcon sx={{ fontSize: 32 }} />
         </button>
         <nav className={styles.nav}>
-          <div className={styles.menuItem}>
-            <Link href="/" className={styles.linkHighlight} onClick={onClose}>
+          <div className={styles["menu-item"]}>
+            <Link href="/" className={styles["link-highlight"]} onClick={onClose}>
               Início
             </Link>
-            <span className={styles.separatorHighlight} />
+            <span className={styles["separator-highlight"]} />
           </div>
-          <div className={styles.menuItem}>
+          <div className={styles["menu-item"]}>
             <button
               type="button"
               className={styles.link}
@@ -64,9 +64,9 @@ export const MobileMenu = ({ isOpen, onClose, onOpenSignUp, onOpenLogin }: Mobil
             >
               Abrir conta
             </button>
-            <span className={styles.separatorHighlight} />
+            <span className={styles["separator-highlight"]} />
           </div>
-          <div className={styles.menuItem}>
+          <div className={styles["menu-item"]}>
             <button
               type="button"
               className={styles.link}

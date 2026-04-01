@@ -19,7 +19,7 @@ export const NotFoundTemplate = () => {
             Voltar ao início
           </Button>
         </div>
-        <div className={styles.imageWrapper}>
+        <div className={styles["image-wrapper"]}>
           <Image
             src="/NotFound/404.svg"
             alt="Imagem de página não encontrada"

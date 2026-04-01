@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/organisms/Navbar';
 import { Hero } from '@/components/organisms/Hero';
 import { Footer } from '@/components/organisms/Footer';
-import { AuthModalSupabase } from '@/components/organisms/AuthModal/AuthModalSupabase';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { AuthModal } from '@/components/organisms/AuthModal';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Home() {
   const [authModalVariant, setAuthModalVariant] = useState<'signup' | 'login' | null>(null);
   const [authModalKey, setAuthModalKey] = useState(0);
-  const { user, isLoading } = useSupabaseAuth();
+  const [isHydrated, setIsHydrated] = useState(false);
+  const { user } = useAuth();
   const router = useRouter();
 
   const handleAuthModalChange = useCallback((variant: 'signup' | 'login' | null) => {
@@ -22,14 +23,25 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Se usuário está logado, redireciona para dashboard
-    if (!isLoading && user) {
-      router.replace('/dashboard');
-    }
-  }, [user, isLoading, router]);
+    // Aguarda um microtask para garantir hydratação completa
+    const timer = setTimeout(() => setIsHydrated(true), 0);
+    return () => clearTimeout(timer);
+  }, []);
 
-  // Mostrar loading durante carregamento
-  if (isLoading) {
+  useEffect(() => {
+    console.log('Home: Verificando usuário:', user, 'Hydrated:', isHydrated);
+    
+    // Só redireciona após a hidratação estar completa
+    if (isHydrated && user) {
+      console.log('Home: Usuário autenticado após hidratação, redirecionando para dashboard');
+      router.replace('/dashboard');
+    } else if (isHydrated) {
+      console.log('Home: Usuário não autenticado após hidratação, permanecendo na home');
+    }
+  }, [user, router, isHydrated]);
+
+  // Mostrar loading durante hidratação
+  if (!isHydrated) {
     return (
       <div style={{ 
         display: 'flex', 
@@ -71,7 +83,7 @@ export default function Home() {
         onOpenLogin={() => handleAuthModalChange('login')}
       />
       <Footer />
-      <AuthModalSupabase
+      <AuthModal
         key={authModalKey}
         isOpen={authModalVariant !== null}
         onClose={() => handleAuthModalChange(null)}

@@ -1,13 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
-
-// Forçar página dinâmica para evitar prerender no build
-export const dynamic = 'force-dynamic';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { DashboardProvider, useDashboard } from '@/contexts/DashboardContext';
-import { UserProfileSupabase } from '@/components/molecules/UserProfile/UserProfileSupabase';
+import { UserProfile } from '@/components/molecules/UserProfile';
 import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';
 import { DashboardServices } from '@/components/organisms/DashboardServices';
@@ -15,17 +12,29 @@ import { DashboardExtract } from '@/components/organisms/DashboardExtract';
 import styles from './dashboard.module.scss';
 
 export default function DashboardPage() {
-  const { user, isLoading } = useSupabaseAuth();
+  const { user } = useAuth();
   const router = useRouter();
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    // Se não está carregando e não tem usuário, redireciona
-    if (!isLoading && !user) {
-      router.replace('/');
-    }
-  }, [user, isLoading, router]);
+    // Aguarda um microtask para garantir hydratação completa
+    const timer = setTimeout(() => setIsHydrated(true), 0);
+    return () => clearTimeout(timer);
+  }, []);
 
-  if (isLoading) {
+  useEffect(() => {
+    console.log('Dashboard: Verificando usuário:', user, 'Hydrated:', isHydrated);
+    
+    // Só redireciona após a hidratação estar completa
+    if (isHydrated && !user) {
+      console.log('Dashboard: Usuário não encontrado após hidratação, redirecionando para home');
+      router.replace('/');
+    } else if (user) {
+      console.log('Dashboard: Usuário autenticado, permanecendo no dashboard');
+    }
+  }, [user, router, isHydrated]);
+
+  if (!isHydrated) {
     return (
       <div className={styles.loading} aria-live="polite">
         Inicializando...
@@ -41,12 +50,9 @@ export default function DashboardPage() {
     );
   }
 
-  // Extrair nome do user metadata ou email
-  const userName = user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário';
-
   return (
     <DashboardProvider>
-      <DashboardContent userName={userName} />
+      <DashboardContent userName={user.name} />
     </DashboardProvider>
   );
 }
@@ -56,7 +62,7 @@ function DashboardContent({ userName }: { userName: string }) {
   
   return (
     <>
-      <UserProfileSupabase userName={userName} />
+      <UserProfile userName={userName} />
       <main className={styles.main}>
         <div className={styles['dashboard-grid']}>
           <div className={styles['grid-sidebar']}>

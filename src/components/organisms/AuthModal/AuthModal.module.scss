@@ -49,7 +49,7 @@ $modal-width-desktop: 80rem;
   flex-direction: column;
 }
 
-.imageWrapper {
+.image-wrapper {
   position: relative;
   width: 30rem;
   height: 21.5rem;
@@ -71,15 +71,15 @@ $modal-width-desktop: 80rem;
   }
 }
 
-.formWrapper {
+.form-wrapper {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
   width: 100%;
 }
 
-.signup .formWrapper,
-.login .formWrapper {
+.signup .form-wrapper,
+.login .form-wrapper {
   gap: 3.2rem;
 }
 
@@ -120,7 +120,7 @@ $modal-width-desktop: 80rem;
   gap: 3.2rem;
 }
 
-.formError {
+.form-error {
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   color: $color-error;
@@ -158,7 +158,7 @@ $modal-width-desktop: 80rem;
   }
 }
 
-.checkboxLabel {
+.checkbox-label {
   display: flex;
   align-items: center;
   gap: 1.6rem;
@@ -194,22 +194,26 @@ $modal-width-desktop: 80rem;
   }
 }
 
-.submitButton {
+.submit-button {
   align-self: flex-start;
 }
 
-.signup .submitButton,
-.login .submitButton {
+.signup .submit-button,
+.login .submit-button {
   align-self: center;
 }
 
-.signup .submitButton {
+.login .submit-button {
+  width: 100%;
+}
+
+.signup .submit-button {
   width: 14.4rem;
   min-width: 14.4rem;
   height: 4.8rem;
 }
 
-.forgotPassword {
+.forgot-password {
   align-self: flex-start;
   padding: 0;
   margin: 0;
@@ -224,8 +228,38 @@ $modal-width-desktop: 80rem;
   border: none;
 }
 
-.checkboxText {
+.checkbox-text {
   font-size: 1.6rem;
   color: $color-black;
   line-height: 1.5;
+}
+
+.reset-success {
+  text-align: center;
+  padding: 2rem 0;
+  
+  p {
+    font-size: 1.6rem;
+    color: $color-black;
+    margin-bottom: 1.6rem;
+    line-height: 1.5;
+    
+    &:first-child {
+      font-weight: $font-weight-semibold;
+      color: $color-green;
+    }
+  }
+}
+
+.form .back-button {
+  margin-top: 1rem;
+  width: 100%;
+  background: transparent;
+  border: 2px solid $color-gray-200;
+  color: $color-black;
+  
+  &:hover {
+    background: $color-gray-50;
+    border-color: $color-gray-300;
+  }
 }
