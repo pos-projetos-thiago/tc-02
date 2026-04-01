@@ -2,11 +2,10 @@
 
 import { useEffect } from 'react';
 
-// Forçar página dinâmica para evitar prerender no build
 export const dynamic = 'force-dynamic';
 import { useRouter } from 'next/navigation';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
-import { DashboardProvider, useDashboard } from '@/contexts/DashboardContext';
+import { useDashboard } from '@/contexts/DashboardContext';
 import { UserProfileSupabase } from '@/components/molecules/UserProfile/UserProfileSupabase';
 import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';
@@ -19,7 +18,6 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Se não está carregando e não tem usuário, redireciona
     if (!isLoading && !user) {
       router.replace('/');
     }
@@ -41,18 +39,22 @@ export default function DashboardPage() {
     );
   }
 
-  // Extrair nome do user metadata ou email
   const userName = user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário';
 
-  return (
-    <DashboardProvider>
-      <DashboardContent userName={userName} />
-    </DashboardProvider>
-  );
+  return <DashboardContent userName={userName} />;
 }
 
 function DashboardContent({ userName }: { userName: string }) {
   const { balance, transactions } = useDashboard();
+  const router = useRouter();
+
+  const handleEditTransactions = () => {
+    router.push('/dashboard/transacoes');
+  };
+
+  const handleDeleteTransactions = () => {
+    router.push('/dashboard/transacoes');
+  };
   
   return (
     <>
@@ -75,7 +77,11 @@ function DashboardContent({ userName }: { userName: string }) {
           </div>
 
           <div className={styles['grid-extract']}>
-            <DashboardExtract transactions={transactions} />
+            <DashboardExtract 
+              transactions={transactions}
+              onEditClick={handleEditTransactions}
+              onDeleteClick={handleDeleteTransactions}
+            />
           </div>
         </div>
       </main>

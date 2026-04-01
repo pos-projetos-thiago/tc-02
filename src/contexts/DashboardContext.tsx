@@ -18,6 +18,8 @@ interface DashboardContextType {
   balance: number;
   transactions: Transaction[];
   addTransaction: (type: string, amount: number) => void;
+  editTransaction: (id: string, updates: Partial<Transaction>) => void;
+  deleteTransaction: (id: string) => void;
   resetData: () => void;
 }
 
@@ -87,6 +89,43 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     setTransactions(prev => [newTransaction, ...prev]);
   };
 
+  const editTransaction = (id: string, updates: Partial<Transaction>) => {
+    setTransactions(prev => {
+      return prev.map(transaction => {
+        if (transaction.id === id) {
+          const updatedTransaction = { ...transaction, ...updates };
+          
+          if (updates.amount !== undefined && updates.amount !== transaction.amount) {
+            const difference = updates.amount - transaction.amount;
+            
+            if (updatedTransaction.type === 'deposit') {
+              setBalance(prevBalance => prevBalance + difference);
+            } else {
+              setBalance(prevBalance => prevBalance - difference);
+            }
+          }
+          
+          return updatedTransaction;
+        }
+        return transaction;
+      });
+    });
+  };
+
+  const deleteTransaction = (id: string) => {
+    const transactionToDelete = transactions.find(t => t.id === id);
+    
+    if (transactionToDelete) {
+      if (transactionToDelete.type === 'deposit') {
+        setBalance(prev => prev - transactionToDelete.amount);
+      } else {
+        setBalance(prev => prev + transactionToDelete.amount);
+      }
+      
+      setTransactions(prev => prev.filter(t => t.id !== id));
+    }
+  };
+
   const resetData = () => {
     setBalance(2000.00);
     setTransactions([]);
@@ -104,6 +143,8 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       balance, 
       transactions, 
       addTransaction,
+      editTransaction,
+      deleteTransaction,
       resetData
     }}>
       {children}

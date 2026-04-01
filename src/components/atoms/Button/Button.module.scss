@@ -96,3 +96,24 @@
     white-space: nowrap;
   }
 }
+
+.danger {
+  background-color: #dc2626;
+  color: $color-white;
+  border: 0.2rem solid #dc2626;
+
+  &:hover {
+    background-color: darken(#dc2626, 8%);
+    border: 0.2rem solid darken(#dc2626, 8%);
+  }
+}
+
+.small {
+  padding: 0.8rem 1.6rem;
+  font-size: 1.2rem;
+  
+  @include tablet {
+    padding: 1rem 1.8rem;
+    font-size: 1.1rem;
+  }
+}
