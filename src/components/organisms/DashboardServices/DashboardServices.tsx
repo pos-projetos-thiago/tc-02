@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 import { Dropdown, type DropdownOption } from '@/components/atoms/Dropdown';
 import { CurrencyInput } from '@/components/atoms/Input';
@@ -121,29 +122,42 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
             <header className={styles.header}>
               <h2 className={`${styles.title} ${styles['transaction-title']}`}>Nova transação</h2>
             </header>
-                  <div className={styles['transaction-form']}>
-                    <Dropdown
-                      options={transactionOptions}
-                      placeholder="Selecione o tipo de transação"
-                      value={selectedType}
-                      onChange={setSelectedType}
-                    />
+            <div className={styles['transaction-container']}>
+              <div className={styles['transaction-form']}>
+                <Dropdown
+                  options={transactionOptions}
+                  placeholder="Selecione o tipo de transação"
+                  value={selectedType}
+                  onChange={setSelectedType}
+                />
+
+                <div className={styles['value-section']}>
+                  <h3 className={styles['value-title']}>Valor</h3>
+                  <CurrencyInput
+                    placeholder="0,00"
+                    value={amount}
+                    onChange={setAmount}
+                  />
+                </div>
+
+                <TransactionButton 
+                  onClick={handleTransaction}
+                  disabled={!selectedType || !isValidAmount(amount)}
+                >
+                  Concluir transação
+                </TransactionButton>
+              </div>
               
-                    <div className={styles['value-section']}>
-                      <h3 className={styles['value-title']}>Valor</h3>
-                      <CurrencyInput
-                        placeholder="0,00"
-                        value={amount}
-                        onChange={setAmount}
-                      />
-                    </div>
-              
-                    <TransactionButton 
-                      onClick={handleTransaction}
-                      disabled={!selectedType || !isValidAmount(amount)}
-                    >
-                      Concluir transação
-                    </TransactionButton>
+              <div className={styles['transaction-illustration']}>
+                <Image 
+                  src="/Transference/transference.svg" 
+                  alt="Ilustração de transferência financeira"
+                  width={328}
+                  height={231}
+                  className={styles['illustration-image']}
+                  priority
+                />
+              </div>
             </div>
           </>
         );
