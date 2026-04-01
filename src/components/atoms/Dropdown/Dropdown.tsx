@@ -45,7 +45,16 @@ export const Dropdown = ({
   };
 
   const handleToggle = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(prev => !prev);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      setIsOpen(prev => !prev);
+    } else if (event.key === 'Escape') {
+      setIsOpen(false);
+    }
   };
 
   const getDisplayText = () => {
@@ -62,6 +71,7 @@ export const Dropdown = ({
         type="button"
         className={styles.trigger}
         onClick={handleToggle}
+        onKeyDown={handleKeyDown}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >

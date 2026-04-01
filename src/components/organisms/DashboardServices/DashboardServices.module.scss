@@ -28,15 +28,29 @@
 }
 
 .transaction-title {
-  color: $color-gray-200;
+  color: $color-text-secondary;
 }
 
 .transaction-form {
-  margin-top: 32px;
+  margin-top: 24px;
   margin-left: 3.2rem;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
+}
+
+.value-section {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.value-title {
+  color: $color-text-secondary;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
 }
 
 .service-grid {

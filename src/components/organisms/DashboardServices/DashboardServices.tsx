@@ -1,6 +1,10 @@
 'use client';
 
+import { useState } from 'react';
+
 import { Dropdown, type DropdownOption } from '@/components/atoms/Dropdown';
+import { CurrencyInput } from '@/components/atoms/Input';
+import { TransactionButton } from '@/components/atoms/TransactionButton';
 import { ServiceCard } from '@/components/molecules/ServiceCard';
 import { useDashboard } from '@/contexts/DashboardContext';
 import styles from './DashboardServices.module.scss';
@@ -64,6 +68,19 @@ const transactionOptions: DropdownOption[] = [
 
 export const DashboardServices = ({ services = defaultServices }: DashboardServicesProps) => {
   const { activeSection } = useDashboard();
+  const [selectedType, setSelectedType] = useState('');
+  const [amount, setAmount] = useState('');
+
+  const handleTransaction = () => {
+    if (!selectedType || !amount) return;
+    
+    // TODO: Implementar lógica de transação
+    alert(`Transação ${selectedType}: R$ ${amount}`);
+    
+    // Reset form
+    setSelectedType('');
+    setAmount('');
+  };
 
   const renderContent = () => {
     switch (activeSection) {
@@ -98,11 +115,23 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
               <Dropdown
                 options={transactionOptions}
                 placeholder="Selecione o tipo de transação"
-                onChange={(value) => {
-                  console.log('Tipo selecionado:', value);
-                  // TODO: Implementar lógica de seleção
-                }}
+                onChange={setSelectedType}
               />
+              
+              <div className={styles['value-section']}>
+                <h3 className={styles['value-title']}>Valor</h3>
+                <CurrencyInput
+                  placeholder="0,00"
+                  onChange={setAmount}
+                />
+              </div>
+              
+              <TransactionButton 
+                onClick={handleTransaction}
+                disabled={!selectedType || !amount}
+              >
+                Concluir transação
+              </TransactionButton>
             </div>
           </>
         );
