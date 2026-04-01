@@ -11,6 +11,7 @@ import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';
 import { DashboardServices } from '@/components/organisms/DashboardServices';
 import { DashboardExtract } from '@/components/organisms/DashboardExtract';
+import { Loading } from '@/components/atoms/Loading';
 import styles from './dashboard.module.scss';
 
 export default function DashboardPage() {
@@ -26,7 +27,11 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div className={styles.loading} aria-live="polite">
-        Inicializando...
+        <Loading 
+          variant="spinner" 
+          size="large" 
+          text="Inicializando dashboard..." 
+        />
       </div>
     );
   }

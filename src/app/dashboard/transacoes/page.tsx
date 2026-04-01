@@ -7,6 +7,7 @@ import { useDashboard } from '@/contexts/DashboardContext';
 import { UserProfileSupabase } from '@/components/molecules/UserProfile/UserProfileSupabase';
 import type { Transaction } from '@/components/molecules/TransactionItem';
 import { Button } from '@/components/atoms/Button/Button';
+import { Loading } from '@/components/atoms/Loading';
 import styles from './transacoes.module.scss';
 
 export default function TransacoesPage() {
@@ -24,7 +25,11 @@ export default function TransacoesPage() {
   if (isLoading) {
     return (
       <div className={styles.loading}>
-        Carregando...
+        <Loading 
+          variant="pulse" 
+          size="large" 
+          text="Carregando extrato..." 
+        />
       </div>
     );
   }
