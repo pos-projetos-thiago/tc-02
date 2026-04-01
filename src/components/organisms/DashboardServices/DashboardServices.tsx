@@ -1,5 +1,6 @@
 'use client';
 
+import { Dropdown, type DropdownOption } from '@/components/atoms/Dropdown';
 import { ServiceCard } from '@/components/molecules/ServiceCard';
 import { useDashboard } from '@/contexts/DashboardContext';
 import styles from './DashboardServices.module.scss';
@@ -55,6 +56,12 @@ const defaultServices: Service[] = [
   }
 ];
 
+const transactionOptions: DropdownOption[] = [
+  { value: 'deposit', label: 'Depósito' },
+  { value: 'withdrawal', label: 'Saque' },
+  { value: 'investment', label: 'Investimento' }
+];
+
 export const DashboardServices = ({ services = defaultServices }: DashboardServicesProps) => {
   const { activeSection } = useDashboard();
 
@@ -85,15 +92,17 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
         return (
           <>
             <header className={styles.header}>
-              <h2 className={styles.title}>Transferências</h2>
+              <h2 className={`${styles.title} ${styles['transaction-title']}`}>Nova transação</h2>
             </header>
-            <div className={styles['empty-state']}>
-              <p className={styles['empty-message']}>
-                Área de transferências em desenvolvimento...
-              </p>
-              <p className={styles['empty-subtitle']}>
-                Em breve você poderá realizar PIX, TED, DOC e transferências internas.
-              </p>
+            <div className={styles['transaction-form']}>
+              <Dropdown
+                options={transactionOptions}
+                placeholder="Selecione o tipo de transação"
+                onChange={(value) => {
+                  console.log('Tipo selecionado:', value);
+                  // TODO: Implementar lógica de seleção
+                }}
+              />
             </div>
           </>
         );
