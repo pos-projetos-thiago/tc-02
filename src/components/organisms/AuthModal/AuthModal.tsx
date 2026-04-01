@@ -156,7 +156,7 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
       contentClassName={`${styles.content} ${styles[variant]}`}
     >
       <div className={styles.wrapper}>
-        <div className={styles.imageWrapper}>
+        <div className={styles["image-wrapper"]}>
           <Image
             src={config.imageSrc}
             alt={config.imageAlt}
@@ -164,13 +164,13 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
             sizes="(max-width: 719px) 300px, 355px"
           />
         </div>
-        <div className={styles.formWrapper}>
+        <div className={styles["form-wrapper"]}>
           <h2 id="auth-modal-title" className={styles.title}>
             {config.title}
           </h2>
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
             {error && (
-              <p className={styles.formError} role="alert">
+              <p className={styles["form-error"]} role="alert">
                 {error}
               </p>
             )}
@@ -202,7 +202,7 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
                     index === config.inputs.length - 1 && (
                       <button
                         type="button"
-                        className={styles.forgotPassword}
+                        className={styles["forgot-password"]}
                         onClick={() => setError('Fluxo de recuperação de senha não está disponível nesta demonstração.')}
                       >
                         {config.forgotPasswordText}
@@ -212,7 +212,7 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
               );
             })}
             {'privacyText' in config && (
-              <label className={styles.checkboxLabel}>
+              <label className={styles["checkbox-label"]}>
                 <input
                   type="checkbox"
                   className={styles.checkbox}
@@ -222,10 +222,10 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
                     setError(null);
                   }}
                 />
-                <span className={styles.checkboxText}>{config.privacyText}</span>
+                <span className={styles["checkbox-text"]}>{config.privacyText}</span>
               </label>
             )}
-            <Button variant={config.buttonVariant} type="submit" className={styles.submitButton}>
+            <Button variant={config.buttonVariant} type="submit" className={styles["submit-button"]}>
               {config.submitLabel}
             </Button>
           </form>

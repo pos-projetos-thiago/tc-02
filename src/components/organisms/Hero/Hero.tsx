@@ -13,19 +13,19 @@ export const Hero = ({ onOpenSignUp, onOpenLogin }: HeroProps) => {
       <div className={styles.container}>
         <div className={styles.principal}>
           <h1>Experimente mais liberdade no controle da sua vida financeira. Crie sua conta com a gente!</h1>
-          <div className={styles.imageWrapper}>
+          <div className={styles["image-wrapper"]}>
             <Image
               src="/Hero/grafico.svg"
               alt="Gráfico ilustrativo de crescimento financeiro"
               width={635}
               height={435}
               priority
-              className={styles.heroImage}
+              className={styles["hero-image"]}
             />
           </div>
-          <div className={styles.mobileActions}>
-            <Button variant="primaryMobile" onClick={onOpenSignUp}>Abrir conta</Button>
-            <Button variant="secondaryMobile" onClick={onOpenLogin}>Já tenho conta</Button>
+          <div className={styles["mobile-actions"]}>
+            <Button variant="primary-mobile" onClick={onOpenSignUp}>Abrir conta</Button>
+            <Button variant="secondary-mobile" onClick={onOpenLogin}>Já tenho conta</Button>
           </div>
         </div>
         <div className={styles.advantages}>

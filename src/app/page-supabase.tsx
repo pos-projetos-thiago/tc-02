@@ -22,9 +22,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Se usuário está logado, redireciona para dashboard
     if (!isLoading && user) {
-      console.log('🏠 Home: Usuário autenticado, redirecionando para dashboard');
       router.replace('/dashboard');
     }
   }, [user, isLoading, router]);
@@ -45,7 +43,6 @@ export default function Home() {
     );
   }
 
-  // Mostrar loading se usuário logado (antes de redirecionar)
   if (user) {
     return (
       <div style={{ 

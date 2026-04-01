@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/components/molecules/Modal';
 import { Button } from '@/components/atoms/Button';
-import { signUpUser, signInUser } from '@/lib/auth/supabase-client-actions';
+import { signUpUser, signInUser, resetPassword } from '@/lib/auth/supabase-client-actions';
 import styles from './AuthModal.module.scss';
 
 export type AuthModalVariant = 'signup' | 'login';
@@ -85,17 +85,50 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState(false);
 
   const handleChange = useCallback((key: FieldKey, value: string) => {
     setValues((prev) => ({ ...prev, [key]: value }));
-    setError(null); // Limpar erro quando usuário digita
+    setError(null);
+    setResetSuccess(false);
   }, []);
+
+  const handleForgotPassword = async () => {
+    if (!values.email.trim()) {
+      setError('Digite seu email para recuperar a senha');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const result = await resetPassword(values.email.trim());
+      
+      if (result.success) {
+        setResetSuccess(true);
+        setError(null);
+      } else {
+        setError(result.error || 'Erro ao enviar email de recuperação');
+      }
+    } catch {
+      setError('Erro interno. Tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     
-    // Validações client-side
+    // Se está no modo "forgot password", chama a função específica
+    if (isForgotPassword) {
+      await handleForgotPassword();
+      return;
+    }
+    
     if (variant === 'signup' && !privacyAccepted) {
       setError('É necessário aceitar a política de privacidade.');
       return;
@@ -113,28 +146,34 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
       }
       
       if (result.success) {
-        // Sucesso - fechar modal e redirecionar
         onClose();
         setValues(emptyValues);
         setPrivacyAccepted(false);
         setError(null);
         
-        // Pequeno delay para garantir que o auth state seja atualizado
         setTimeout(() => {
           router.push('/dashboard');
         }, 100);
       } else {
-        // Mostrar erro
         setError(result.error || 'Erro desconhecido');
       }
-    } catch (error) {
+    } catch {
       setError('Erro interno. Tente novamente.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const dialogLabel = variant === 'login' ? 'Login' : 'Criar conta corrente';
+  const dialogLabel = isForgotPassword ? 'Recuperar senha' : 
+    (variant === 'login' ? 'Login' : 'Criar conta corrente');
+
+  const currentTitle = isForgotPassword ? 'Recuperar senha' :
+    (resetSuccess ? 'Email enviado!' : config.title);
+
+  const currentSubmitLabel = isForgotPassword ? 'Enviar email de recuperação' : 
+    (isLoading ? 'Processando...' : config.submitLabel);
+
+  const showInputs = !resetSuccess;
 
   return (
     <Modal
@@ -145,7 +184,7 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
       contentClassName={`${styles.content} ${styles[variant]}`}
     >
       <div className={styles.wrapper}>
-        <div className={styles.imageWrapper}>
+        <div className={styles["image-wrapper"]}>
           <Image
             src={config.imageSrc}
             alt={config.imageAlt}
@@ -153,77 +192,125 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
             sizes="(max-width: 719px) 300px, 355px"
           />
         </div>
-        <div className={styles.formWrapper}>
+        <div className={styles["form-wrapper"]}>
           <h2 id="auth-modal-title" className={styles.title}>
-            {config.title}
+            {currentTitle}
           </h2>
-          <form className={styles.form} onSubmit={handleSubmit} noValidate>
-            {(error || errorMessage) && (
-              <p className={styles.formError} role="alert">
-                {error || (errorMessage ? decodeURIComponent(errorMessage) : '')}
-              </p>
-            )}
-            {config.inputs.map((input, index) => {
-              const id = `auth-${variant}-${input.fieldKey}`;
-              return (
-                <div key={input.fieldKey} className={styles.field}>
-                  <label htmlFor={id} className={styles.label}>
-                    {input.label}
-                  </label>
-                  <input
-                    id={id}
-                    type={input.type}
-                    placeholder={input.placeholder}
-                    className={styles.input}
-                    value={values[input.fieldKey]}
-                    onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
-                    disabled={isLoading}
-                    autoComplete={
-                      input.fieldKey === 'password'
-                        ? variant === 'signup'
-                          ? 'new-password'
-                          : 'current-password'
-                        : input.fieldKey === 'email'
-                          ? 'email'
-                          : 'name'
-                    }
-                    required
-                  />
-                  {'forgotPasswordText' in config &&
-                    index === config.inputs.length - 1 && (
-                      <button
-                        type="button"
-                        className={styles.forgotPassword}
+          
+          {resetSuccess ? (
+            <div className={styles["reset-success"]}>
+              <p>Email de recuperação enviado com sucesso!</p>
+              <p>Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.</p>
+              <Button 
+                variant="primary" 
+                onClick={() => {
+                  setIsForgotPassword(false);
+                  setResetSuccess(false);
+                  setValues(emptyValues);
+                  setError(null);
+                }}
+                className={styles["submit-button"]}
+              >
+                Voltar ao login
+              </Button>
+            </div>
+          ) : (
+            <form className={styles.form} onSubmit={handleSubmit} noValidate>
+              {(error || errorMessage) && (
+                <p className={styles["form-error"]} role="alert">
+                  {error || (errorMessage ? decodeURIComponent(errorMessage) : '')}
+                </p>
+              )}
+              
+              {showInputs && (
+                <>
+                  {(isForgotPassword ? [{ fieldKey: 'email' as const, label: 'Email', placeholder: 'Digite seu email', type: 'email' as const }] : config.inputs).map((input, index) => {
+                    const id = `auth-${variant}-${input.fieldKey}`;
+                    return (
+                      <div key={input.fieldKey} className={styles.field}>
+                        <label htmlFor={id} className={styles.label}>
+                          {input.label}
+                        </label>
+                        <input
+                          id={id}
+                          type={input.type}
+                          placeholder={input.placeholder}
+                          className={styles.input}
+                          value={values[input.fieldKey]}
+                          onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
+                          disabled={isLoading}
+                          autoComplete={
+                            input.fieldKey === 'password'
+                              ? variant === 'signup'
+                                ? 'new-password'
+                                : 'current-password'
+                              : input.fieldKey === 'email'
+                                ? 'email'
+                                : 'name'
+                          }
+                          required
+                        />
+                        {'forgotPasswordText' in config &&
+                          index === config.inputs.length - 1 &&
+                          !isForgotPassword && (
+                            <button
+                              type="button"
+                              className={styles["forgot-password"]}
+                              disabled={isLoading}
+                              onClick={() => {
+                                setIsForgotPassword(true);
+                                setError(null);
+                              }}
+                            >
+                              {config.forgotPasswordText}
+                            </button>
+                          )}
+                      </div>
+                    );
+                  })}
+                  
+                  {!isForgotPassword && 'privacyText' in config && (
+                    <label className={styles["checkbox-label"]}>
+                      <input
+                        type="checkbox"
+                        className={styles.checkbox}
+                        checked={privacyAccepted}
+                        onChange={(e) => setPrivacyAccepted(e.target.checked)}
                         disabled={isLoading}
-                      >
-                        {config.forgotPasswordText}
-                      </button>
-                    )}
-                </div>
-              );
-            })}
-            {'privacyText' in config && (
-              <label className={styles.checkboxLabel}>
-                <input
-                  type="checkbox"
-                  className={styles.checkbox}
-                  checked={privacyAccepted}
-                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                        required
+                      />
+                      <span className={styles["checkbox-text"]}>{config.privacyText}</span>
+                    </label>
+                  )}
+                </>
+              )}
+              
+              <Button 
+                variant={isForgotPassword ? 'primary' : config.buttonVariant} 
+                type="submit" 
+                className={styles["submit-button"]}
+                disabled={isLoading}
+              >
+                {currentSubmitLabel}
+              </Button>
+              
+              {isForgotPassword && (
+                <Button 
+                  variant="secondary" 
+                  type="button"
+                  onClick={() => {
+                    setIsForgotPassword(false);
+                    setError(null);
+                    setValues(emptyValues);
+                  }}
+                  className={styles["back-button"]}
                   disabled={isLoading}
-                  required
-                />
-                <span className={styles.checkboxText}>{config.privacyText}</span>
-              </label>
-            )}
-            <Button 
-              variant={config.buttonVariant} 
-              type="submit" 
-              className={styles.submitButton}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Processando...' : config.submitLabel}
-            </Button>
-          </form>
+                >
+                  Voltar ao login
+                </Button>
+              )}
+            </form>
+          )}
         </div>
       </div>
     </Modal>

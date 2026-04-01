@@ -9,7 +9,6 @@ import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';
 import { DashboardServices } from '@/components/organisms/DashboardServices';
 import { DashboardExtract } from '@/components/organisms/DashboardExtract';
-import { AuthDebug } from '@/components/atoms/AuthDebug';
 import styles from './dashboard.module.scss';
 
 export default function DashboardPage() {
@@ -24,14 +23,14 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    console.log('🏠 Dashboard: Verificando usuário:', user, 'Hydrated:', isHydrated);
+    console.log('Dashboard: Verificando usuário:', user, 'Hydrated:', isHydrated);
     
     // Só redireciona após a hidratação estar completa
     if (isHydrated && !user) {
-      console.log('🏠 Dashboard: Usuário não encontrado após hydratação, redirecionando para home');
+      console.log('Dashboard: Usuário não encontrado após hidratação, redirecionando para home');
       router.replace('/');
     } else if (user) {
-      console.log('🏠 Dashboard: Usuário autenticado, permanecendo no dashboard');
+      console.log('Dashboard: Usuário autenticado, permanecendo no dashboard');
     }
   }, [user, router, isHydrated]);
 
@@ -86,7 +85,6 @@ function DashboardContent({ userName }: { userName: string }) {
           </div>
         </div>
       </main>
-      <AuthDebug />
     </>
   );
 }

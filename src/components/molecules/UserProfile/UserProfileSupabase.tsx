@@ -43,7 +43,7 @@ export const UserProfileSupabase = ({
           
           <button 
             onClick={handleLogout}
-            className={styles.logoutButton}
+            className={styles["logout-button"]}
             title="Sair"
           >
             Sair

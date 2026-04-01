@@ -33,11 +33,13 @@ export function getStoredUsers(): StoredUser[] {
     
     if (!raw) {
       if (process.env.NODE_ENV === 'development') {
-        console.log('📖 ❌ Nenhum dado encontrado no localStorage para usuários!');
+        console.log('Nenhum dado encontrado no localStorage para usuários');
         console.log('📖 🔍 Verificando todas as chaves no localStorage:');
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
-          console.log(`  ${key}: ${localStorage.getItem(key)}`);
+          if (key) {
+            console.log(`  ${key}: ${localStorage.getItem(key)}`);
+          }
         }
       }
       return [];
@@ -47,13 +49,13 @@ export function getStoredUsers(): StoredUser[] {
     const users = Array.isArray(parsed) ? (parsed as StoredUser[]) : [];
     
     if (process.env.NODE_ENV === 'development') {
-      console.log('📖 ✅ Usuários recuperados:', users);
+      console.log('Usuários recuperados:', users);
     }
     
     return users;
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
-      console.error('📖 ❌ Erro ao ler usuários:', error);
+      console.error('Erro ao ler usuários:', error);
     }
     return [];
   }

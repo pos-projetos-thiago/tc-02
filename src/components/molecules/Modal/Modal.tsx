@@ -49,19 +49,19 @@ export const Modal = ({ isOpen, onClose, children, contentClassName, ariaLabel, 
         aria-hidden="true"
       />
       <div
-        className={`${styles.overlay} ${fullHeight ? styles.overlayFullHeight : ''}`.trim()}
+        className={`${styles.overlay} ${fullHeight ? styles["overlay-full-height"] : ''}`.trim()}
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}
         onClick={onClose}
       >
         <div
-          className={`${styles.content} ${fullHeight ? styles.contentFullHeight : ''} ${contentClassName || ''}`.trim()}
+          className={`${styles.content} ${fullHeight ? styles["content-full-height"] : ''} ${contentClassName || ''}`.trim()}
           onClick={(e) => e.stopPropagation()}
         >
           <button
             type="button"
-            className={styles.closeButton}
+            className={styles["close-button"]}
             onClick={onClose}
             aria-label="Fechar"
           >

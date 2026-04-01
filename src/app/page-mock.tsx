@@ -6,7 +6,6 @@ import { Navbar } from '@/components/organisms/Navbar';
 import { Hero } from '@/components/organisms/Hero';
 import { Footer } from '@/components/organisms/Footer';
 import { AuthModal } from '@/components/organisms/AuthModal';
-import { AuthDebug } from '@/components/atoms/AuthDebug';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Home() {
@@ -30,14 +29,14 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log('🏠 Home: Verificando usuário:', user, 'Hydrated:', isHydrated);
+    console.log('Home: Verificando usuário:', user, 'Hydrated:', isHydrated);
     
     // Só redireciona após a hidratação estar completa
     if (isHydrated && user) {
-      console.log('🏠 Home: Usuário autenticado após hydratação, redirecionando para dashboard');
+      console.log('Home: Usuário autenticado após hidratação, redirecionando para dashboard');
       router.replace('/dashboard');
     } else if (isHydrated) {
-      console.log('🏠 Home: Usuário não autenticado após hydratação, permanecendo na home');
+      console.log('Home: Usuário não autenticado após hidratação, permanecendo na home');
     }
   }, [user, router, isHydrated]);
 
@@ -90,7 +89,6 @@ export default function Home() {
         onClose={() => handleAuthModalChange(null)}
         variant={authModalVariant ?? 'signup'}
       />
-      <AuthDebug />
     </>
   );
 }

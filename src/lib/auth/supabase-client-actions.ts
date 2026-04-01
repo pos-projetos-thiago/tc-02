@@ -9,8 +9,7 @@ export interface AuthResult {
 
 export async function signUpUser(name: string, email: string, password: string): Promise<AuthResult> {
   try {
-    // Validação básica
-    if (!name || !email || !password) {
+  if (!name || !email || !password) {
       return { success: false, error: 'Nome, email e senha são obrigatórios' }
     }
 
@@ -18,7 +17,6 @@ export async function signUpUser(name: string, email: string, password: string):
       return { success: false, error: 'Senha deve ter pelo menos 6 caracteres' }
     }
 
-    // Criar conta (tentativa de auto-confirmação)
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password: password,
@@ -35,7 +33,6 @@ export async function signUpUser(name: string, email: string, password: string):
     }
 
     if (data?.user) {
-      // Verificar se precisa confirmar email
       if (data.user && !data.session) {
         return { 
           success: false, 
@@ -47,20 +44,18 @@ export async function signUpUser(name: string, email: string, password: string):
     }
 
     return { success: false, error: 'Erro desconhecido ao criar conta' }
-  } catch (error) {
+  } catch {
     return { success: false, error: 'Erro interno do servidor' }
   }
 }
 
 export async function signInUser(email: string, password: string): Promise<AuthResult> {
   try {
-    // Validação básica
-    if (!email || !password) {
+  if (!email || !password) {
       return { success: false, error: 'Email e senha são obrigatórios' }
     }
 
-    // Fazer login
-    const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password: password,
     })
@@ -78,7 +73,7 @@ export async function signInUser(email: string, password: string): Promise<AuthR
     }
 
     return { success: false, error: 'Erro desconhecido ao fazer login' }
-  } catch (error) {
+  } catch {
     return { success: false, error: 'Erro interno do servidor' }
   }
 }
@@ -92,7 +87,33 @@ export async function signOutUser(): Promise<AuthResult> {
     }
 
     return { success: true }
-  } catch (error) {
+  } catch {
+    return { success: false, error: 'Erro interno do servidor' }
+  }
+}
+
+export async function resetPassword(email: string): Promise<AuthResult> {
+  try {
+  if (!email) {
+      return { success: false, error: 'Email é obrigatório' }
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      return { success: false, error: 'Email inválido' }
+    }
+
+    // Enviar email de reset
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/reset-password`
+    })
+
+    if (error) {
+      return { success: false, error: error.message }
+    }
+
+    return { success: true }
+  } catch {
     return { success: false, error: 'Erro interno do servidor' }
   }
 }

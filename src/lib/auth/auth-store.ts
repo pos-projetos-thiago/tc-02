@@ -105,19 +105,19 @@ export function loginWithCredentials(email: string, password: string) {
 
     const demo = resolveDemoLogin(email, password);
     if (demo) {
-      console.log('✅ Login demo realizado');
+      console.log('Login demo realizado');
       setSessionUser(demo);
       return;
     }
     
     const found = findUserByCredentials(email, password);
     if (found) {
-      console.log('✅ Usuário encontrado, fazendo login');
+      console.log('Usuário encontrado, fazendo login');
       setSessionUser({ name: found.name, email: found.email });
       return;
     }
     
-    console.log('❌ Credenciais não encontradas');
+    console.log('Credenciais não encontradas');
     throw new Error('E-mail ou senha incorretos.');
   } catch (error) {
     console.error('Auth: Erro no login:', error);
