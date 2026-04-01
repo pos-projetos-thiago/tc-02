@@ -10,32 +10,8 @@ export interface DashboardExtractProps {
   maxItems?: number;
 }
 
-const mockTransactions: Transaction[] = [
-  {
-    id: '1',
-    type: 'deposit',
-    amount: 1500.00,
-    description: 'Depósito em conta',
-    date: '2026-03-25'
-  },
-  {
-    id: '2',
-    type: 'withdrawal',
-    amount: -250.50,
-    description: 'Compra no supermercado',
-    date: '2026-03-24'
-  },
-  {
-    id: '3',
-    type: 'transfer',
-    amount: -100.00,
-    description: 'Transferência PIX',
-    date: '2026-03-23'
-  }
-];
-
 export const DashboardExtract = ({ 
-  transactions = mockTransactions, 
+  transactions = [], 
   maxItems = 5 
 }: DashboardExtractProps) => {
 

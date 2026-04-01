@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { DashboardProvider } from '@/contexts/DashboardContext';
+import { DashboardProvider, useDashboard } from '@/contexts/DashboardContext';
 import { UserProfile } from '@/components/molecules/UserProfile';
 import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';
@@ -31,7 +31,17 @@ export default function DashboardPage() {
 
   return (
     <DashboardProvider>
-      <UserProfile userName={user.name} />
+      <DashboardContent userName={user.name} />
+    </DashboardProvider>
+  );
+}
+
+function DashboardContent({ userName }: { userName: string }) {
+  const { balance, transactions } = useDashboard();
+  
+  return (
+    <>
+      <UserProfile userName={userName} />
       <main className={styles.main}>
         <div className={styles['dashboard-grid']}>
           <div className={styles['grid-sidebar']}>
@@ -40,8 +50,8 @@ export default function DashboardPage() {
 
           <div className={styles['grid-header']}>
             <DashboardHero
-              userName={user.name}
-              balance={2500.75}
+              userName={userName}
+              balance={balance}
             />
           </div>
 
@@ -50,10 +60,10 @@ export default function DashboardPage() {
           </div>
 
           <div className={styles['grid-extract']}>
-            <DashboardExtract />
+            <DashboardExtract transactions={transactions} />
           </div>
         </div>
       </main>
-    </DashboardProvider>
+    </>
   );
 }

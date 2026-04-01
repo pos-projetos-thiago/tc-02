@@ -67,17 +67,27 @@ const transactionOptions: DropdownOption[] = [
 ];
 
 export const DashboardServices = ({ services = defaultServices }: DashboardServicesProps) => {
-  const { activeSection } = useDashboard();
+  const { activeSection, addTransaction } = useDashboard();
   const [selectedType, setSelectedType] = useState('');
   const [amount, setAmount] = useState('');
+
+  const isValidAmount = (value: string): boolean => {
+    if (!value || value.trim() === '') return false;
+    const numericValue = parseFloat(value.replace(',', '.'));
+    return !isNaN(numericValue) && numericValue > 0;
+  };
 
   const handleTransaction = () => {
     if (!selectedType || !amount) return;
     
-    // TODO: Implementar lógica de transação
-    alert(`Transação ${selectedType}: R$ ${amount}`);
+    const numericAmount = parseFloat(amount.replace(',', '.'));
     
-    // Reset form
+    if (!numericAmount || numericAmount <= 0) {
+      return;
+    }
+
+    addTransaction(selectedType, numericAmount);
+
     setSelectedType('');
     setAmount('');
   };
@@ -111,27 +121,29 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
             <header className={styles.header}>
               <h2 className={`${styles.title} ${styles['transaction-title']}`}>Nova transação</h2>
             </header>
-            <div className={styles['transaction-form']}>
-              <Dropdown
-                options={transactionOptions}
-                placeholder="Selecione o tipo de transação"
-                onChange={setSelectedType}
-              />
+                  <div className={styles['transaction-form']}>
+                    <Dropdown
+                      options={transactionOptions}
+                      placeholder="Selecione o tipo de transação"
+                      value={selectedType}
+                      onChange={setSelectedType}
+                    />
               
-              <div className={styles['value-section']}>
-                <h3 className={styles['value-title']}>Valor</h3>
-                <CurrencyInput
-                  placeholder="0,00"
-                  onChange={setAmount}
-                />
-              </div>
+                    <div className={styles['value-section']}>
+                      <h3 className={styles['value-title']}>Valor</h3>
+                      <CurrencyInput
+                        placeholder="0,00"
+                        value={amount}
+                        onChange={setAmount}
+                      />
+                    </div>
               
-              <TransactionButton 
-                onClick={handleTransaction}
-                disabled={!selectedType || !amount}
-              >
-                Concluir transação
-              </TransactionButton>
+                    <TransactionButton 
+                      onClick={handleTransaction}
+                      disabled={!selectedType || !isValidAmount(amount)}
+                    >
+                      Concluir transação
+                    </TransactionButton>
             </div>
           </>
         );

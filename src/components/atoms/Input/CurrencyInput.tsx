@@ -20,7 +20,6 @@ export const CurrencyInput = ({
     const inputValue = e.target.value.replace(/\D/g, '');
     
     if (inputValue === '') {
-      e.target.value = '';
       onChange?.('');
       return;
     }
@@ -28,7 +27,6 @@ export const CurrencyInput = ({
     const numericValue = Number(inputValue) / 100;
     const formattedValue = numericValue.toFixed(2).replace('.', ',');
     
-    e.target.value = formattedValue;
     onChange?.(formattedValue);
   };
 
@@ -40,7 +38,7 @@ export const CurrencyInput = ({
         inputMode="decimal"
         className={styles['input']}
         placeholder={placeholder}
-        defaultValue={value}
+        value={value}
         onChange={handleChange}
         autoComplete="off"
       />

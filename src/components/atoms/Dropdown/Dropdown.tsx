@@ -11,6 +11,7 @@ export interface DropdownOption {
 export interface DropdownProps {
   options: DropdownOption[];
   placeholder?: string;
+  value?: string;
   onChange?: (value: string) => void;
   className?: string;
 }
@@ -18,10 +19,14 @@ export interface DropdownProps {
 export const Dropdown = ({
   options,
   placeholder = 'Selecione uma opção',
+  value,
   onChange,
   className = ''
 }: DropdownProps) => {
   const [selectedValue, setSelectedValue] = useState('');
+  
+  // Use controlled value if provided, otherwise use internal state
+  const currentValue = value !== undefined ? value : selectedValue;
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -38,10 +43,13 @@ export const Dropdown = ({
     };
   }, []);
 
-  const handleSelect = (value: string) => {
-    setSelectedValue(value);
+  const handleSelect = (newValue: string) => {
+    // Only update internal state if not controlled
+    if (value === undefined) {
+      setSelectedValue(newValue);
+    }
     setIsOpen(false);
-    onChange?.(value);
+    onChange?.(newValue);
   };
 
   const handleToggle = () => {
@@ -58,12 +66,12 @@ export const Dropdown = ({
   };
 
   const getDisplayText = () => {
-    if (!selectedValue) return placeholder;
-    const option = options.find(opt => opt.value === selectedValue);
+    if (!currentValue) return placeholder;
+    const option = options.find(opt => opt.value === currentValue);
     return option?.label || placeholder;
   };
 
-  const isPlaceholder = !selectedValue;
+  const isPlaceholder = !currentValue;
 
   return (
     <div className={`${styles.dropdown} ${className}`} ref={dropdownRef}>
@@ -86,10 +94,10 @@ export const Dropdown = ({
       {isOpen && (
         <div className={styles.menu} role="listbox">
           <div
-            className={`${styles.option} ${selectedValue === '' ? styles.selected : ''}`}
+            className={`${styles.option} ${currentValue === '' ? styles.selected : ''}`}
             onClick={() => handleSelect('')}
             role="option"
-            aria-selected={selectedValue === ''}
+            aria-selected={currentValue === ''}
           >
             {placeholder}
           </div>
@@ -97,10 +105,10 @@ export const Dropdown = ({
           {options.map((option) => (
             <div
               key={option.value}
-              className={`${styles.option} ${selectedValue === option.value ? styles.selected : ''}`}
+              className={`${styles.option} ${currentValue === option.value ? styles.selected : ''}`}
               onClick={() => handleSelect(option.value)}
               role="option"
-              aria-selected={selectedValue === option.value}
+              aria-selected={currentValue === option.value}
             >
               {option.label}
             </div>
