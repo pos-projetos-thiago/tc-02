@@ -19,27 +19,34 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // Aguardar um tempo maior para evitar loop de redirecionamento
     if (!isLoading && !user) {
-      router.replace('/');
+      const timer = setTimeout(() => {
+        router.replace('/');
+      }, 100); // Pequeno delay para estabilizar
+
+      return () => clearTimeout(timer);
     }
   }, [user, isLoading, router]);
 
+  // Mostrar loading enquanto autentica
   if (isLoading) {
     return (
       <LoadingScreen 
         isVisible={true}
         size="large" 
-        text="Inicializando dashboard..." 
+        text="Verificando autenticação..." 
       />
     );
   }
 
+  // Se não há usuário, mostrar loading durante redirecionamento
   if (!user) {
     return (
       <LoadingScreen 
         isVisible={true}
         size="large" 
-        text="Redirecionando..." 
+        text="Redirecionando para login..." 
       />
     );
   }

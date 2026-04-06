@@ -24,7 +24,11 @@ export default function Home() {
   useEffect(() => {
     // Se usuário está logado, redireciona para dashboard
     if (!isLoading && user) {
-      router.replace('/dashboard');
+      const timer = setTimeout(() => {
+        router.replace('/dashboard');
+      }, 100); // Pequeno delay para evitar loop
+
+      return () => clearTimeout(timer);
     }
   }, [user, isLoading, router]);
 
@@ -39,7 +43,7 @@ export default function Home() {
         fontSize: '18px',
         color: '#004D61'
       }}>
-        Inicializando...
+        Verificando autenticação...
       </div>
     );
   }
@@ -55,7 +59,7 @@ export default function Home() {
         fontSize: '18px',
         color: '#004D61'
       }}>
-        Redirecionando...
+        Redirecionando para dashboard...
       </div>
     );
   }
