@@ -9,20 +9,14 @@ export interface LoadingScreenProps extends LoadingProps {
 
 export const LoadingScreen = ({ 
   isVisible, 
-  variant = 'pulse',
   size = 'large',
   text = 'Carregando...'
 }: LoadingScreenProps) => {
-  
   if (!isVisible) return null;
 
   return (
     <div className={styles['full-screen']}>
-      <Loading 
-        variant={variant} 
-        size={size} 
-        text={text}
-      />
+      <Loading size={size} text={text} />
     </div>
   );
 };

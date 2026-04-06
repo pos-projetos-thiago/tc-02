@@ -257,15 +257,6 @@
   max-width: 40rem;
 }
 
-.loading {
-  min-height: calc(100dvh - 7.2rem);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-size-base;
-  color: $color-white;
-  background-color: $color-mint-bg;
-}
 
 .modal {
   position: fixed;

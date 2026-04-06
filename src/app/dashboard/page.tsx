@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-
-export const dynamic = 'force-dynamic';
 import { useRouter } from 'next/navigation';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { useDashboard } from '@/contexts/DashboardContext';
@@ -11,8 +9,10 @@ import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';
 import { DashboardServices } from '@/components/organisms/DashboardServices';
 import { DashboardExtract } from '@/components/organisms/DashboardExtract';
-import { Loading } from '@/components/atoms/Loading';
+import { LoadingScreen } from '@/components/atoms/Loading';
 import styles from './dashboard.module.scss';
+
+export const dynamic = 'force-dynamic';
 
 export default function DashboardPage() {
   const { user, isLoading } = useSupabaseAuth();
@@ -26,21 +26,21 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className={styles.loading} aria-live="polite">
-        <Loading 
-          variant="spinner" 
-          size="large" 
-          text="Inicializando dashboard..." 
-        />
-      </div>
+      <LoadingScreen 
+        isVisible={true}
+        size="large" 
+        text="Inicializando dashboard..." 
+      />
     );
   }
 
   if (!user) {
     return (
-      <div className={styles.loading} aria-live="polite">
-        Carregando…
-      </div>
+      <LoadingScreen 
+        isVisible={true}
+        size="large" 
+        text="Redirecionando..." 
+      />
     );
   }
 
