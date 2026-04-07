@@ -64,7 +64,8 @@ const defaultServices: Service[] = [
 const transactionOptions: DropdownOption[] = [
   { value: 'deposit', label: 'Depósito' },
   { value: 'withdrawal', label: 'Saque' },
-  { value: 'investment', label: 'Investimento' }
+  { value: 'investment-renda-fixa', label: 'Investimento - Renda Fixa' },
+  { value: 'investment-renda-variavel', label: 'Investimento - Renda Variável' }
 ];
 
 export const DashboardServices = ({ services = defaultServices }: DashboardServicesProps) => {
@@ -76,8 +77,13 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
     .filter(transaction => transaction.type === 'investment')
     .reduce((total, transaction) => total + transaction.amount, 0);
 
-  const rendaFixa = totalInvestments * 0.72;
-  const rendaVariavel = totalInvestments * 0.28;
+  const rendaFixa = transactions
+    .filter(transaction => transaction.type === 'investment' && transaction.subtype === 'renda-fixa')
+    .reduce((total, transaction) => total + transaction.amount, 0);
+
+  const rendaVariavel = transactions
+    .filter(transaction => transaction.type === 'investment' && transaction.subtype === 'renda-variavel')
+    .reduce((total, transaction) => total + transaction.amount, 0);
 
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
@@ -212,10 +218,6 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
               </div>
               <div className={styles['statistics-wrapper']}>
                 <div className={styles['statistics-card']}>
-                  <h3 className={styles['card-title']}>Rendimento Total</h3>
-                  <p className={styles['card-value']}>
-                    {formatCurrency(totalInvestments * 0.08)}
-                  </p>
                 </div>
               </div>
             </div>

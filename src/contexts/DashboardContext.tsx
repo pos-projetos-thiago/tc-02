@@ -7,6 +7,7 @@ type DashboardSection = 'services' | 'transfers' | 'investments' | 'others';
 export interface Transaction {
   id: string;
   type: 'deposit' | 'withdrawal' | 'transfer' | 'investment';
+  subtype?: 'renda-fixa' | 'renda-variavel';
   amount: number;
   description: string;
   date: string;
@@ -63,18 +64,26 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     const transactionTypes: { [key: string]: Transaction['type'] } = {
       deposit: 'deposit',
       withdrawal: 'withdrawal', 
-      investment: 'investment'
+      'investment-renda-fixa': 'investment',
+      'investment-renda-variavel': 'investment'
     };
 
     const transactionLabels: { [key: string]: string } = {
       deposit: 'Depósito',
       withdrawal: 'Saque',
-      investment: 'Investimento'
+      'investment-renda-fixa': 'Investimento - Renda Fixa',
+      'investment-renda-variavel': 'Investimento - Renda Variável'
+    };
+
+    const subtypeMap: { [key: string]: Transaction['subtype'] } = {
+      'investment-renda-fixa': 'renda-fixa',
+      'investment-renda-variavel': 'renda-variavel'
     };
 
     const newTransaction: Transaction = {
       id: `txn_${Date.now()}`,
       type: transactionTypes[type] || 'transfer',
+      subtype: subtypeMap[type],
       amount: amount,
       description: transactionLabels[type] || 'Transação',
       date: new Date().toISOString().split('T')[0]

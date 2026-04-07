@@ -7,6 +7,7 @@ import styles from './TransactionItem.module.scss';
 export interface Transaction {
   id: string;
   type: 'deposit' | 'withdrawal' | 'transfer' | 'investment';
+  subtype?: 'renda-fixa' | 'renda-variavel';
   amount: number;
   description: string;
   date: string;
@@ -27,7 +28,6 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
     return () => clearTimeout(timer);
   }, []);
 
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -42,7 +42,11 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
     });
   };
 
-  const getTypeLabel = (type: Transaction['type']) => {
+  const getTypeLabel = (type: Transaction['type'], subtype?: Transaction['subtype']) => {
+    if (type === 'investment' && subtype) {
+      return subtype === 'renda-fixa' ? 'Investimento - Renda Fixa' : 'Investimento - Renda Variável';
+    }
+    
     const typeLabels = {
       deposit: 'Depósito',
       withdrawal: 'Saque',
@@ -59,7 +63,7 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
       </div>
       <div className={styles['description-row']}>
         <div className={styles['transaction-description']}>
-          {getTypeLabel(transaction.type)}
+          {getTypeLabel(transaction.type, transaction.subtype)}
         </div>
         <div className={styles['transaction-date']}>
           {isHydrated ? formatDate(transaction.date) : ''}

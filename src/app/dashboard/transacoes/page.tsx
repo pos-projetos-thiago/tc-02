@@ -34,8 +34,14 @@ export default function TransacoesPage() {
 
   const handleEdit = useCallback((transaction: Transaction) => {
     setEditingTransaction(transaction);
+    
+    let editType = transaction.type;
+    if (transaction.type === 'investment' && transaction.subtype) {
+      editType = `investment-${transaction.subtype}` as Transaction['type'];
+    }
+    
     setFormData({
-      type: transaction.type,
+      type: editType,
       amount: transaction.amount.toLocaleString('pt-BR', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
@@ -50,8 +56,7 @@ export default function TransacoesPage() {
       setDeletingId(transactionId);
       await new Promise(resolve => setTimeout(resolve, 300));
       deleteTransaction(transactionId);
-    } catch (error) {
-      console.error('Erro ao deletar transação:', error);
+    } catch {
       alert('Erro ao deletar transação. Tente novamente.');
     } finally {
       setDeletingId(null);
@@ -77,10 +82,19 @@ export default function TransacoesPage() {
       return;
     }
 
-    editTransaction(editingTransaction.id, {
-      type: formData.type as Transaction['type'],
+    const updates: Partial<Transaction> = {
       amount: amount
-    });
+    };
+
+    if (formData.type.startsWith('investment-')) {
+      updates.type = 'investment';
+      updates.subtype = formData.type === 'investment-renda-fixa' ? 'renda-fixa' : 'renda-variavel';
+    } else {
+      updates.type = formData.type as Transaction['type'];
+      updates.subtype = undefined;
+    }
+
+    editTransaction(editingTransaction.id, updates);
 
     handleCancelEdit();
   }, [editingTransaction, formData, editTransaction, handleCancelEdit]);
@@ -180,7 +194,9 @@ export default function TransacoesPage() {
                               {transaction.type === 'deposit' && 'Depósito'}
                               {transaction.type === 'withdrawal' && 'Saque'}
                               {transaction.type === 'transfer' && 'Transferência'}
-                              {transaction.type === 'investment' && 'Investimento'}
+                              {transaction.type === 'investment' && transaction.subtype === 'renda-fixa' && 'Investimento - Renda Fixa'}
+                              {transaction.type === 'investment' && transaction.subtype === 'renda-variavel' && 'Investimento - Renda Variável'}
+                              {transaction.type === 'investment' && !transaction.subtype && 'Investimento'}
                             </div>
                             <div className={styles['transaction-date']}>
                               {new Date(transaction.date).toLocaleDateString('pt-BR')}
@@ -235,7 +251,8 @@ export default function TransacoesPage() {
                   <option value="deposit">Depósito</option>
                   <option value="withdrawal">Saque</option>
                   <option value="transfer">Transferência</option>
-                  <option value="investment">Investimento</option>
+                  <option value="investment-renda-fixa">Investimento - Renda Fixa</option>
+                  <option value="investment-renda-variavel">Investimento - Renda Variável</option>
                 </select>
               </div>
 
