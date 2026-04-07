@@ -39,11 +39,11 @@
   margin-top: 24px;
   margin-left: 3.2rem;
   margin-right: 3.2rem;
-  
+
   @media (max-width: 1024px) {
     gap: 20px;
   }
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 0;
@@ -60,7 +60,7 @@
   gap: 20px;
   flex: 1;
   max-width: 400px;
-  
+
   @media (max-width: 768px) {
     max-width: none;
   }
@@ -70,7 +70,7 @@
   flex-shrink: 0;
   display: flex;
   align-items: flex-end;
-  
+
   @media (max-width: 768px) {
     display: none;
   }
@@ -81,19 +81,19 @@
   height: auto;
   max-width: 100%;
   object-fit: contain;
-  
+
   @media (max-width: 1400px) {
     width: 350px;
   }
-  
+
   @media (max-width: 1200px) {
     width: 320px;
   }
-  
+
   @media (max-width: 1024px) {
     width: 280px;
   }
-  
+
   @media (max-width: 900px) {
     width: 240px;
   }
@@ -154,4 +154,125 @@
   color: $color-gray-500;
   margin: 0;
   max-width: 40rem;
+}
+
+.investment-total {
+  margin-top: 1rem;
+  margin-left: 3.2rem;
+  margin-right: 3.2rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.total-label {
+  font-size: 2rem;
+  font-weight: $font-weight-regular;
+  color: $color-primary;
+  margin: 0;
+}
+
+.total-value {
+  font-size: 2rem;
+  font-weight: $font-weight-regular;
+  color: $color-primary;
+  margin: 0;
+}
+
+.investment-categories {
+  display: flex;
+  gap: 3.5rem;
+  margin-top: 1rem;
+  margin-left: 3.2rem;
+  margin-right: 3.2rem;
+  justify-content: flex-start;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.investment-card {
+  width: 42rem;
+  height: 9rem;
+  padding: 1rem;
+  background-color: $color-primary;
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 42rem;
+  }
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: $font-weight-regular;
+  color: $color-white;
+  margin: 0;
+}
+
+.card-value {
+  font-size: 1.7rem;
+  font-weight: $font-weight-regular;
+  color: $color-white;
+  margin: 0;
+  margin-top: 1rem;
+}
+
+.statistics-section {
+  margin-top: 1.5rem;
+}
+
+.statistics-header {
+  margin-top: 1rem;
+  margin-left: 3.2rem;
+  margin-right: 3.2rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.statistics-label {
+  font-size: 2rem;
+  font-weight: $font-weight-regular;
+  color: $color-primary;
+  margin: 0;
+}
+
+.statistics-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 1rem;
+  margin-left: 3.2rem;
+  margin-right: 3.2rem;
+}
+
+.statistics-card {
+  width: calc(42rem + 3.5rem + 42rem);
+  height: 12.5rem;
+  padding: 1rem;
+  background-color: $color-primary;
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 0;
+  margin-bottom: 1rem;
+  
+  @media (max-width: 768px) {
+    width: calc(100% - 6.4rem);
+  }
+
+  .card-value {
+    margin-top: 1rem;
+  }
 }

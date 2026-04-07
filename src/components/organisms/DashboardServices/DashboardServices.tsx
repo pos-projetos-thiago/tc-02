@@ -68,9 +68,23 @@ const transactionOptions: DropdownOption[] = [
 ];
 
 export const DashboardServices = ({ services = defaultServices }: DashboardServicesProps) => {
-  const { activeSection, addTransaction } = useDashboard();
+  const { activeSection, addTransaction, transactions } = useDashboard();
   const [selectedType, setSelectedType] = useState('');
   const [amount, setAmount] = useState('');
+
+  const totalInvestments = transactions
+    .filter(transaction => transaction.type === 'investment')
+    .reduce((total, transaction) => total + transaction.amount, 0);
+
+  const rendaFixa = totalInvestments * 0.72;
+  const rendaVariavel = totalInvestments * 0.28;
+
+  const formatCurrency = (value: number): string => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
 
   const isValidAmount = (value: string): boolean => {
     if (!value || value.trim() === '') return false;
@@ -80,9 +94,9 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
 
   const handleTransaction = () => {
     if (!selectedType || !amount) return;
-    
+
     const numericAmount = parseFloat(amount.replace(',', '.'));
-    
+
     if (!numericAmount || numericAmount <= 0) {
       return;
     }
@@ -96,6 +110,7 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
   const renderContent = () => {
     switch (activeSection) {
       case 'services':
+      default:
         return (
           <>
             <header className={styles.header}>
@@ -140,17 +155,17 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
                   />
                 </div>
 
-                <TransactionButton 
+                <TransactionButton
                   onClick={handleTransaction}
                   disabled={!selectedType || !isValidAmount(amount)}
                 >
                   Concluir transação
                 </TransactionButton>
               </div>
-              
+
               <div className={styles['transaction-illustration']}>
-                <Image 
-                  src="/Transference/transference.svg" 
+                <Image
+                  src="/Transference/transference.svg"
                   alt="Ilustração de transferência financeira"
                   width={328}
                   height={231}
@@ -168,13 +183,41 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
             <header className={styles.header}>
               <h2 className={styles.title}>Investimentos</h2>
             </header>
-            <div className={styles['empty-state']}>
-              <p className={styles['empty-message']}>
-                Área de investimentos em desenvolvimento...
+            <div className={styles['investment-total']}>
+              <p className={styles['total-label']}>Total:</p>
+              <p className={styles['total-value']}>
+                {formatCurrency(totalInvestments)}
               </p>
-              <p className={styles['empty-subtitle']}>
-                Em breve você poderá acessar CDB, Tesouro Direto, Fundos e mais.
-              </p>
+            </div>
+
+            <div className={styles['investment-categories']}>
+              <div className={styles['investment-card']}>
+                <h3 className={styles['card-title']}>Renda Fixa</h3>
+                <p className={styles['card-value']}>
+                  {formatCurrency(rendaFixa)}
+                </p>
+              </div>
+              
+              <div className={styles['investment-card']}>
+                <h3 className={styles['card-title']}>Renda Variável</h3>
+                <p className={styles['card-value']}>
+                  {formatCurrency(rendaVariavel)}
+                </p>
+              </div>
+            </div>
+
+            <div className={styles['statistics-section']}>
+              <div className={styles['statistics-header']}>
+                <h3 className={styles['statistics-label']}>Estatísticas</h3>
+              </div>
+              <div className={styles['statistics-wrapper']}>
+                <div className={styles['statistics-card']}>
+                  <h3 className={styles['card-title']}>Rendimento Total</h3>
+                  <p className={styles['card-value']}>
+                    {formatCurrency(totalInvestments * 0.08)}
+                  </p>
+                </div>
+              </div>
             </div>
           </>
         );
@@ -193,27 +236,6 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
                 Em breve você poderá acessar mais funcionalidades bancárias.
               </p>
             </div>
-          </>
-        );
-
-      default:
-        return (
-          <>
-            <header className={styles.header}>
-              <h2 className={styles.title}>Confira os serviços disponíveis</h2>
-            </header>
-            <ul className={styles['service-grid']}>
-              {services.map((service) => (
-                <li key={service.id}>
-                  <ServiceCard
-                    title={service.title}
-                    description={service.description}
-                    icon={service.icon}
-                    onClick={service.action}
-                  />
-                </li>
-              ))}
-            </ul>
           </>
         );
     }
