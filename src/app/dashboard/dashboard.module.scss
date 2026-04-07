@@ -3,15 +3,6 @@
 @import '../../styles/breakpoints';
 @import '../../styles/functions';
 
-.loading {
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-size-base;
-  color: $color-white;
-  background-color: $color-black;
-}
 
 .main {
   min-height: calc(100dvh - 7.2rem);

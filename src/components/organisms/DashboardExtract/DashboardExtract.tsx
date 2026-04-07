@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { TransactionItem, type Transaction } from '@/components/molecules/TransactionItem';
 import styles from './DashboardExtract.module.scss';
 
@@ -8,18 +9,54 @@ export type { Transaction };
 export interface DashboardExtractProps {
   transactions?: Transaction[];
   maxItems?: number;
+  onEditClick?: () => void;
+  onDeleteClick?: () => void;
 }
 
 export const DashboardExtract = ({ 
   transactions = [], 
-  maxItems = 5 
+  maxItems = 5,
+  onEditClick,
+  onDeleteClick
 }: DashboardExtractProps) => {
 
   const limitedTransactions = transactions.slice(0, maxItems);
 
   return (
     <aside className={styles.extract}>
-      <h2 className={styles.title}>Extrato</h2>
+      <div className={styles.header}>
+        <h2 className={styles.title}>Extrato</h2>
+        
+        <div className={styles.actions}>
+          <button 
+            className={styles['action-button']}
+            onClick={onEditClick}
+            title="Editar transações"
+            type="button"
+          >
+            <Image 
+              src="/Extract/edit.svg" 
+              alt="Editar"
+              width={21}
+              height={21}
+            />
+          </button>
+          
+          <button 
+            className={styles['action-button']}
+            onClick={onDeleteClick}
+            title="Deletar transações"
+            type="button"
+          >
+            <Image 
+              src="/Extract/delete.svg" 
+              alt="Deletar"
+              width={19}
+              height={22}
+            />
+          </button>
+        </div>
+      </div>
 
       <div className={styles['transaction-list']}>
         {limitedTransactions.map((transaction) => (

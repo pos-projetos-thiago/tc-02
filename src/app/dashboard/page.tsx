@@ -1,58 +1,72 @@
 'use client';
 
 import { useEffect } from 'react';
-
-// Forçar página dinâmica para evitar prerender no build
-export const dynamic = 'force-dynamic';
 import { useRouter } from 'next/navigation';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
-import { DashboardProvider, useDashboard } from '@/contexts/DashboardContext';
+import { useDashboard } from '@/contexts/DashboardContext';
 import { UserProfileSupabase } from '@/components/molecules/UserProfile/UserProfileSupabase';
 import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';
 import { DashboardServices } from '@/components/organisms/DashboardServices';
 import { DashboardExtract } from '@/components/organisms/DashboardExtract';
+import { LoadingScreen } from '@/components/atoms/Loading';
 import styles from './dashboard.module.scss';
+
+export const dynamic = 'force-dynamic';
 
 export default function DashboardPage() {
   const { user, isLoading } = useSupabaseAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // Se não está carregando e não tem usuário, redireciona
+    // Aguardar um tempo maior para evitar loop de redirecionamento
     if (!isLoading && !user) {
-      router.replace('/');
+      const timer = setTimeout(() => {
+        router.replace('/');
+      }, 100); // Pequeno delay para estabilizar
+
+      return () => clearTimeout(timer);
     }
   }, [user, isLoading, router]);
 
+  // Mostrar loading enquanto autentica
   if (isLoading) {
     return (
-      <div className={styles.loading} aria-live="polite">
-        Inicializando...
-      </div>
+      <LoadingScreen 
+        isVisible={true}
+        size="large" 
+        text="Verificando autenticação..." 
+      />
     );
   }
 
+  // Se não há usuário, mostrar loading durante redirecionamento
   if (!user) {
     return (
-      <div className={styles.loading} aria-live="polite">
-        Carregando…
-      </div>
+      <LoadingScreen 
+        isVisible={true}
+        size="large" 
+        text="Redirecionando para login..." 
+      />
     );
   }
 
-  // Extrair nome do user metadata ou email
   const userName = user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário';
 
-  return (
-    <DashboardProvider>
-      <DashboardContent userName={userName} />
-    </DashboardProvider>
-  );
+  return <DashboardContent userName={userName} />;
 }
 
 function DashboardContent({ userName }: { userName: string }) {
   const { balance, transactions } = useDashboard();
+  const router = useRouter();
+
+  const handleEditTransactions = () => {
+    router.push('/dashboard/transacoes');
+  };
+
+  const handleDeleteTransactions = () => {
+    router.push('/dashboard/transacoes');
+  };
   
   return (
     <>
@@ -75,7 +89,11 @@ function DashboardContent({ userName }: { userName: string }) {
           </div>
 
           <div className={styles['grid-extract']}>
-            <DashboardExtract transactions={transactions} />
+            <DashboardExtract 
+              transactions={transactions}
+              onEditClick={handleEditTransactions}
+              onDeleteClick={handleDeleteTransactions}
+            />
           </div>
         </div>
       </main>

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from 'react';
 
 type DashboardSection = 'services' | 'transfers' | 'investments' | 'others';
 
@@ -18,6 +18,8 @@ interface DashboardContextType {
   balance: number;
   transactions: Transaction[];
   addTransaction: (type: string, amount: number) => void;
+  editTransaction: (id: string, updates: Partial<Transaction>) => void;
+  deleteTransaction: (id: string) => void;
   resetData: () => void;
 }
 
@@ -57,7 +59,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     }
   }, [transactions]);
 
-  const addTransaction = (type: string, amount: number) => {
+  const addTransaction = useCallback((type: string, amount: number) => {
     const transactionTypes: { [key: string]: Transaction['type'] } = {
       deposit: 'deposit',
       withdrawal: 'withdrawal', 
@@ -85,9 +87,62 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     }
 
     setTransactions(prev => [newTransaction, ...prev]);
-  };
+  }, []);
 
-  const resetData = () => {
+  const editTransaction = useCallback((id: string, updates: Partial<Transaction>) => {
+    const originalTransaction = transactions.find(t => t.id === id);
+    if (!originalTransaction) return;
+
+    const oldAmount = originalTransaction.amount;
+    const oldType = originalTransaction.type;
+    const newAmount = updates.amount !== undefined ? updates.amount : oldAmount;
+    const newType = updates.type !== undefined ? updates.type : oldType;
+
+    if (newAmount !== oldAmount || newType !== oldType) {
+      setBalance(currentBalance => {
+        let adjustedBalance = currentBalance;
+
+        if (oldType === 'deposit') {
+          adjustedBalance -= oldAmount;
+        } else {
+          adjustedBalance += oldAmount;
+        }
+
+        if (newType === 'deposit') {
+          adjustedBalance += newAmount;
+        } else {
+          adjustedBalance -= newAmount;
+        }
+
+        return adjustedBalance;
+      });
+    }
+
+    setTransactions(prev => 
+      prev.map(transaction => 
+        transaction.id === id 
+          ? { ...transaction, ...updates }
+          : transaction
+      )
+    );
+  }, [transactions]);
+
+  const deleteTransaction = useCallback((id: string) => {
+    const transactionToDelete = transactions.find(t => t.id === id);
+    if (!transactionToDelete) return;
+
+    setBalance(currentBalance => {
+      if (transactionToDelete.type === 'deposit') {
+        return currentBalance - transactionToDelete.amount;
+      } else {
+        return currentBalance + transactionToDelete.amount;
+      }
+    });
+
+    setTransactions(prev => prev.filter(t => t.id !== id));
+  }, [transactions]);
+
+  const resetData = useCallback(() => {
     setBalance(2000.00);
     setTransactions([]);
     
@@ -95,17 +150,21 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem(STORAGE_KEYS.balance);
       localStorage.removeItem(STORAGE_KEYS.transactions);
     }
-  };
+  }, []);
+
+  const contextValue = useMemo(() => ({
+    activeSection, 
+    setActiveSection, 
+    balance, 
+    transactions, 
+    addTransaction,
+    editTransaction,
+    deleteTransaction,
+    resetData
+  }), [activeSection, balance, transactions, addTransaction, editTransaction, deleteTransaction, resetData]);
 
   return (
-    <DashboardContext.Provider value={{ 
-      activeSection, 
-      setActiveSection, 
-      balance, 
-      transactions, 
-      addTransaction,
-      resetData
-    }}>
+    <DashboardContext.Provider value={contextValue}>
       {children}
     </DashboardContext.Provider>
   );
