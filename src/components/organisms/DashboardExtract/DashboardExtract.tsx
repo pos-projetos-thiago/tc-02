@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { TransactionItem, type Transaction } from '@/components/molecules/TransactionItem';
+import { TransactionItem } from '@/components/molecules/TransactionItem';
+import type { Transaction } from '@/contexts/DashboardContext';
 import styles from './DashboardExtract.module.scss';
 
 export type { Transaction };

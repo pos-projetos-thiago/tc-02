@@ -2,16 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
+import type { Transaction } from '@/contexts/DashboardContext';
 import styles from './TransactionItem.module.scss';
-
-export interface Transaction {
-  id: string;
-  type: 'deposit' | 'withdrawal' | 'transfer' | 'investment';
-  subtype?: 'renda-fixa' | 'renda-variavel';
-  amount: number;
-  description: string;
-  date: string;
-}
 
 export interface TransactionItemProps {
   transaction: Transaction;
@@ -42,9 +34,21 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
     });
   };
 
-  const getTypeLabel = (type: Transaction['type'], subtype?: Transaction['subtype']) => {
-    if (type === 'investment' && subtype) {
-      return subtype === 'renda-fixa' ? 'Investimento - Renda Fixa' : 'Investimento - Renda Variável';
+  const getTypeLabel = (type: Transaction['type'], subtype?: Transaction['subtype'], investmentType?: Transaction['investmentType']) => {
+    if (type === 'investment') {
+      if (investmentType) {
+        const specificLabels = {
+          fundos: 'Fundos de investimento',
+          'tesouro-direto': 'Tesouro Direto',
+          previdencia: 'Previdência Privada',
+          bolsa: 'Bolsa de Valores'
+        };
+        return specificLabels[investmentType];
+      }
+      
+      if (subtype) {
+        return subtype === 'renda-fixa' ? 'Investimento - Renda Fixa' : 'Investimento - Renda Variável';
+      }
     }
     
     const typeLabels = {
@@ -63,7 +67,7 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
       </div>
       <div className={styles['description-row']}>
         <div className={styles['transaction-description']}>
-          {getTypeLabel(transaction.type, transaction.subtype)}
+          {getTypeLabel(transaction.type, transaction.subtype, transaction.investmentType)}
         </div>
         <div className={styles['transaction-date']}>
           {isHydrated ? formatDate(transaction.date) : ''}

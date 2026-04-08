@@ -36,8 +36,12 @@ export default function TransacoesPage() {
     setEditingTransaction(transaction);
     
     let editType = transaction.type;
-    if (transaction.type === 'investment' && transaction.subtype) {
-      editType = `investment-${transaction.subtype}` as Transaction['type'];
+    if (transaction.type === 'investment') {
+      if (transaction.investmentType) {
+        editType = `investment-${transaction.investmentType}` as Transaction['type'];
+      } else if (transaction.subtype) {
+        editType = `investment-${transaction.subtype}` as Transaction['type'];
+      }
     }
     
     setFormData({
@@ -88,10 +92,25 @@ export default function TransacoesPage() {
 
     if (formData.type.startsWith('investment-')) {
       updates.type = 'investment';
-      updates.subtype = formData.type === 'investment-renda-fixa' ? 'renda-fixa' : 'renda-variavel';
+      
+      const investmentTypeMap = {
+        'investment-fundos': { investmentType: 'fundos' as const, subtype: 'renda-variavel' as const },
+        'investment-tesouro-direto': { investmentType: 'tesouro-direto' as const, subtype: 'renda-fixa' as const },
+        'investment-previdencia': { investmentType: 'previdencia' as const, subtype: 'renda-fixa' as const },
+        'investment-bolsa': { investmentType: 'bolsa' as const, subtype: 'renda-variavel' as const },
+        'investment-renda-fixa': { subtype: 'renda-fixa' as const },
+        'investment-renda-variavel': { subtype: 'renda-variavel' as const }
+      };
+      
+      const mapping = investmentTypeMap[formData.type as keyof typeof investmentTypeMap];
+      if (mapping) {
+        updates.investmentType = 'investmentType' in mapping ? mapping.investmentType : undefined;
+        updates.subtype = mapping.subtype;
+      }
     } else {
       updates.type = formData.type as Transaction['type'];
       updates.subtype = undefined;
+      updates.investmentType = undefined;
     }
 
     editTransaction(editingTransaction.id, updates);
@@ -194,9 +213,13 @@ export default function TransacoesPage() {
                               {transaction.type === 'deposit' && 'Depósito'}
                               {transaction.type === 'withdrawal' && 'Saque'}
                               {transaction.type === 'transfer' && 'Transferência'}
-                              {transaction.type === 'investment' && transaction.subtype === 'renda-fixa' && 'Investimento - Renda Fixa'}
-                              {transaction.type === 'investment' && transaction.subtype === 'renda-variavel' && 'Investimento - Renda Variável'}
-                              {transaction.type === 'investment' && !transaction.subtype && 'Investimento'}
+                              {transaction.type === 'investment' && transaction.investmentType === 'fundos' && 'Fundos de investimento'}
+                              {transaction.type === 'investment' && transaction.investmentType === 'tesouro-direto' && 'Tesouro Direto'}
+                              {transaction.type === 'investment' && transaction.investmentType === 'previdencia' && 'Previdência Privada'}
+                              {transaction.type === 'investment' && transaction.investmentType === 'bolsa' && 'Bolsa de Valores'}
+                              {transaction.type === 'investment' && !transaction.investmentType && transaction.subtype === 'renda-fixa' && 'Investimento - Renda Fixa'}
+                              {transaction.type === 'investment' && !transaction.investmentType && transaction.subtype === 'renda-variavel' && 'Investimento - Renda Variável'}
+                              {transaction.type === 'investment' && !transaction.investmentType && !transaction.subtype && 'Investimento'}
                             </div>
                             <div className={styles['transaction-date']}>
                               {new Date(transaction.date).toLocaleDateString('pt-BR')}
@@ -251,6 +274,10 @@ export default function TransacoesPage() {
                   <option value="deposit">Depósito</option>
                   <option value="withdrawal">Saque</option>
                   <option value="transfer">Transferência</option>
+                  <option value="investment-fundos">Fundos de investimento</option>
+                  <option value="investment-tesouro-direto">Tesouro Direto</option>
+                  <option value="investment-previdencia">Previdência Privada</option>
+                  <option value="investment-bolsa">Bolsa de Valores</option>
                   <option value="investment-renda-fixa">Investimento - Renda Fixa</option>
                   <option value="investment-renda-variavel">Investimento - Renda Variável</option>
                 </select>

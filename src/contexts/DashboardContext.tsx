@@ -8,6 +8,7 @@ export interface Transaction {
   id: string;
   type: 'deposit' | 'withdrawal' | 'transfer' | 'investment';
   subtype?: 'renda-fixa' | 'renda-variavel';
+  investmentType?: 'fundos' | 'tesouro-direto' | 'previdencia' | 'bolsa';
   amount: number;
   description: string;
   date: string;
@@ -65,25 +66,45 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       deposit: 'deposit',
       withdrawal: 'withdrawal', 
       'investment-renda-fixa': 'investment',
-      'investment-renda-variavel': 'investment'
+      'investment-renda-variavel': 'investment',
+      'investment-fundos': 'investment',
+      'investment-tesouro-direto': 'investment',
+      'investment-previdencia': 'investment',
+      'investment-bolsa': 'investment'
     };
 
     const transactionLabels: { [key: string]: string } = {
       deposit: 'Depósito',
       withdrawal: 'Saque',
       'investment-renda-fixa': 'Investimento - Renda Fixa',
-      'investment-renda-variavel': 'Investimento - Renda Variável'
+      'investment-renda-variavel': 'Investimento - Renda Variável',
+      'investment-fundos': 'Fundos de investimento',
+      'investment-tesouro-direto': 'Tesouro Direto',
+      'investment-previdencia': 'Previdência Privada',
+      'investment-bolsa': 'Bolsa de Valores'
     };
 
     const subtypeMap: { [key: string]: Transaction['subtype'] } = {
       'investment-renda-fixa': 'renda-fixa',
-      'investment-renda-variavel': 'renda-variavel'
+      'investment-renda-variavel': 'renda-variavel',
+      'investment-fundos': 'renda-variavel',
+      'investment-tesouro-direto': 'renda-fixa',
+      'investment-previdencia': 'renda-fixa',
+      'investment-bolsa': 'renda-variavel'
+    };
+
+    const investmentTypeMap: { [key: string]: Transaction['investmentType'] } = {
+      'investment-fundos': 'fundos',
+      'investment-tesouro-direto': 'tesouro-direto',
+      'investment-previdencia': 'previdencia',
+      'investment-bolsa': 'bolsa'
     };
 
     const newTransaction: Transaction = {
       id: `txn_${Date.now()}`,
       type: transactionTypes[type] || 'transfer',
       subtype: subtypeMap[type],
+      investmentType: investmentTypeMap[type],
       amount: amount,
       description: transactionLabels[type] || 'Transação',
       date: new Date().toISOString().split('T')[0]

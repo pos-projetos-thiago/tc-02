@@ -120,7 +120,7 @@
   gap: 2rem;
   margin: 0;
   padding: 2.5rem 3.2rem;
-  min-height: 15rem;
+  min-height: 18rem;
 
   @include mobile {
     grid-template-columns: 1fr;
@@ -228,6 +228,10 @@
 
 .statistics-section {
   margin-top: 1.5rem;
+  
+  @media (max-width: 768px) {
+    margin-top: 1rem;
+  }
 }
 
 .statistics-header {
@@ -249,14 +253,22 @@
 .statistics-wrapper {
   display: flex;
   justify-content: flex-start;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   margin-left: 3.2rem;
   margin-right: 3.2rem;
+  
+  @media (min-height: 900px) {
+    margin-top: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    margin-top: 1rem;
+  }
 }
 
 .statistics-card {
   width: calc(42rem + 3.5rem + 42rem);
-  height: 12.5rem;
+  height: 11rem;
   padding: 1rem;
   background-color: $color-primary;
   border-radius: 0.8rem;
@@ -270,5 +282,7 @@
   
   @media (max-width: 768px) {
     width: calc(100% - 6.4rem);
+    height: 10rem;
+    padding: 0.8rem;
   }
 }

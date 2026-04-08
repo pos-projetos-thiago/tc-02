@@ -6,7 +6,9 @@ import Image from 'next/image';
 import { Dropdown, type DropdownOption } from '@/components/atoms/Dropdown';
 import { CurrencyInput } from '@/components/atoms/Input';
 import { TransactionButton } from '@/components/atoms/TransactionButton';
+import { ButtonGroup, type ButtonOption } from '@/components/atoms/ButtonGroup/ButtonGroup';
 import { ServiceCard } from '@/components/molecules/ServiceCard';
+import { InvestmentChart } from '@/components/molecules/InvestmentChart/InvestmentChart';
 import { useDashboard } from '@/contexts/DashboardContext';
 import styles from './DashboardServices.module.scss';
 
@@ -64,13 +66,36 @@ const defaultServices: Service[] = [
 const transactionOptions: DropdownOption[] = [
   { value: 'deposit', label: 'Depósito' },
   { value: 'withdrawal', label: 'Saque' },
-  { value: 'investment-renda-fixa', label: 'Investimento - Renda Fixa' },
-  { value: 'investment-renda-variavel', label: 'Investimento - Renda Variável' }
+  { value: 'investment', label: 'Investimento' }
+];
+
+const investmentOptions: ButtonOption[] = [
+  { 
+    value: 'investment-fundos', 
+    label: 'Fundos', 
+    color: '#2567F9' 
+  },
+  { 
+    value: 'investment-tesouro-direto', 
+    label: 'Tesouro Direto', 
+    color: '#8F3CFF' 
+  },
+  { 
+    value: 'investment-previdencia', 
+    label: 'Previdência', 
+    color: '#FF3C82' 
+  },
+  { 
+    value: 'investment-bolsa', 
+    label: 'Bolsa', 
+    color: '#F1823D' 
+  }
 ];
 
 export const DashboardServices = ({ services = defaultServices }: DashboardServicesProps) => {
   const { activeSection, addTransaction, transactions } = useDashboard();
   const [selectedType, setSelectedType] = useState('');
+  const [selectedInvestmentType, setSelectedInvestmentType] = useState('');
   const [amount, setAmount] = useState('');
 
   const totalInvestments = transactions
@@ -78,11 +103,21 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
     .reduce((total, transaction) => total + transaction.amount, 0);
 
   const rendaFixa = transactions
-    .filter(transaction => transaction.type === 'investment' && transaction.subtype === 'renda-fixa')
+    .filter(transaction => 
+      transaction.type === 'investment' && 
+      (transaction.investmentType === 'tesouro-direto' || 
+       transaction.investmentType === 'previdencia' ||
+       transaction.subtype === 'renda-fixa')
+    )
     .reduce((total, transaction) => total + transaction.amount, 0);
 
   const rendaVariavel = transactions
-    .filter(transaction => transaction.type === 'investment' && transaction.subtype === 'renda-variavel')
+    .filter(transaction => 
+      transaction.type === 'investment' && 
+      (transaction.investmentType === 'fundos' || 
+       transaction.investmentType === 'bolsa' ||
+       transaction.subtype === 'renda-variavel')
+    )
     .reduce((total, transaction) => total + transaction.amount, 0);
 
   const formatCurrency = (value: number): string => {
@@ -98,18 +133,25 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
     return !isNaN(numericValue) && numericValue > 0;
   };
 
+  const canSubmitTransaction = () => {
+    if (!selectedType || !isValidAmount(amount)) return false;
+    if (selectedType === 'investment' && !selectedInvestmentType) return false;
+    return true;
+  };
+
   const handleTransaction = () => {
     if (!selectedType || !amount) return;
+    
+    if (selectedType === 'investment' && !selectedInvestmentType) return;
 
     const numericAmount = parseFloat(amount.replace(',', '.'));
+    if (!numericAmount || numericAmount <= 0) return;
 
-    if (!numericAmount || numericAmount <= 0) {
-      return;
-    }
-
-    addTransaction(selectedType, numericAmount);
+    const transactionType = selectedType === 'investment' ? selectedInvestmentType : selectedType;
+    addTransaction(transactionType, numericAmount);
 
     setSelectedType('');
+    setSelectedInvestmentType('');
     setAmount('');
   };
 
@@ -149,8 +191,21 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
                   options={transactionOptions}
                   placeholder="Selecione o tipo de transação"
                   value={selectedType}
-                  onChange={setSelectedType}
+                  onChange={(value) => {
+                    setSelectedType(value);
+                    if (value !== 'investment') {
+                      setSelectedInvestmentType('');
+                    }
+                  }}
                 />
+
+                {selectedType === 'investment' && (
+                  <ButtonGroup
+                    options={investmentOptions}
+                    value={selectedInvestmentType}
+                    onChange={setSelectedInvestmentType}
+                  />
+                )}
 
                 <div className={styles['value-section']}>
                   <h3 className={styles['value-title']}>Valor</h3>
@@ -163,7 +218,7 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
 
                 <TransactionButton
                   onClick={handleTransaction}
-                  disabled={!selectedType || !isValidAmount(amount)}
+                  disabled={!canSubmitTransaction()}
                 >
                   Concluir transação
                 </TransactionButton>
@@ -218,6 +273,7 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
               </div>
               <div className={styles['statistics-wrapper']}>
                 <div className={styles['statistics-card']}>
+                  <InvestmentChart transactions={transactions} />
                 </div>
               </div>
             </div>
