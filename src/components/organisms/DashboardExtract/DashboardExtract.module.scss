@@ -7,7 +7,7 @@
   border-radius: 0.8rem;
   padding: 3.2rem 2.4rem 2.4rem 2.4rem;
   height: 100%;
-  min-height: 40rem;
+  min-height: 35rem;
   border: 1px solid $color-gray-200;
 }
 
@@ -61,7 +61,7 @@
 .transaction-list {
   display: flex;
   flex-direction: column;
-  gap: 2.4rem;
+  gap: 1.5rem;
 }
 
 
@@ -70,4 +70,37 @@
   padding: 4rem 2rem;
   color: $color-gray-500;
   font-size: $font-size-base;
+}
+
+.view-more-button {
+  width: 100%;
+  background-color: $color-green;
+  border: none;
+  border-radius: 0.8rem;
+  color: $color-white;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  font-family: inherit;
+  padding: 1.6rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  &:hover {
+    background-color: darken($color-green, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba($color-green, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(71, 161, 56, 0.1);
+  }
 }

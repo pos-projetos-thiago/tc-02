@@ -18,8 +18,10 @@
     "@mui/material": "^7.3.9",
     "@supabase/ssr": "^0.10.0",
     "@supabase/supabase-js": "^2.101.1",
+    "chart.js": "^4.5.1",
     "next": "16.1.6",
     "react": "19.2.3",
+    "react-chartjs-2": "^5.3.1",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.2",
     "zod": "^4.3.6"

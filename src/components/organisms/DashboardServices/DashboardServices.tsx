@@ -6,7 +6,9 @@ import Image from 'next/image';
 import { Dropdown, type DropdownOption } from '@/components/atoms/Dropdown';
 import { CurrencyInput } from '@/components/atoms/Input';
 import { TransactionButton } from '@/components/atoms/TransactionButton';
+import { ButtonGroup, type ButtonOption } from '@/components/atoms/ButtonGroup/ButtonGroup';
 import { ServiceCard } from '@/components/molecules/ServiceCard';
+import { InvestmentChart } from '@/components/molecules/InvestmentChart/InvestmentChart';
 import { useDashboard } from '@/contexts/DashboardContext';
 import styles from './DashboardServices.module.scss';
 
@@ -67,10 +69,63 @@ const transactionOptions: DropdownOption[] = [
   { value: 'investment', label: 'Investimento' }
 ];
 
+const investmentOptions: ButtonOption[] = [
+  { 
+    value: 'investment-fundos', 
+    label: 'Fundos', 
+    color: '#2567F9' 
+  },
+  { 
+    value: 'investment-tesouro-direto', 
+    label: 'Tesouro', 
+    color: '#8F3CFF' 
+  },
+  { 
+    value: 'investment-previdencia', 
+    label: 'Previdência', 
+    color: '#FF3C82' 
+  },
+  { 
+    value: 'investment-bolsa', 
+    label: 'Bolsa', 
+    color: '#F1823D' 
+  }
+];
+
 export const DashboardServices = ({ services = defaultServices }: DashboardServicesProps) => {
-  const { activeSection, addTransaction } = useDashboard();
+  const { activeSection, addTransaction, transactions } = useDashboard();
   const [selectedType, setSelectedType] = useState('');
+  const [selectedInvestmentType, setSelectedInvestmentType] = useState('');
   const [amount, setAmount] = useState('');
+
+  const totalInvestments = transactions
+    .filter(transaction => transaction.type === 'investment')
+    .reduce((total, transaction) => total + transaction.amount, 0);
+
+  const rendaFixa = transactions
+    .filter(transaction => 
+      transaction.type === 'investment' && 
+      (transaction.investmentType === 'tesouro-direto' || 
+       transaction.investmentType === 'previdencia' ||
+       transaction.subtype === 'renda-fixa')
+    )
+    .reduce((total, transaction) => total + transaction.amount, 0);
+
+  const rendaVariavel = transactions
+    .filter(transaction => 
+      transaction.type === 'investment' && 
+      (transaction.investmentType === 'fundos' || 
+       transaction.investmentType === 'bolsa' ||
+       transaction.subtype === 'renda-variavel')
+    )
+    .reduce((total, transaction) => total + transaction.amount, 0);
+
+  const formatCurrency = (value: number): string => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
 
   const isValidAmount = (value: string): boolean => {
     if (!value || value.trim() === '') return false;
@@ -78,24 +133,32 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
     return !isNaN(numericValue) && numericValue > 0;
   };
 
+  const canSubmitTransaction = () => {
+    if (!selectedType || !isValidAmount(amount)) return false;
+    if (selectedType === 'investment' && !selectedInvestmentType) return false;
+    return true;
+  };
+
   const handleTransaction = () => {
     if (!selectedType || !amount) return;
     
-    const numericAmount = parseFloat(amount.replace(',', '.'));
-    
-    if (!numericAmount || numericAmount <= 0) {
-      return;
-    }
+    if (selectedType === 'investment' && !selectedInvestmentType) return;
 
-    addTransaction(selectedType, numericAmount);
+    const numericAmount = parseFloat(amount.replace(',', '.'));
+    if (!numericAmount || numericAmount <= 0) return;
+
+    const transactionType = selectedType === 'investment' ? selectedInvestmentType : selectedType;
+    addTransaction(transactionType, numericAmount);
 
     setSelectedType('');
+    setSelectedInvestmentType('');
     setAmount('');
   };
 
   const renderContent = () => {
     switch (activeSection) {
       case 'services':
+      default:
         return (
           <>
             <header className={styles.header}>
@@ -128,8 +191,21 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
                   options={transactionOptions}
                   placeholder="Selecione o tipo de transação"
                   value={selectedType}
-                  onChange={setSelectedType}
+                  onChange={(value) => {
+                    setSelectedType(value);
+                    if (value !== 'investment') {
+                      setSelectedInvestmentType('');
+                    }
+                  }}
                 />
+
+                {selectedType === 'investment' && (
+                  <ButtonGroup
+                    options={investmentOptions}
+                    value={selectedInvestmentType}
+                    onChange={setSelectedInvestmentType}
+                  />
+                )}
 
                 <div className={styles['value-section']}>
                   <h3 className={styles['value-title']}>Valor</h3>
@@ -140,17 +216,17 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
                   />
                 </div>
 
-                <TransactionButton 
+                <TransactionButton
                   onClick={handleTransaction}
-                  disabled={!selectedType || !isValidAmount(amount)}
+                  disabled={!canSubmitTransaction()}
                 >
                   Concluir transação
                 </TransactionButton>
               </div>
-              
+
               <div className={styles['transaction-illustration']}>
-                <Image 
-                  src="/Transference/transference.svg" 
+                <Image
+                  src="/Transference/transference.svg"
                   alt="Ilustração de transferência financeira"
                   width={328}
                   height={231}
@@ -168,13 +244,38 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
             <header className={styles.header}>
               <h2 className={styles.title}>Investimentos</h2>
             </header>
-            <div className={styles['empty-state']}>
-              <p className={styles['empty-message']}>
-                Área de investimentos em desenvolvimento...
+            <div className={styles['investment-total']}>
+              <p className={styles['total-label']}>Total:</p>
+              <p className={styles['total-value']}>
+                {formatCurrency(totalInvestments)}
               </p>
-              <p className={styles['empty-subtitle']}>
-                Em breve você poderá acessar CDB, Tesouro Direto, Fundos e mais.
-              </p>
+            </div>
+
+            <div className={styles['investment-categories']}>
+              <div className={styles['investment-card']}>
+                <h3 className={styles['card-title']}>Renda Fixa</h3>
+                <p className={styles['card-value']}>
+                  {formatCurrency(rendaFixa)}
+                </p>
+              </div>
+              
+              <div className={styles['investment-card']}>
+                <h3 className={styles['card-title']}>Renda Variável</h3>
+                <p className={styles['card-value']}>
+                  {formatCurrency(rendaVariavel)}
+                </p>
+              </div>
+            </div>
+
+            <div className={styles['statistics-section']}>
+              <div className={styles['statistics-header']}>
+                <h3 className={styles['statistics-label']}>Estatísticas</h3>
+              </div>
+              <div className={styles['statistics-wrapper']}>
+                <div className={styles['statistics-card']}>
+                  <InvestmentChart transactions={transactions} />
+                </div>
+              </div>
             </div>
           </>
         );
@@ -193,27 +294,6 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
                 Em breve você poderá acessar mais funcionalidades bancárias.
               </p>
             </div>
-          </>
-        );
-
-      default:
-        return (
-          <>
-            <header className={styles.header}>
-              <h2 className={styles.title}>Confira os serviços disponíveis</h2>
-            </header>
-            <ul className={styles['service-grid']}>
-              {services.map((service) => (
-                <li key={service.id}>
-                  <ServiceCard
-                    title={service.title}
-                    description={service.description}
-                    icon={service.icon}
-                    onClick={service.action}
-                  />
-                </li>
-              ))}
-            </ul>
           </>
         );
     }
