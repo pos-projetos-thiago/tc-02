@@ -57,7 +57,7 @@ export default function DashboardPage() {
 }
 
 function DashboardContent({ userName }: { userName: string }) {
-  const { balance, transactions } = useDashboard();
+  const { balance, transactions, activeSection } = useDashboard();
   const router = useRouter();
 
   const handleEditTransactions = () => {
@@ -72,7 +72,7 @@ function DashboardContent({ userName }: { userName: string }) {
     <>
       <UserProfileSupabase userName={userName} />
       <main className={styles.main}>
-        <div className={styles['dashboard-grid']}>
+        <div className={`${styles['dashboard-grid']} ${activeSection === 'others' ? styles['others-layout'] : ''}`}>
           <div className={styles['grid-sidebar']}>
             <DashboardNav />
           </div>
@@ -84,17 +84,21 @@ function DashboardContent({ userName }: { userName: string }) {
             />
           </div>
 
-          <div className={styles['grid-services']}>
-            <DashboardServices />
-          </div>
+          {activeSection !== 'others' && (
+            <>
+              <div className={styles['grid-services']}>
+                <DashboardServices />
+              </div>
 
-          <div className={styles['grid-extract']}>
-            <DashboardExtract 
-              transactions={transactions}
-              onEditClick={handleEditTransactions}
-              onDeleteClick={handleDeleteTransactions}
-            />
-          </div>
+              <div className={styles['grid-extract']}>
+                <DashboardExtract 
+                  transactions={transactions}
+                  onEditClick={handleEditTransactions}
+                  onDeleteClick={handleDeleteTransactions}
+                />
+              </div>
+            </>
+          )}
         </div>
       </main>
     </>

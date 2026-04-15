@@ -29,6 +29,13 @@
     height: auto;
     gap: 1.6rem;
   }
+
+  &.others-layout {
+    @include mobile {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+  }
 }
 
 .grid-sidebar {
@@ -44,6 +51,11 @@
 
   @include mobile {
     grid-area: auto;
+  }
+
+  .others-layout & {
+    grid-area: 1 / 2 / 2 / 5;
+    max-height: 50rem;
   }
 }
 

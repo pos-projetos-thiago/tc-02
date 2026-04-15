@@ -10,6 +10,13 @@
   min-height: 20rem;
   position: relative;
   overflow: hidden;
+
+  &.others-mode {
+    background: #CBCBCB;
+    color: #000000;
+    min-height: 20rem;
+    height: 50rem;
+  }
 }
 
 .content {
@@ -58,6 +65,22 @@
     z-index: 1;
     pointer-events: auto;
   }
+
+  .others-mode & {
+    position: absolute;
+    right: auto;
+    left: 8rem;
+    top: 6rem;
+    bottom: auto;
+    max-width: 40rem;
+    z-index: 1;
+
+    @include mobile {
+      left: 6rem;
+      max-width: 24rem;
+      top: 4rem;
+    }
+  }
 }
 
 .illustration-img {
@@ -71,12 +94,29 @@
     max-width: 20rem;
     opacity: 1;
   }
+
+  .others-mode & {
+    max-width: 40rem;
+    width: 40rem;
+    height: 40rem;
+    opacity: 1;
+
+    @include mobile {
+      max-width: 24rem;
+      width: 24rem;
+      height: 24rem;
+    }
+  }
 }
 
 .greeting {
   font-size: 2.5rem;
   font-weight: $font-weight-bold;
   margin: 0;
+
+  &.others-greeting {
+    color: #000000;
+  }
 }
 
 .date {
