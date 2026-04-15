@@ -77,7 +77,7 @@ const investmentOptions: ButtonOption[] = [
   },
   { 
     value: 'investment-tesouro-direto', 
-    label: 'Tesouro Direto', 
+    label: 'Tesouro', 
     color: '#8F3CFF' 
   },
   { 

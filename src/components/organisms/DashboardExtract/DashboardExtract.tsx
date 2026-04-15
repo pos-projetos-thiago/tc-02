@@ -1,11 +1,10 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { TransactionItem } from '@/components/molecules/TransactionItem';
 import type { Transaction } from '@/contexts/DashboardContext';
 import styles from './DashboardExtract.module.scss';
-
-export type { Transaction };
 
 export interface DashboardExtractProps {
   transactions?: Transaction[];
@@ -16,12 +15,17 @@ export interface DashboardExtractProps {
 
 export const DashboardExtract = ({ 
   transactions = [], 
-  maxItems = 5,
+  maxItems = 4,
   onEditClick,
   onDeleteClick
 }: DashboardExtractProps) => {
-
+  const router = useRouter();
   const limitedTransactions = transactions.slice(0, maxItems);
+  const hasMoreTransactions = transactions.length > maxItems;
+
+  const handleViewMore = () => {
+    router.push('/dashboard/transacoes');
+  };
 
   return (
     <aside className={styles.extract}>
@@ -68,6 +72,16 @@ export const DashboardExtract = ({
           <div className={styles['empty-state']}>
             <p>Nenhuma transação recente</p>
           </div>
+        )}
+
+        {hasMoreTransactions && (
+          <button 
+            className={styles['view-more-button']}
+            onClick={handleViewMore}
+            type="button"
+          >
+            Ver mais
+          </button>
         )}
       </div>
     </aside>
