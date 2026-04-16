@@ -15,7 +15,7 @@
     background: #CBCBCB;
     color: #000000;
     min-height: 20rem;
-    height: 50rem;
+    height: 55rem;
   }
 }
 
@@ -24,10 +24,15 @@
   justify-content: space-between;
   align-items: flex-start;
   height: 100%;
+  gap: 4rem;
   
   @include mobile {
     flex-direction: column;
     gap: 2.4rem;
+  }
+
+  .others-mode & {
+    gap: 6rem;
   }
 }
 
@@ -67,18 +72,20 @@
   }
 
   .others-mode & {
-    position: absolute;
+    position: relative;
     right: auto;
-    left: 8rem;
-    top: 6rem;
+    left: auto;
+    top: auto;
     bottom: auto;
-    max-width: 40rem;
+    max-width: none;
     z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 4rem;
 
     @include mobile {
-      left: 6rem;
-      max-width: 24rem;
-      top: 4rem;
+      margin-top: 2rem;
     }
   }
 }
@@ -99,7 +106,7 @@
     max-width: 40rem;
     width: 40rem;
     height: 40rem;
-    opacity: 1;
+    opacity: 0.8;
 
     @include mobile {
       max-width: 24rem;
@@ -130,6 +137,20 @@
   margin-right: 10rem;
   
   @include mobile {
+    margin-right: 1.6rem;
+  }
+}
+
+.profile-wrapper {
+  margin-top: 6rem;
+  margin-right: 6rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 1;
+  
+  @include mobile {
+    margin-top: 3rem;
     margin-right: 1.6rem;
   }
 }

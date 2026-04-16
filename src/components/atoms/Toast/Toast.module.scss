@@ -1,0 +1,99 @@
+@import '../../../styles/colors';
+@import '../../../styles/typography';
+
+.toast {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background: $color-white;
+  border-radius: 0.8rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 1.6rem 2rem;
+  z-index: 1000;
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 50rem;
+  min-width: 32rem;
+  border-left: 4px solid transparent;
+
+  &.show {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  &.success {
+    border-left-color: $color-green;
+    
+    .message {
+      color: darken($color-green, 20%);
+    }
+  }
+
+  &.error {
+    border-left-color: $color-error;
+    
+    .message {
+      color: darken($color-error, 10%);
+    }
+  }
+
+  &.info {
+    border-left-color: $color-blue;
+    
+    .message {
+      color: darken($color-blue, 15%);
+    }
+  }
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.message {
+  font-size: 1.4rem;
+  font-weight: $font-weight-medium;
+  color: $color-black;
+  line-height: 1.4;
+}
+
+.close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  color: $color-gray-400;
+  cursor: pointer;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: $color-gray-50;
+    color: $color-gray-500;
+  }
+
+  &:focus {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+@media (max-width: 768px) {
+  .toast {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: none;
+  }
+}
