@@ -100,6 +100,12 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(values.email.trim())) {
+      setError('Por favor, insira um email válido');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     
@@ -199,8 +205,9 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
           
           {resetSuccess ? (
             <div className={styles["reset-success"]}>
-              <p>Email de recuperação enviado com sucesso!</p>
-              <p>Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.</p>
+              <p>Solicitação de recuperação processada!</p>
+              <p>Se este email estiver cadastrado em nossa plataforma, você receberá um link para redefinir sua senha em alguns minutos.</p>
+              <p className={styles["hint-text"]}>Verifique também sua caixa de spam.</p>
               <Button 
                 variant="primary" 
                 onClick={() => {

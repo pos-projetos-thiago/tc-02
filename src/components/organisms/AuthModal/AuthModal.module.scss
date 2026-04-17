@@ -283,3 +283,10 @@ $modal-width-desktop: 80rem;
     border-color: $color-gray-300;
   }
 }
+
+.hint-text {
+  font-size: 1.4rem;
+  color: $color-text-secondary;
+  font-style: italic;
+  margin-top: 0.8rem;
+}

@@ -13,6 +13,12 @@
   @media (min-height: 1025px) {
     padding-bottom: 1.8rem;
   }
+
+  @include mobile {
+    border-radius: 1.2rem;
+    min-height: 15rem;
+    margin-bottom: 1.6rem;
+  }
 }
 
 .header {
@@ -25,6 +31,13 @@
   color: $color-black;
   margin-top: 2rem;
   margin-left: 3.2rem;
+
+  @include mobile {
+    font-size: 2rem;
+    margin-top: 1.6rem;
+    margin-left: 2.4rem;
+    margin-right: 2.4rem;
+  }
 }
 
 .transaction-title {
