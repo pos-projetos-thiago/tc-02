@@ -10,6 +10,7 @@ import { ButtonGroup, type ButtonOption } from '@/components/atoms/ButtonGroup';
 import { ServiceCard } from '@/components/molecules/ServiceCard';
 import { InvestmentChart } from '@/components/molecules/InvestmentChart';
 import { useDashboard } from '@/contexts/DashboardContext';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import styles from './DashboardServices.module.scss';
 
 export interface Service {
@@ -22,6 +23,7 @@ export interface Service {
 
 export interface DashboardServicesProps {
   services?: Service[];
+  userName?: string;
 }
 
 const defaultServices: Service[] = [
@@ -70,30 +72,75 @@ const transactionOptions: DropdownOption[] = [
 ];
 
 const investmentOptions: ButtonOption[] = [
-  { 
-    value: 'investment-fundos', 
-    label: 'Fundos', 
-    color: '#2567F9' 
+  {
+    value: 'investment-fundos',
+    label: 'Fundos',
+    color: '#2567F9'
   },
-  { 
-    value: 'investment-tesouro-direto', 
-    label: 'Tesouro', 
-    color: '#8F3CFF' 
+  {
+    value: 'investment-tesouro-direto',
+    label: 'Tesouro',
+    color: '#8F3CFF'
   },
-  { 
-    value: 'investment-previdencia', 
-    label: 'Previdência', 
-    color: '#FF3C82' 
+  {
+    value: 'investment-previdencia',
+    label: 'Previdência',
+    color: '#FF3C82'
   },
-  { 
-    value: 'investment-bolsa', 
-    label: 'Bolsa', 
-    color: '#F1823D' 
+  {
+    value: 'investment-bolsa',
+    label: 'Bolsa',
+    color: '#F1823D'
   }
 ];
 
-export const DashboardServices = ({ services = defaultServices }: DashboardServicesProps) => {
-  const { activeSection, addTransaction, transactions } = useDashboard();
+export const DashboardServices = ({ services = defaultServices, userName = "Usuário" }: DashboardServicesProps) => {
+  const { activeSection, addTransaction, transactions, setActiveSection } = useDashboard();
+  const { user } = useSupabaseAuth();
+  
+  const displayName = user?.user_metadata?.full_name || userName;
+  
+  const servicesWithActions: Service[] = [
+    {
+      id: '1',
+      title: 'Empréstimo',
+      description: '',
+      icon: '/DashboardServices/emprestimo.svg'
+    },
+    {
+      id: '2',
+      title: 'Meus cartões',
+      description: '',
+      icon: '/DashboardServices/cartao.svg',
+      action: () => setActiveSection('cards')
+    },
+    {
+      id: '3',
+      title: 'Doações',
+      description: '',
+      icon: '/DashboardServices/doacoes.svg'
+    },
+    {
+      id: '4',
+      title: 'Pix',
+      description: '',
+      icon: '/DashboardServices/pix.svg'
+    },
+    {
+      id: '5',
+      title: 'Seguros',
+      description: '',
+      icon: '/DashboardServices/seguros.svg'
+    },
+    {
+      id: '6',
+      title: 'Crédito celular',
+      description: '',
+      icon: '/DashboardServices/celular.svg'
+    }
+  ];
+
+  const currentServices = services === defaultServices ? servicesWithActions : services;
   const [selectedType, setSelectedType] = useState('');
   const [selectedInvestmentType, setSelectedInvestmentType] = useState('');
   const [amount, setAmount] = useState('');
@@ -103,20 +150,20 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
     .reduce((total, transaction) => total + transaction.amount, 0);
 
   const rendaFixa = transactions
-    .filter(transaction => 
-      transaction.type === 'investment' && 
-      (transaction.investmentType === 'tesouro-direto' || 
-       transaction.investmentType === 'previdencia' ||
-       transaction.subtype === 'renda-fixa')
+    .filter(transaction =>
+      transaction.type === 'investment' &&
+      (transaction.investmentType === 'tesouro-direto' ||
+        transaction.investmentType === 'previdencia' ||
+        transaction.subtype === 'renda-fixa')
     )
     .reduce((total, transaction) => total + transaction.amount, 0);
 
   const rendaVariavel = transactions
-    .filter(transaction => 
-      transaction.type === 'investment' && 
-      (transaction.investmentType === 'fundos' || 
-       transaction.investmentType === 'bolsa' ||
-       transaction.subtype === 'renda-variavel')
+    .filter(transaction =>
+      transaction.type === 'investment' &&
+      (transaction.investmentType === 'fundos' ||
+        transaction.investmentType === 'bolsa' ||
+        transaction.subtype === 'renda-variavel')
     )
     .reduce((total, transaction) => total + transaction.amount, 0);
 
@@ -141,7 +188,7 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
 
   const handleTransaction = () => {
     if (!selectedType || !amount) return;
-    
+
     if (selectedType === 'investment' && !selectedInvestmentType) return;
 
     const numericAmount = parseFloat(amount.replace(',', '.'));
@@ -165,7 +212,7 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
               <h2 className={styles.title}>Confira os serviços disponíveis</h2>
             </header>
             <ul className={styles['service-grid']}>
-              {services.map((service) => (
+              {currentServices.map((service: Service) => (
                 <li key={service.id}>
                   <ServiceCard
                     title={service.title}
@@ -258,7 +305,7 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
                   {formatCurrency(rendaFixa)}
                 </p>
               </div>
-              
+
               <div className={styles['investment-card']}>
                 <h3 className={styles['card-title']}>Renda Variável</h3>
                 <p className={styles['card-value']}>
@@ -274,6 +321,52 @@ export const DashboardServices = ({ services = defaultServices }: DashboardServi
               <div className={styles['statistics-wrapper']}>
                 <div className={styles['statistics-card']}>
                   <InvestmentChart transactions={transactions} />
+                </div>
+              </div>
+            </div>
+          </>
+        );
+
+      case 'cards':
+        return (
+          <>
+            <header className={styles.header}>
+              <h2 className={styles.title}>Meus cartões</h2>
+            </header>
+            
+            <div className={styles['cards-container']}>
+              <div className={styles['card-section']}>
+                <h3 className={styles['card-type-title']}>Cartão digital</h3>
+                
+                <div className={styles['card-layout']}>
+                  <div className={styles['card-display']}>
+                    <div className={styles['card-logo']}>
+                      <Image
+                        src="/DashboardServices/logo-card.svg"
+                        alt="Logo Byte"
+                        width={100}
+                        height={60}
+                        className={styles['logo-img']}
+                      />
+                    </div>
+                    
+                    <div className={styles['card-info']}>
+                      <p className={styles['card-holder']}>{displayName}</p>
+                      <p className={styles['card-number']}>•••••••</p>
+                    </div>
+                  </div>
+                  
+                  <div className={styles['card-actions-side']}>
+                    <button className={styles['btn-configure']}>
+                      Configurar
+                    </button>
+                    <button className={styles['btn-block']}>
+                      Bloquear
+                    </button>
+                    <p className={styles['card-function']}>
+                      Função: Débito/Crédito
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

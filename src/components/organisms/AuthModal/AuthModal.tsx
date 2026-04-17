@@ -125,18 +125,18 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
         return;
       }
       
-      console.log('🚪 Iniciando processo de login...');
+      console.log('Iniciando processo de login...');
       login(email, password);
-      console.log('🚪 Login executado, aguardando...');
+      console.log('Login executado, aguardando...');
       
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      console.log('🚪 Fechando modal...');
+      console.log('Fechando modal...');
       onClose();
       setValues(emptyValues);
-      console.log('🚪 Navegando para dashboard...');
+      console.log('Navegando para dashboard...');
       router.push('/dashboard');
-      console.log('🚪 Processo de login concluído!');
+      console.log('Processo de login concluído!');
     } catch (err) {
       const message = err instanceof Error ? err.message : 
         variant === 'signup' ? 'Não foi possível criar a conta.' : 'Não foi possível entrar.';

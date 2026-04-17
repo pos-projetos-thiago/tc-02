@@ -73,7 +73,7 @@ export function setSessionUser(next: SessionUser | null) {
       
       // Detectar origem do logout automático
       if (next === null) {
-        console.log('🚨 LOGOUT DETECTADO! Stack trace:');
+        console.log('LOGOUT DETECTADO! Stack trace:');
         console.trace('Origem do logout:');
       }
     }

@@ -30,20 +30,20 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <LoadingScreen 
+      <LoadingScreen
         isVisible={true}
-        size="large" 
-        text="Verificando autenticação..." 
+        size="large"
+        text="Verificando autenticação..."
       />
     );
   }
 
   if (!user) {
     return (
-      <LoadingScreen 
+      <LoadingScreen
         isVisible={true}
-        size="large" 
-        text="Redirecionando para login..." 
+        size="large"
+        text="Redirecionando para login..."
       />
     );
   }
@@ -64,7 +64,7 @@ function DashboardContent({ userName }: { userName: string }) {
   const handleDeleteTransactions = () => {
     router.push('/dashboard/transacoes');
   };
-  
+
   return (
     <>
       <UserProfileSupabase userName={userName} />
@@ -84,11 +84,11 @@ function DashboardContent({ userName }: { userName: string }) {
           {activeSection !== 'others' && (
             <>
               <div className={styles['grid-services']}>
-                <DashboardServices />
+                <DashboardServices userName={userName} />
               </div>
 
               <div className={styles['grid-extract']}>
-                <DashboardExtract 
+                <DashboardExtract
                   transactions={transactions}
                   onEditClick={handleEditTransactions}
                   onDeleteClick={handleDeleteTransactions}
