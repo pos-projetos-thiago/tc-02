@@ -6,9 +6,9 @@ import Image from 'next/image';
 import { Dropdown, type DropdownOption } from '@/components/atoms/Dropdown';
 import { CurrencyInput } from '@/components/atoms/Input';
 import { TransactionButton } from '@/components/atoms/TransactionButton';
-import { ButtonGroup, type ButtonOption } from '@/components/atoms/ButtonGroup/ButtonGroup';
+import { ButtonGroup, type ButtonOption } from '@/components/atoms/ButtonGroup';
 import { ServiceCard } from '@/components/molecules/ServiceCard';
-import { InvestmentChart } from '@/components/molecules/InvestmentChart/InvestmentChart';
+import { InvestmentChart } from '@/components/molecules/InvestmentChart';
 import { useDashboard } from '@/contexts/DashboardContext';
 import styles from './DashboardServices.module.scss';
 

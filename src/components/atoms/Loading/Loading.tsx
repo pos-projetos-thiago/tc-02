@@ -26,6 +26,7 @@ export const Loading = ({
           alt="Carregando..." 
           width={sizeMap[size]}
           height={sizeMap[size]}
+          loading="eager"
           className={styles.gif}
           unoptimized
         />

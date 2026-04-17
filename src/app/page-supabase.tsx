@@ -27,7 +27,6 @@ export default function Home() {
     }
   }, [user, isLoading, router]);
 
-  // Mostrar loading durante carregamento
   if (isLoading) {
     return (
       <div style={{ 

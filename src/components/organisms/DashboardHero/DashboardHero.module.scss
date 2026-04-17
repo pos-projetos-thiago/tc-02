@@ -10,6 +10,13 @@
   min-height: 20rem;
   position: relative;
   overflow: hidden;
+
+  &.others-mode {
+    background: #CBCBCB;
+    color: #000000;
+    min-height: 20rem;
+    height: 55rem;
+  }
 }
 
 .content {
@@ -17,10 +24,15 @@
   justify-content: space-between;
   align-items: flex-start;
   height: 100%;
+  gap: 4rem;
   
   @include mobile {
     flex-direction: column;
     gap: 2.4rem;
+  }
+
+  .others-mode & {
+    gap: 6rem;
   }
 }
 
@@ -58,6 +70,24 @@
     z-index: 1;
     pointer-events: auto;
   }
+
+  .others-mode & {
+    position: relative;
+    right: auto;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    max-width: none;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 4rem;
+
+    @include mobile {
+      margin-top: 2rem;
+    }
+  }
 }
 
 .illustration-img {
@@ -71,12 +101,29 @@
     max-width: 20rem;
     opacity: 1;
   }
+
+  .others-mode & {
+    max-width: 40rem;
+    width: 40rem;
+    height: 40rem;
+    opacity: 0.8;
+
+    @include mobile {
+      max-width: 24rem;
+      width: 24rem;
+      height: 24rem;
+    }
+  }
 }
 
 .greeting {
   font-size: 2.5rem;
   font-weight: $font-weight-bold;
   margin: 0;
+
+  &.others-greeting {
+    color: #000000;
+  }
 }
 
 .date {
@@ -90,6 +137,20 @@
   margin-right: 10rem;
   
   @include mobile {
+    margin-right: 1.6rem;
+  }
+}
+
+.profile-wrapper {
+  margin-top: 6rem;
+  margin-right: 6rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 1;
+  
+  @include mobile {
+    margin-top: 3rem;
     margin-right: 1.6rem;
   }
 }
