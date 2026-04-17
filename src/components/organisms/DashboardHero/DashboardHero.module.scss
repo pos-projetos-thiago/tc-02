@@ -45,6 +45,11 @@
   flex: 1;
   position: relative;
   z-index: 2;
+  
+  @include mobile {
+    margin: 1.6rem;
+    gap: 1.6rem;
+  }
 }
 
 .greeting-section {

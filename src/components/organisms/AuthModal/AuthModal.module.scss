@@ -19,6 +19,12 @@ $modal-width-desktop: 80rem;
   @include desktop {
     width: $modal-width-desktop;
   }
+  
+  @include mobile {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
 }
 
 .wrapper {
@@ -36,8 +42,9 @@ $modal-width-desktop: 80rem;
   }
 
   @include mobile {
-    padding: 2.4rem 1.6rem 2.4rem;
+    padding: 1.6rem 1.2rem 2.4rem;
     min-width: unset;
+    gap: 1.6rem;
   }
 }
 
@@ -51,8 +58,8 @@ $modal-width-desktop: 80rem;
 
 .image-wrapper {
   position: relative;
-  width: 30rem;
-  height: 21.5rem;
+  width: 24rem;
+  height: 17rem;
   flex-shrink: 0;
 
   @include tablet {
@@ -205,12 +212,25 @@ $modal-width-desktop: 80rem;
 
 .login .submit-button {
   width: 100%;
+  margin-bottom: 1.6rem;
 }
 
 .signup .submit-button {
   width: 14.4rem;
   min-width: 14.4rem;
   height: 4.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 2.4rem;
+  
+  @include mobile {
+    width: 100%;
+    min-width: auto;
+    height: 5.2rem;
+    font-size: 1.6rem;
+  }
 }
 
 .forgot-password {

@@ -123,7 +123,9 @@
   min-height: 18rem;
 
   @include mobile {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.6rem;
+    padding: 2rem 1.6rem;
   }
 
   li {
@@ -313,7 +315,7 @@
   gap: 3.2rem;
   align-items: flex-start;
   
-  @media (max-width: 768px) {
+  @include mobile {
     flex-direction: column;
     gap: 2.4rem;
   }
@@ -330,10 +332,11 @@
   flex-direction: column;
   justify-content: space-between;
   
-  @media (max-width: 768px) {
+  @include mobile {
     width: 100%;
-    max-width: 35rem;
-    height: 20rem;
+    max-width: none;
+    height: 18rem;
+    margin: 0 auto;
   }
 }
 
@@ -379,10 +382,12 @@
   min-width: 28rem;
   padding-top: 1rem;
   
-  @media (max-width: 768px) {
-    align-items: flex-start;
+  @include mobile {
+    align-items: stretch;
     gap: 1.2rem;
     min-width: auto;
+    width: 100%;
+    padding-top: 0;
   }
 }
 
@@ -398,6 +403,7 @@
   transition: all 0.2s ease;
   width: 100%;
   min-width: 28rem;
+  min-height: 4.8rem;
   
   &:hover {
     background-color: darken(#E8451C, 10%);
@@ -407,6 +413,12 @@
   
   &:active {
     transform: translateY(0);
+  }
+  
+  @include mobile {
+    min-width: auto;
+    padding: 1.8rem 2.4rem;
+    font-size: 1.7rem;
   }
 }
 
@@ -422,6 +434,7 @@
   transition: all 0.2s ease;
   width: 100%;
   min-width: 28rem;
+  min-height: 4.8rem;
   
   &:hover {
     background-color: rgba(232, 69, 28, 0.08);
@@ -433,6 +446,12 @@
   
   &:active {
     transform: translateY(0);
+  }
+  
+  @include mobile {
+    min-width: auto;
+    padding: 1.8rem 2.4rem;
+    font-size: 1.7rem;
   }
 }
 

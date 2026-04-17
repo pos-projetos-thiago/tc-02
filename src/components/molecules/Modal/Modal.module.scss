@@ -32,11 +32,16 @@
   position: relative;
   max-width: 90vw;
   max-height: 90vh;
-  overflow: hidden;
+  overflow-y: auto;
   background-color: $color-white;
   border-radius: 1.2rem;
   box-shadow: 0 0.4rem 2.4rem rgba(0, 0, 0, 0.2);
   animation: scaleIn 0.3s ease-out;
+  
+  @include mobile {
+    max-height: 95vh;
+    max-width: 95vw;
+  }
 }
 
 .content-full-height {
