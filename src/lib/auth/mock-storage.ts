@@ -34,7 +34,7 @@ export function getStoredUsers(): StoredUser[] {
     if (!raw) {
       if (process.env.NODE_ENV === 'development') {
         console.log('Nenhum dado encontrado no localStorage para usuários');
-        console.log('📖 🔍 Verificando todas as chaves no localStorage:');
+        console.log('Verificando todas as chaves no localStorage:');
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
           if (key) {
@@ -71,9 +71,9 @@ export function saveStoredUser(user: StoredUser): void {
     const normalizedEmail = user.email.toLowerCase();
     
     if (process.env.NODE_ENV === 'development') {
-      console.log('💾 Salvando usuário:', user);
-      console.log('💾 Usuários existentes antes:', users);
-      console.log('💾 Chave do localStorage:', BYTEBANK_USERS_KEY);
+      console.log('Salvando usuário:', user);
+      console.log('Usuários existentes antes:', users);
+      console.log('Chave do localStorage:', BYTEBANK_USERS_KEY);
     }
     
     if (users.some((u) => u.email.toLowerCase() === normalizedEmail)) {
@@ -84,9 +84,9 @@ export function saveStoredUser(user: StoredUser): void {
     localStorage.setItem(BYTEBANK_USERS_KEY, JSON.stringify(users));
     
     if (process.env.NODE_ENV === 'development') {
-      console.log('💾 Usuário salvo com sucesso!');
-      console.log('💾 Usuários após salvar:', getStoredUsers());
-      console.log('💾 Dados no localStorage:', localStorage.getItem(BYTEBANK_USERS_KEY));
+      console.log('Usuário salvo com sucesso!');
+      console.log('Usuários após salvar:', getStoredUsers());
+      console.log('Dados no localStorage:', localStorage.getItem(BYTEBANK_USERS_KEY));
     }
   } catch (error) {
     if (error instanceof Error && error.message.includes('existe uma conta')) {
@@ -102,7 +102,7 @@ export function findUserByCredentials(email: string, password: string): StoredUs
   const users = getStoredUsers();
   
   if (process.env.NODE_ENV === 'development') {
-    console.log('🔍 Buscando credenciais:', {
+    console.log('Buscando credenciais:', {
       emailBuscado: normalized,
       senhaBuscada: password,
       usuariosEncontrados: users.length,
@@ -119,7 +119,7 @@ export function findUserByCredentials(email: string, password: string): StoredUs
   );
   
   if (process.env.NODE_ENV === 'development') {
-    console.log('🔍 Resultado da busca:', found ? 'ENCONTRADO' : 'NÃO ENCONTRADO');
+    console.log('Resultado da busca:', found ? 'ENCONTRADO' : 'NÃO ENCONTRADO');
   }
   
   return found;

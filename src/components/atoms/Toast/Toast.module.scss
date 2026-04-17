@@ -3,7 +3,7 @@
 
 .toast {
   position: fixed;
-  top: 2rem;
+  bottom: 2rem;
   right: 2rem;
   background: $color-white;
   border-radius: 0.8rem;
@@ -24,7 +24,7 @@
 
   &.success {
     border-left-color: $color-green;
-    
+
     .message {
       color: darken($color-green, 20%);
     }
@@ -32,7 +32,7 @@
 
   &.error {
     border-left-color: $color-error;
-    
+
     .message {
       color: darken($color-error, 10%);
     }
@@ -40,7 +40,7 @@
 
   &.info {
     border-left-color: $color-blue;
-    
+
     .message {
       color: darken($color-blue, 15%);
     }
@@ -91,7 +91,7 @@
 
 @media (max-width: 768px) {
   .toast {
-    top: 1rem;
+    bottom: 1rem;
     right: 1rem;
     left: 1rem;
     max-width: none;

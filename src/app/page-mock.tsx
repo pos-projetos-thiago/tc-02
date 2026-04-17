@@ -40,7 +40,6 @@ export default function Home() {
     }
   }, [user, router, isHydrated]);
 
-  // Mostrar loading durante hidratação
   if (!isHydrated) {
     return (
       <div style={{ 
@@ -56,7 +55,6 @@ export default function Home() {
     );
   }
 
-  // Mostrar loading se usuário logado (antes de redirecionar)
   if (user) {
     return (
       <div style={{ 

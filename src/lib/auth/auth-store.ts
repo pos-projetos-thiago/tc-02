@@ -147,7 +147,7 @@ export function registerUser(name: string, email: string, password: string) {
     };
 
     if (process.env.NODE_ENV === 'development') {
-      console.log('📝 Registrando usuário:', userData);
+      console.log('Registrando usuário:', userData);
     }
 
     saveStoredUser(userData);

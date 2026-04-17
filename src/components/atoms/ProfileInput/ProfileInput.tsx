@@ -27,7 +27,6 @@ export const ProfileInput = ({
 }: ProfileInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   
-  // Gerar ID único se não fornecido
   const inputId = id || `profile-input-${label.toLowerCase().replace(/\s+/g, '-')}`;
   const inputName = name || label.toLowerCase().replace(/\s+/g, '_');
 

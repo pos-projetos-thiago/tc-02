@@ -19,17 +19,15 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Aguardar um tempo maior para evitar loop de redirecionamento
     if (!isLoading && !user) {
       const timer = setTimeout(() => {
         router.replace('/');
-      }, 100); // Pequeno delay para estabilizar
+      }, 100);
 
       return () => clearTimeout(timer);
     }
   }, [user, isLoading, router]);
 
-  // Mostrar loading enquanto autentica
   if (isLoading) {
     return (
       <LoadingScreen 
@@ -40,7 +38,6 @@ export default function DashboardPage() {
     );
   }
 
-  // Se não há usuário, mostrar loading durante redirecionamento
   if (!user) {
     return (
       <LoadingScreen 

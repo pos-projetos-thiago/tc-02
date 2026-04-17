@@ -63,10 +63,10 @@ export const DashboardHero = ({
       message = "Nenhuma alteração foi feita no perfil";
       type = 'info';
     } else if (changes.length === 1) {
-      message = `✓ Perfil atualizado! ${changes[0]}`;
+      message = `Perfil atualizado! ${changes[0]}`;
       type = 'success';
     } else {
-      message = `✓ Perfil atualizado com ${changes.length} alterações: ${changes.join(" • ")}`;
+      message = `Perfil atualizado com ${changes.length} alterações: ${changes.join(" • ")}`;
       type = 'success';
     }
 

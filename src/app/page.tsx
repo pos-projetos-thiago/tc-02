@@ -26,13 +26,12 @@ export default function Home() {
     if (!isLoading && user) {
       const timer = setTimeout(() => {
         router.replace('/dashboard');
-      }, 100); // Pequeno delay para evitar loop
+      }, 100);
 
       return () => clearTimeout(timer);
     }
   }, [user, isLoading, router]);
 
-  // Mostrar loading durante carregamento
   if (isLoading) {
     return (
       <div style={{ 
@@ -48,7 +47,6 @@ export default function Home() {
     );
   }
 
-  // Mostrar loading se usuário logado (antes de redirecionar)
   if (user) {
     return (
       <div style={{ 
