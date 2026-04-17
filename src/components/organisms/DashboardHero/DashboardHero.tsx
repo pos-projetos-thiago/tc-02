@@ -20,10 +20,10 @@ export const DashboardHero = ({
 }: DashboardHeroProps) => {
   const { activeSection } = useDashboard();
   const { user } = useSupabaseAuth();
-  const [toast, setToast] = useState({ 
-    isVisible: false, 
-    message: '', 
-    type: 'success' as 'success' | 'info' | 'error' 
+  const [toast, setToast] = useState({
+    isVisible: false,
+    message: '',
+    type: 'success' as 'success' | 'info' | 'error'
   });
   const currentDate = useMemo(() => {
     const today = new Date();
@@ -33,7 +33,7 @@ export const DashboardHero = ({
       month: '2-digit',
       day: '2-digit'
     });
-    
+
     return dateString.charAt(0).toUpperCase() + dateString.slice(1);
   }, []);
 
@@ -47,18 +47,18 @@ export const DashboardHero = ({
     if (data.name !== originalName) {
       changes.push(`Nome: "${originalName}" → "${data.name}"`);
     }
-    
+
     if (data.email !== originalEmail) {
       changes.push(`Email: "${originalEmail}" → "${data.email}"`);
     }
-    
+
     if (data.password.trim()) {
       changes.push(`Senha alterada`);
     }
 
     let message = "";
     let type: 'success' | 'info' | 'error' = 'success';
-    
+
     if (changes.length === 0) {
       message = "Nenhuma alteração foi feita no perfil";
       type = 'info';
@@ -120,7 +120,7 @@ export const DashboardHero = ({
           </div>
         )}
       </div>
-      
+
       <Toast
         message={toast.message}
         type={toast.type}

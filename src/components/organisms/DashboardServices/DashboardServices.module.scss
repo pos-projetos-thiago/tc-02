@@ -286,3 +286,161 @@
     padding: 0.8rem;
   }
 }
+
+.cards-container {
+  padding: 0 3.2rem;
+  
+  @media (max-width: 768px) {
+    padding: 0 1.6rem;
+  }
+}
+
+.card-section {
+  margin-top: 1.6rem;
+}
+
+.card-type-title {
+  font-size: 2rem;
+  font-weight: 300;
+  color: $color-text-secondary;
+  margin: 0;
+  margin-bottom: 1.6rem;
+}
+
+.card-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 3.2rem;
+  align-items: flex-start;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 2.4rem;
+  }
+}
+
+.card-display {
+  background-color: #004D61;
+  border-radius: 1.2rem;
+  width: 40rem;
+  height: 22rem;
+  position: relative;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 35rem;
+    height: 20rem;
+  }
+}
+
+.card-logo {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+}
+
+.logo-img {
+  width: 10rem;
+  height: auto;
+}
+
+.card-info {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+}
+
+.card-holder {
+  color: white;
+  font-size: 1.6rem;
+  font-weight: $font-weight-medium;
+  margin: 0;
+  margin-bottom: 0.8rem;
+}
+
+.card-number {
+  color: white;
+  font-size: 1.6rem;
+  font-weight: $font-weight-regular;
+  margin: 0;
+  letter-spacing: 0.3rem;
+}
+
+.card-actions-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  align-items: stretch;
+  justify-content: flex-start;
+  min-width: 28rem;
+  padding-top: 1rem;
+  
+  @media (max-width: 768px) {
+    align-items: flex-start;
+    gap: 1.2rem;
+    min-width: auto;
+  }
+}
+
+.btn-configure {
+  background-color: #E8451C;
+  color: white;
+  border: none;
+  border-radius: 0.8rem;
+  padding: 1.6rem;
+  font-size: 1.6rem;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  min-width: 28rem;
+  
+  &:hover {
+    background-color: darken(#E8451C, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(232, 69, 28, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-block {
+  background-color: transparent;
+  color: #E8451C;
+  border: 2px solid #E8451C;
+  border-radius: 0.8rem;
+  padding: 1.6rem;
+  font-size: 1.6rem;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  min-width: 28rem;
+  
+  &:hover {
+    background-color: rgba(232, 69, 28, 0.08);
+    border-color: darken(#E8451C, 10%);
+    color: darken(#E8451C, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(232, 69, 28, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.card-function {
+  color: $color-text-secondary;
+  font-size: 1.6rem;
+  font-weight: $font-weight-regular;
+  margin: 0;
+  text-align: center;
+  margin-top: 0.8rem;
+}

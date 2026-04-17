@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from 'react';
 
-type DashboardSection = 'services' | 'transfers' | 'investments' | 'others';
+type DashboardSection = 'services' | 'transfers' | 'investments' | 'others' | 'cards';
 
 export interface Transaction {
   id: string;
@@ -64,7 +64,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const addTransaction = useCallback((type: string, amount: number) => {
     const transactionTypes: { [key: string]: Transaction['type'] } = {
       deposit: 'deposit',
-      withdrawal: 'withdrawal', 
+      withdrawal: 'withdrawal',
       'investment-renda-fixa': 'investment',
       'investment-renda-variavel': 'investment',
       'investment-fundos': 'investment',
@@ -148,9 +148,9 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       });
     }
 
-    setTransactions(prev => 
-      prev.map(transaction => 
-        transaction.id === id 
+    setTransactions(prev =>
+      prev.map(transaction =>
+        transaction.id === id
           ? { ...transaction, ...updates }
           : transaction
       )
@@ -175,7 +175,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const resetData = useCallback(() => {
     setBalance(2000.00);
     setTransactions([]);
-    
+
     if (typeof window !== 'undefined') {
       localStorage.removeItem(STORAGE_KEYS.balance);
       localStorage.removeItem(STORAGE_KEYS.transactions);
@@ -183,10 +183,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const contextValue = useMemo(() => ({
-    activeSection, 
-    setActiveSection, 
-    balance, 
-    transactions, 
+    activeSection,
+    setActiveSection,
+    balance,
+    transactions,
     addTransaction,
     editTransaction,
     deleteTransaction,
