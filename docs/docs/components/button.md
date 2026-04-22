@@ -1,6 +1,6 @@
 # Button
 
-Componente de botão reutilizável com variantes semânticas e visuais.
+Componente em `src/components/atoms/Button/`. Estilos em `Button.module.scss`: a variante **primary** usa `$color-green` (não o `$color-primary` do token de marca) - confira o arquivo para hex e hovers.
 
 ## Variantes
 
@@ -25,28 +25,39 @@ Destaque ou alerta. Fundo laranja (ex: página 404).
 <Button variant="accent">Voltar ao início</Button>
 ```
 
-### Primary Mobile
+### Primary mobile
 Botões do Hero no mobile. Fundo preto.
 
 ```tsx
-<Button variant="primaryMobile">Abrir conta</Button>
+<Button variant="primary-mobile">Abrir conta</Button>
 ```
 
-### Secondary Mobile
+### Secondary mobile
 Botões do Hero no mobile. Outline preto.
 
 ```tsx
-<Button variant="secondaryMobile">Já tenho conta</Button>
+<Button variant="secondary-mobile">Já tenho conta</Button>
+```
+
+### Danger
+Ação destrutiva. Fundo vermelho (hex fixo no SCSS, fora de `_colors.scss`).
+
+```tsx
+<Button variant="danger">Excluir</Button>
 ```
 
 ## Props
 
 | Prop | Tipo | Padrão | Descrição |
 |------|------|--------|-----------|
-| `children` | `React.ReactNode` | - | **Obrigatório**. Conteúdo do botão |
-| `variant` | `'primary' \| 'secondary' \| 'accent' \| 'primaryMobile' \| 'secondaryMobile'` | `'primary'` | Variante visual do botão |
-| `onClick` | `() => void` | - | Função executada ao clicar |
-| `className` | `string` | - | Classes CSS adicionais |
+| `children` | `React.ReactNode` | - | Conteúdo |
+| `variant` | `'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'primary-mobile' \| 'secondary-mobile'` | `'primary'` | Classe no `Button.module.scss` |
+| `size` | `'normal' \| 'small'` | `'normal'` | Classe `small` para padding menor |
+| `onClick` | `() => void` | - | Se `href` não for passado |
+| `className` | `string` | - | - |
+| `href` | `string` | - | Se informado, renderiza `Link` do Next no lugar de `<button>` |
+| `type` | `'button' \| 'submit' \| 'reset'` | `button` | Só para `<button>` |
+| `disabled` | `boolean` | `false` | Só para `<button>` |
 
 ## Exemplos
 
@@ -88,10 +99,7 @@ export default function Example() {
 
 ## Responsividade
 
-O botão ajusta automaticamente seu tamanho em diferentes telas:
-
-- **Desktop**: padding 1.2rem 2.4rem | font-size 1.6rem
-- **Tablet**: padding 1.8rem 2rem | font-size 1.4rem
+A classe base `.button` ajusta `padding`, `min-height` e `font-size` nos mixins `mobile` e `tablet` de `_breakpoints.scss` (valores exatos no `Button.module.scss`).
 
 ## Acessibilidade
 
@@ -99,64 +107,9 @@ O botão ajusta automaticamente seu tamanho em diferentes telas:
 - **Contraste:** pensado para leitura em estados padrão e hover (validar pares se mudar a paleta)
 - **Feedback visual:** transição e estados claros de interação
 
-## Código Fonte
+## Implementação no repositório
 
-```tsx
-// src/components/atoms/Button/Button.tsx
-export interface ButtonProps {
-  children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'accent' | 'primaryMobile' | 'secondaryMobile';
-  onClick?: () => void;
-  className?: string;
-}
+- **Lógica:** `Button.tsx` (renderiza `next/link` se `href` estiver definido, senão `<button>` com `type` e `disabled`).
+- **Aparência:** `Button.module.scss` (variante `primary` com `$color-green`; `danger` com hex fixo; mobile com larguras no breakpoint).
 
-export const Button = ({ 
-  children, 
-  variant = 'primary', 
-  onClick, 
-  className 
-}: ButtonProps) => {
-  return (
-    <button 
-      className={`${styles.button} ${styles[variant]} ${className || ''}`} 
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-};
-```
-
-## Estilos
-
-```scss
-.button {
-  padding: 1.2rem 2.4rem;
-  border-radius: 0.8rem;
-  font-size: $font-size-base;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.primary {
-  background-color: $color-green;
-  color: $color-white;
-  border: 0.2rem solid $color-green;
-  
-  &:hover {
-    background-color: darken($color-green, 8%);
-  }
-}
-
-.secondary {
-  background-color: transparent;
-  color: $color-green;
-  border: 0.2rem solid $color-green;
-  
-  &:hover {
-    background-color: $color-green;
-    color: $color-white;
-  }
-}
-```
+Trechos de interface e classes mudam com o tempo; a referência final é sempre o código no Git.

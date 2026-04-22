@@ -127,7 +127,7 @@ Use o mixin `container-padding` para aplicar padding lateral e max-width automat
 @import '../../../styles/colors';
 
 .botao {
-  background-color: $color-primary-base;
+  background-color: $color-primary;
   color: $color-white;
   
   &:hover {

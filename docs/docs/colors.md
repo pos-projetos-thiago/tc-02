@@ -1,58 +1,65 @@
 # Cores
 
-O sistema de cores do Bytebank transmite confiança e leitura clara em textos e estados (ação, destaque, erro).
+**Fonte única:** `src/styles/_colors.scss`. O que segue é o que existe no arquivo; o uso em cada tela depende do componente (importe a variável e veja o SCSS do componente).
 
-## Cores principais
+## Variáveis (como no código)
 
-### Primary (identidade)
-- **Variável:** `$color-primary`
-- **Hex:** `#004D61`
-- **Uso:** base da marca, blocos e elementos principais
+### Principais e estado
 
-### Accent (chamada e destaque)
-- **Variável:** `$color-accent`
-- **Hex:** `#FF5031`
-- **Uso:** CTAs fortes, alertas visíveis, foco
+| Variável | Valor |
+|----------|--------|
+| `$color-primary` | `#004D61` |
+| `$color-accent` | `#FF5031` |
+| `$color-error` | `#BF1313` |
 
-### Error
-- **Variável:** `$color-error`
-- **Hex:** `#BF1313`
-- **Uso:** validação, mensagens de falha
+### Destaque (paleta auxiliar)
 
-## Neutros
+| Variável | Valor |
+|----------|--------|
+| `$color-blue` | `#2567F9` |
+| `$color-purple` | `#8F3CFF` |
+| `$color-orange` | `#F1823D` |
+| `$color-pink` | `#FF3C82` |
+| `$color-green` | `#47A138` |
 
-- `$color-white` — `#FFFFFF`
-- `$color-black` — `#000000`
-- Escala de cinza em `gray-50` … `gray-500` (fundos, bordas, texto secundário)
+### Neutros e texto
 
-Tabela de referência rápida (detalhe no repositório em `src/styles/_colors.scss`):
+| Variável | Valor |
+|----------|--------|
+| `$color-white` | `#FFFFFF` |
+| `$color-black` | `#000000` |
+| `$color-gray-50` | `#F8F8F8` |
+| `$color-gray-200` | `#DEE9EA` |
+| `$color-gray-300` | `#CBCBCB` |
+| `$color-gray-400` | `#767676` |
+| `$color-gray-500` | `#8B8B8B` |
+| `$color-mint-bg` | `#E4EDE3` |
+| `$color-text-secondary` | `#444444` |
 
-| Variável        | Uso comum        |
-|-----------------|------------------|
-| `gray-50`       | Fundo claro      |
-| `gray-200`      | Bordas, divisórias |
-| `gray-400/500`  | Texto secundário, desativado |
+### Gradiente
 
-## Cores de apoio (destaques)
+| Variável | Valor |
+|----------|--------|
+| `$gradient-primary` | `linear-gradient(180deg, $color-primary 0%, $color-white 100%)` |
 
-Uso moderado, para gráficos e cartões: blue, purple, orange, pink, green (definidas no mesmo arquivo de tokens).
+## Uso global (`globals.scss`)
 
-## Gradientes
+No `body`, o texto padrão usa `color: $color-primary` e o fundo `background-color: $color-black`. Isso não significa que todo título no app seja sempre “identidade primary” em todos os blocos; muitos componentes sobrescrevem cor (por exemplo texto preto em cartões brancos).
 
-- **Primary:** ex.: hero — combinação documentada no código com fundo claro/escuro conforme o bloco
+## Onde entra cada cor (exemplos reais, não regra fixa)
 
-## Uso no SCSS
+- **`$color-green`:** muito usada para ações positivas, bordas de foco e botões “primários” no estilo do `Button` (ver `Button.module.scss`).
+- **`$color-primary`:** marca, destaques, bordas de outline em alguns componentes.
+- **`$color-accent`:** variante `accent` do `Button` e destaques pontuais.
+- **`$color-error`:** validação e erros (ex.: `AuthModal`).
+- **Grises e `$color-text-secondary`:** bordas, texto secundário, estados desativados.
+
+Para um mapeamento exato “tela a tela”, abra o `*.module.scss` do componente.
+
+## Import
 
 ```scss
 @import '@/styles/colors';
-
-.card {
-  background: $color-white;
-  color: $color-primary;
-  border: 1px solid $color-gray-200;
-}
 ```
 
-## Acessibilidade
-
-Combinações comuns (texto sobre fundo) foram consideradas no projeto para contraste legível. Ao criar pares novos, valide com ferramenta de contraste (WCAG).
+(Conforme o alias do projeto; em muitos arquivos o padrão é `@/styles/...`.)

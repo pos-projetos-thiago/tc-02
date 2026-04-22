@@ -1,53 +1,53 @@
 # Tipografia
 
-A interface usa a família **Inter** (carregada no app) e um sistema **REMs** com base 10 (configuração global de `html`) para conversões previsíveis.
+**Fonte única:** `src/styles/_typography.scss`. A família **Inter** é referenciada em `$font-family-base` e carregada no app (veja o `layout` do Next.js).
 
-## Escala (referência)
+A base de **rem** vem do `html { font-size: 62.5% }` em `globals.scss` (1 rem ≈ 10 px no cálculo mental do time).
 
-Exemplos comuns mapeados em `src/styles/_typography.scss`:
+## Variáveis de tamanho (`$font-size-*`)
 
-| Uso aproximado   | Tamanho típico (exemplo) |
-|------------------|--------------------------|
-| Auxiliar pequeno | `1.3rem` (13px)         |
-| Corpo / padrão   | `1.6rem` (16px)         |
-| Subtítulos       | `1.8rem` – `2.0rem`     |
-| Títulos H1/H2    | `3.0rem` e afins         |
-| Display / hero  | `3.6rem` – `4.8rem`      |
+| Variável | Valor em SCSS | Equiv. aprox. (com base 10) |
+|----------|----------------|-------------------------------|
+| `$font-size-xs` | `1.3rem` | 13 px |
+| `$font-size-sm` | `1.4rem` | 14 px |
+| `$font-size-base` | `1.6rem` | 16 px |
+| `$font-size-md` | `1.8rem` | 18 px |
+| `$font-size-lg` | `2.0rem` | 20 px |
+| `$font-size-xl` | `2.5rem` | 25 px |
+| `$font-size-2xl` | `3.0rem` | 30 px |
+| `$font-size-3xl` | `3.6rem` | 36 px |
+| `$font-size-4xl` | `4.8rem` | 48 px |
 
-(Valores exatos seguem as variáveis do repositório; ajuste só na fonte SCSS e atualize aqui se mudar.)
+## Peso (`$font-weight-*`)
 
-## Pesos
+| Variável | Valor |
+|----------|--------|
+| `$font-weight-light` | 300 |
+| `$font-weight-regular` | 400 |
+| `$font-weight-medium` | 500 |
+| `$font-weight-semibold` | 600 |
+| `$font-weight-bold` | 700 |
 
-- `400` — leitura contínua
-- `500` / `600` — ênfase, subtítulos
-- `700` — títulos, botões em destaque
+## Altura de linha (`$line-height-*`)
 
-## Altura de linha
+| Variável | Valor |
+|----------|--------|
+| `$line-height-tight` | 1.2 |
+| `$line-height-base` | 1.5 |
+| `$line-height-relaxed` | 1.75 |
 
-- Títulos: `line-height` mais fechado (ex.: 1.2)
-- Corpo: ~1.5
-- Blocos longos: pode relaxar ligeiramente (ex.: 1.75)
+## Função `rem()` em `src/styles/_functions.scss`
 
-## Exemplo SCSS
+Conversão de px para rem: `rem(24)` gera o `calc` equivalente. Útil quando o valor ainda está pensado em pixels.
+
+## Import
 
 ```scss
 @import '@/styles/typography';
-
-h1 {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  line-height: $line-height-tight;
-}
-
-p {
-  font-size: $font-size-base;
-  line-height: $line-height-base;
-}
 ```
 
 ## Boas práticas
 
-1. Priorize variáveis de tipografia e cores, não hex ou px soltos
-2. Prefira `rem` a `px` no que impacte leitura e zoom do usuário
-3. Respeite hierarquia: H1 → H2 → H3 → parágrafo
-4. Evite tamanhos muito próximos; poucos tamanhos claros leem melhor que muitas famílias de “quase iguais”
+1. Use as variáveis do arquivo em vez de números soltos, para mudar tudo de um lugar só
+2. Prefira `rem` (ou a função `rem()`) no que for tamanho tipográfico ou layout sensível a zoom
+3. Quem manda no “tamanho de título” em cada tela é o SCSS do componente, não esta página - confira o `*.module.scss` correspondente

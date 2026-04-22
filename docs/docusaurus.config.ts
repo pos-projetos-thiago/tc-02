@@ -101,6 +101,10 @@ const config: Config = {
               to: '/docs/breakpoints',
             },
             {
+              label: 'Catálogo de componentes',
+              to: '/docs/components/catalog',
+            },
+            {
               label: 'Button',
               to: '/docs/components/button',
             },
@@ -120,7 +124,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Bytebank — documentação do design system · ${new Date().getFullYear()}`,
+      copyright: `Bytebank - documentação do design system · ${new Date().getFullYear()}`,
     },
     prism: {
       theme: prismThemes.github,
