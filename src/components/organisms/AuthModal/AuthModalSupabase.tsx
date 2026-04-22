@@ -3,6 +3,8 @@
 import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Modal } from '@/components/molecules/Modal';
 import { Button } from '@/components/atoms/Button';
 import { signUpUser, signInUser, resetPassword } from '@/lib/auth/supabase-client-actions';
@@ -87,6 +89,12 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
   const [error, setError] = useState<string | null>(null);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClose = useCallback(() => {
+    setShowPassword(false);
+    onClose();
+  }, [onClose]);
 
   const handleChange = useCallback((key: FieldKey, value: string) => {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -97,6 +105,12 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
   const handleForgotPassword = async () => {
     if (!values.email.trim()) {
       setError('Digite seu email para recuperar a senha');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(values.email.trim())) {
+      setError('Por favor, insira um email válido');
       return;
     }
 
@@ -146,7 +160,7 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
       }
       
       if (result.success) {
-        onClose();
+        handleClose();
         setValues(emptyValues);
         setPrivacyAccepted(false);
         setError(null);
@@ -178,7 +192,7 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       ariaLabel={dialogLabel}
       fullHeight
       contentClassName={`${styles.content} ${styles[variant]}`}
@@ -199,8 +213,9 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
           
           {resetSuccess ? (
             <div className={styles["reset-success"]}>
-              <p>Email de recuperação enviado com sucesso!</p>
-              <p>Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.</p>
+              <p>Solicitação de recuperação processada!</p>
+              <p>Se este email estiver cadastrado em nossa plataforma, você receberá um link para redefinir sua senha em alguns minutos.</p>
+              <p className={styles["hint-text"]}>Verifique também sua caixa de spam.</p>
               <Button 
                 variant="primary" 
                 onClick={() => {
@@ -231,25 +246,50 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
                         <label htmlFor={id} className={styles.label}>
                           {input.label}
                         </label>
-                        <input
-                          id={id}
-                          type={input.type}
-                          placeholder={input.placeholder}
-                          className={styles.input}
-                          value={values[input.fieldKey]}
-                          onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
-                          disabled={isLoading}
-                          autoComplete={
-                            input.fieldKey === 'password'
-                              ? variant === 'signup'
-                                ? 'new-password'
-                                : 'current-password'
-                              : input.fieldKey === 'email'
-                                ? 'email'
-                                : 'name'
-                          }
-                          required
-                        />
+                        {input.type === 'password' ? (
+                          <div className={styles['password-shell']}>
+                            <input
+                              id={id}
+                              type={showPassword ? 'text' : 'password'}
+                              placeholder={input.placeholder}
+                              className={styles['password-input']}
+                              value={values[input.fieldKey]}
+                              onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
+                              disabled={isLoading}
+                              autoComplete={
+                                variant === 'signup' ? 'new-password' : 'current-password'
+                              }
+                              required
+                            />
+                            <button
+                              type="button"
+                              className={styles['password-toggle']}
+                              onClick={() => setShowPassword((v) => !v)}
+                              disabled={isLoading}
+                              aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                            >
+                              {showPassword ? (
+                                <VisibilityOff sx={{ fontSize: 22 }} />
+                              ) : (
+                                <Visibility sx={{ fontSize: 22 }} />
+                              )}
+                            </button>
+                          </div>
+                        ) : (
+                          <input
+                            id={id}
+                            type={input.type}
+                            placeholder={input.placeholder}
+                            className={styles.input}
+                            value={values[input.fieldKey]}
+                            onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
+                            disabled={isLoading}
+                            autoComplete={
+                              input.fieldKey === 'email' ? 'email' : 'name'
+                            }
+                            required
+                          />
+                        )}
                         {'forgotPasswordText' in config &&
                           index === config.inputs.length - 1 &&
                           !isForgotPassword && (
@@ -285,14 +325,27 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
                 </>
               )}
               
-              <Button 
-                variant={isForgotPassword ? 'primary' : config.buttonVariant} 
-                type="submit" 
-                className={styles["submit-button"]}
-                disabled={isLoading}
-              >
-                {currentSubmitLabel}
-              </Button>
+              {variant === 'signup' && !isForgotPassword ? (
+                <div className={styles['submit-bar']}>
+                  <Button
+                    variant={config.buttonVariant}
+                    type="submit"
+                    className={styles['submit-button']}
+                    disabled={isLoading}
+                  >
+                    {currentSubmitLabel}
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant={isForgotPassword ? 'primary' : config.buttonVariant}
+                  type="submit"
+                  className={styles['submit-button']}
+                  disabled={isLoading}
+                >
+                  {currentSubmitLabel}
+                </Button>
+              )}
               
               {isForgotPassword && (
                 <Button 

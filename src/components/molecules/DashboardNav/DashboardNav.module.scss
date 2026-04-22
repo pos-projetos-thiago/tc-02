@@ -2,6 +2,25 @@
 @import '../../../styles/typography';
 @import '../../../styles/breakpoints';
 
+.only-desktop {
+  @include tablet {
+    display: none;
+  }
+}
+
+.only-tablet {
+  display: none;
+
+  @include tablet {
+    display: block;
+    width: 100%;
+  }
+}
+
+.tabs {
+  background: transparent;
+}
+
 .sidebar {
   background-color: $color-gray-50;
   border-radius: 0.8rem;
@@ -67,11 +86,4 @@
   height: 1px;
   background-color: $color-black;
   margin-top: 1.6rem;
-}
-
-@include mobile {
-  .sidebar {
-    width: 100%;
-    padding: 2.4rem;
-  }
 }

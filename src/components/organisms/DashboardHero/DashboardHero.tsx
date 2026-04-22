@@ -84,40 +84,62 @@ export const DashboardHero = ({
   return (
     <section className={`${styles.header} ${isOthersSection ? styles['others-mode'] : ''}`}>
       <div className={styles.content}>
-        <div className={styles['account-info']}>
-          <div className={styles['greeting-section']}>
-            <h1 className={`${styles.greeting} ${isOthersSection ? styles['others-greeting'] : ''}`}>
-              {isOthersSection ? 'Minha conta' : `Olá, ${userName} :)`}
-            </h1>
-            {!isOthersSection && <time className={styles.date}>{currentDate}</time>}
-          </div>
-
-          <div className={styles['illustration']}>
-            <Image
-              src={isOthersSection ? "/Services/account.svg" : "/DashboardHero/ilustration.svg"}
-              alt={isOthersSection ? "Ícone da conta" : "Ilustração do dashboard financeiro"}
-              width={690}
-              height={400}
-              loading="eager"
-              priority
-              className={styles['illustration-img']}
-              style={isOthersSection ? { width: 'auto', height: 'auto' } : undefined}
-            />
-          </div>
-        </div>
-
         {isOthersSection ? (
-          <div className={styles['profile-wrapper']}>
-            <ProfileForm
-              userName={userName}
-              userEmail={user?.email || "usuario@exemplo.com"}
-              onSave={handleProfileSave}
-            />
-          </div>
+          <>
+            <div className={styles['account-info']}>
+              <div className={styles['greeting-section']}>
+                <h1 className={`${styles.greeting} ${styles['others-greeting']}`}>
+                  Minha conta
+                </h1>
+              </div>
+
+              <div className={styles['illustration']}>
+                <Image
+                  src="/Services/account.svg"
+                  alt="Ícone da conta"
+                  width={690}
+                  height={400}
+                  loading="eager"
+                  priority
+                  className={styles['illustration-img']}
+                  style={{ width: 'auto', height: 'auto' }}
+                />
+              </div>
+            </div>
+
+            <div className={styles['profile-wrapper']}>
+              <ProfileForm
+                userName={userName}
+                userEmail={user?.email || "usuario@exemplo.com"}
+                onSave={handleProfileSave}
+              />
+            </div>
+          </>
         ) : (
-          <div className={styles['balance-wrapper']}>
-            <BalanceCard balance={balance} />
-          </div>
+          <>
+            <div className={styles['greeting-block']}>
+              <h1 className={styles.greeting}>
+                {`Olá, ${userName} :)`}
+              </h1>
+              <time className={styles.date}>{currentDate}</time>
+            </div>
+
+            <div className={styles['balance-wrapper']}>
+              <BalanceCard balance={balance} />
+            </div>
+
+            <div className={styles['illustration']}>
+              <Image
+                src="/DashboardHero/ilustration.svg"
+                alt="Ilustração do dashboard financeiro"
+                width={690}
+                height={400}
+                loading="eager"
+                priority
+                className={styles['illustration-img']}
+              />
+            </div>
+          </>
         )}
       </div>
 

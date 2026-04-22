@@ -15,6 +15,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   text-align: center;
+  min-height: 6rem;
   
   &:hover {
     background-color: rgba($color-gray-50, 0.6);
@@ -29,10 +30,22 @@
       outline-offset: 2px;
     }
   }
+  
+  @include mobile {
+    padding: 2.4rem 1.6rem;
+    gap: 1.6rem;
+    min-height: 8rem;
+    
+    &:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
 
-  @media (min-width: 1920px) and (min-height: 1024px) {
-    gap: 3rem;
-    padding: 3rem 1rem;
+  @include desktop {
+    @media (min-height: 1024px) {
+      gap: 3rem;
+      padding: 3rem 1rem;
+    }
   }
 }
 

@@ -9,6 +9,19 @@
   height: 100%;
   min-height: 35rem;
   border: 1px solid $color-gray-200;
+
+  @include mobile {
+    padding: 2.4rem 1.6rem;
+    min-height: 25rem;
+    border-radius: 1.2rem;
+  }
+
+  @include tablet {
+    padding: 2.4rem 1.6rem;
+    min-height: 25rem;
+    border-radius: 1.2rem;
+    height: auto;
+  }
 }
 
 .header {
@@ -16,6 +29,18 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2.4rem;
+
+  @include mobile {
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.6rem;
+  }
+
+  @include tablet {
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.6rem;
+  }
 }
 
 .title {
@@ -23,6 +48,16 @@
   font-weight: $font-weight-bold;
   color: $color-black;
   margin: 0;
+
+  @include mobile {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  @include tablet {
+    font-size: 2rem;
+    text-align: center;
+  }
 }
 
 .actions {
@@ -42,6 +77,18 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  @include mobile {
+    width: 4.8rem;
+    height: 4.8rem;
+    min-height: 4.4rem;
+  }
+
+  @include tablet {
+    width: 4.8rem;
+    height: 4.8rem;
+    min-height: 4.4rem;
+  }
 
   &:hover {
     background-color: darken($color-primary, 10%);
@@ -88,6 +135,20 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+
+  @include mobile {
+    padding: 1.8rem;
+    font-size: 1.6rem;
+    min-height: 4.8rem;
+    border-radius: 1.2rem;
+  }
+
+  @include tablet {
+    padding: 1.8rem;
+    font-size: 1.6rem;
+    min-height: 4.8rem;
+    border-radius: 1.2rem;
+  }
   
   &:hover {
     background-color: darken($color-green, 10%);
