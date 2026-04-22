@@ -1,23 +1,25 @@
-# Bytebank — gestão financeira
+# Bytebank
 
 <div align="center">
 
-[![CI](https://img.shields.io/github/actions/workflow/status/pos-projetos-thiago/tc-01/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=CI&labelColor=0c252c)](https://github.com/pos-projetos-thiago/tc-01/actions/workflows/ci.yml)
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
-
-[![Supabase](https://img.shields.io/badge/Supabase-auth_%2B_DB-3ECF8E?style=for-the-badge&logo=supabase&logoColor=1a1a1a)](https://supabase.com/)
-[![MUI](https://img.shields.io/badge/MUI-7-007FFF?style=for-the-badge&logo=mui&logoColor=white)](https://mui.com/)
-[![Sass](https://img.shields.io/badge/Sass-modules-CC6699?style=for-the-badge&logo=sass&logoColor=white)](https://sass-lang.com/)
-[![Docusaurus](https://img.shields.io/badge/Docusaurus-docs-3ECC5F?style=for-the-badge&logo=docusaurus&logoColor=1a1a1a)](https://docusaurus.io/)
+<a href="https://github.com/pos-projetos-thiago/tc-01/actions/workflows/ci.yml"><img src="https://github.com/pos-projetos-thiago/tc-01/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+<a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-16-1a1a1a?style=flat-square&logo=next.js&logoColor=white&labelColor=004D61" alt="Next.js 16"></a>
+<a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white&labelColor=004D61" alt="TypeScript 5"></a>
+<a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-20232A?style=flat-square&logo=react&logoColor=61DAFB&labelColor=004D61" alt="React 19"></a>
+<br>
+<a href="https://supabase.com/"><img src="https://img.shields.io/badge/Supabase-auth%20%2B%20DB-3ECF8E?style=flat-square&logo=supabase&logoColor=1a1a1a&labelColor=004D61" alt="Supabase"></a>
+<a href="https://mui.com/"><img src="https://img.shields.io/badge/MUI-7-007FFF?style=flat-square&logo=mui&logoColor=white&labelColor=004D61" alt="MUI 7"></a>
+<a href="https://sass-lang.com/"><img src="https://img.shields.io/badge/Sass-modules-CC6699?style=flat-square&logo=sass&logoColor=white&labelColor=004D61" alt="Sass"></a>
+<a href="https://docusaurus.io/"><img src="https://img.shields.io/badge/Docusaurus-docs-3ECC5F?style=flat-square&logo=docusaurus&logoColor=1a1a1a&labelColor=004D61" alt="Docusaurus"></a>
 
 </div>
 
 Aplicação de **gerenciamento financeiro** com Next.js 16, TypeScript, SCSS e autenticação com **Supabase** (Postgres e sessão real entre dispositivos).
 
-**Tech Challenge — Fase 1 · FIAP Pós-Tech**  
-**Autor:** Thiago Soares
+**FIAP Pós-Tech** · Tech Challenge - Fase 1  
+**Thiago Soares** · RM 373636
+
+<!-- Vídeo -->
 
 ---
 
@@ -59,16 +61,16 @@ Abre em [http://localhost:4000](http://localhost:4000). O site fica no diretóri
 
 ## Stack (resumo)
 
-| Área        | Escolha                          |
-|------------|-----------------------------------|
-| Framework  | Next.js 16, App Router            |
-| Linguagem  | TypeScript                        |
-| Estilo     | SCSS Modules                      |
-| UI         | Material UI (ícones e componentes) |
-| Dados/Auth | Supabase                          |
-| Formulários| React Hook Form + Zod            |
-| Docs       | Docusaurus (design system)        |
-| Arquitetura| Atomic Design em `src/components/`|
+| Área        | Escolha                            |
+| ----------- | ---------------------------------- |
+| Framework   | Next.js 16, App Router             |
+| Linguagem   | TypeScript                         |
+| Estilo      | SCSS Modules                       |
+| UI          | Material UI (ícones e componentes) |
+| Dados/Auth  | Supabase                           |
+| Formulários | React Hook Form + Zod              |
+| Docs        | Docusaurus (design system)         |
+| Arquitetura | Atomic Design em `src/components/` |
 
 ---
 
