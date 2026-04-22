@@ -1,23 +1,27 @@
-// Breakpoints simples baseados no Figma
+$bp-mobile-max: 719px;
+$bp-tablet-min: 720px;
+$bp-tablet-max: 1023px;
+$bp-desktop-min: 1024px;
+$bp-container-wide-min: 1920px;
+
 @mixin mobile {
-  @media (max-width: 719px) {
+  @media (max-width: $bp-mobile-max) {
     @content;
   }
 }
 
 @mixin tablet {
-  @media (min-width: 720px) and (max-width: 1919px) {
+  @media (min-width: $bp-tablet-min) and (max-width: $bp-tablet-max) {
     @content;
   }
 }
 
 @mixin desktop {
-  @media (min-width: 1920px) {
+  @media (min-width: $bp-desktop-min) {
     @content;
   }
 }
 
-// Spacing lateral
 $spacing-desktop: 36rem;
 $spacing-tablet: 6rem;
 $spacing-mobile: 2.4rem;
@@ -28,7 +32,7 @@ $container-max-width: 192rem;
   margin: 0 auto;
   padding: 0 $spacing-desktop;
 
-  @include tablet {
+  @media (min-width: $bp-tablet-min) and (max-width: ($bp-container-wide-min - 1px)) {
     padding: 0 $spacing-tablet;
   }
 

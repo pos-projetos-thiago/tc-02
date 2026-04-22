@@ -41,9 +41,11 @@
     }
   }
 
-  @media (min-width: 1920px) and (min-height: 1024px) {
-    gap: 3rem;
-    padding: 3rem 1rem;
+  @include desktop {
+    @media (min-height: 1024px) {
+      gap: 3rem;
+      padding: 3rem 1rem;
+    }
   }
 }
 

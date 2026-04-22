@@ -109,17 +109,14 @@ Use o mixin `container-padding` para aplicar padding lateral e max-width automat
 @import '../../../styles/breakpoints';
 
 .elemento {
-  // Desktop first (1920px+)
-  width: 100%;
-  
+  @include mobile {
+    width: 100%;
+  }
   @include tablet {
-    // Tablet (720px - 1919px)
     width: 80%;
   }
-  
-  @include mobile {
-    // Mobile (até 719px)
-    width: 100%;
+  @include desktop {
+    max-width: 60rem;
   }
 }
 ```

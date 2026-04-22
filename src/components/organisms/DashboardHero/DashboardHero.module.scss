@@ -128,7 +128,7 @@
 }
 
 .others-mode .account-info {
-  @media (max-width: 1919px) {
+  @media (max-width: $bp-tablet-max) {
     display: contents;
   }
 }
