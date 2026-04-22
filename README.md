@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![GitHub Workflow Status](https://github.com/pos-projetos-thiago/tc-01/actions/workflows/ci.yml/badge.svg)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/pos-projetos-thiago/tc-01/ci.yml?style=for-the-badge&label=CI&logo=github)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
