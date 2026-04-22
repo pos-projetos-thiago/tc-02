@@ -1,20 +1,22 @@
-# Website
+# Documentação (Docusaurus)
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+Site estático do **Bytebank Design System** (tokens, guias e componentes).
 
-## Installation
+## Instalação
+
+Na raiz de `docs/`:
 
 ```bash
 yarn
 ```
 
-## Local Development
+## Desenvolvimento
 
 ```bash
 yarn start
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+Por padrão o dev server sobe em [http://localhost:3000](http://localhost:3000) dentro de `docs`. Na raiz do repositório principal, use `yarn docs` (porta `4000`).
 
 ## Build
 
@@ -22,20 +24,14 @@ This command starts a local development server and opens up a browser window. Mo
 yarn build
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+Gera a pasta `build/`, pronta para publicar em qualquer host estático.
 
-## Deployment
+## Publicação (GitHub Pages, opcional)
 
-Using SSH:
-
-```bash
-USE_SSH=true yarn deploy
-```
-
-Not using SSH:
+Ajuste `url` e `baseUrl` em `docusaurus.config.ts` ao publicar. Com deploy via Docusaurus:
 
 ```bash
-GIT_USER=<Your GitHub username> yarn deploy
+GIT_USER=<seu_usuario_github> yarn deploy
 ```
 
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+(Detalhes oficiais: [Deploying to GitHub Pages](https://docusaurus.io/docs/deployment#deploying-to-github-pages).)

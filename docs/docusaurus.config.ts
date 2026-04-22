@@ -6,7 +6,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Bytebank Design System',
-  tagline: 'Sistema de design para aplicação de gerenciamento financeiro',
+  tagline: 'Cores, tipografia e componentes do app de gestão financeira',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -42,20 +42,9 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/pos-projetos-thiago/tc-01/tree/main/docs/',
+          editUrl: 'https://github.com/pos-projetos-thiago/tc-01/tree/dev/docs/',
         },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ['rss', 'atom'],
-            xslt: true,
-          },
-          editUrl: 'https://github.com/pos-projetos-thiago/tc-01/tree/main/docs/',
-          // Useful options to enforce blogging best practices
-          onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
-        },
+        blog: false,
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -70,9 +59,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'Bytebank DS',
+      title: 'Bytebank',
       logo: {
-        alt: 'Bytebank Logo',
+        alt: 'Bytebank',
         src: 'img/logo.svg',
       },
       items: [
@@ -80,11 +69,11 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Componentes',
+          label: 'Documentação',
         },
         {
           href: 'https://github.com/pos-projetos-thiago/tc-01',
-          label: 'GitHub',
+          label: 'Código no GitHub',
           position: 'right',
         },
       ],
@@ -93,33 +82,49 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Documentação',
+          title: 'Guia',
           items: [
             {
               label: 'Introdução',
               to: '/docs/intro',
             },
             {
-              label: 'Componentes',
+              label: 'Cores e tokens',
+              to: '/docs/colors',
+            },
+            {
+              label: 'Tipografia',
+              to: '/docs/typography',
+            },
+            {
+              label: 'Breakpoints',
+              to: '/docs/breakpoints',
+            },
+            {
+              label: 'Catálogo de componentes',
+              to: '/docs/components/catalog',
+            },
+            {
+              label: 'Button',
               to: '/docs/components/button',
             },
           ],
         },
         {
-          title: 'Projeto',
+          title: 'Repositório',
           items: [
             {
-              label: 'GitHub',
+              label: 'tc-01 no GitHub',
               href: 'https://github.com/pos-projetos-thiago/tc-01',
             },
             {
-              label: 'README',
-              href: 'https://github.com/pos-projetos-thiago/tc-01/blob/main/README.md',
+              label: 'README do projeto',
+              href: 'https://github.com/pos-projetos-thiago/tc-01/blob/dev/README.md',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Bytebank - Desenvolvido por Thiago Soares.`,
+      copyright: `Bytebank - documentação do design system · ${new Date().getFullYear()}`,
     },
     prism: {
       theme: prismThemes.github,

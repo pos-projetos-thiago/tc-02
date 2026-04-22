@@ -13,6 +13,7 @@ function HomepageHeader() {
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
+        <p className={styles.kicker}>Design system</p>
         <Heading as="h1" className="hero__title">
           {siteConfig.title}
         </Heading>
@@ -21,7 +22,7 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/docs/intro">
-            Docusaurus Tutorial - 5min ⏱️
+            Abrir documentação
           </Link>
         </div>
       </div>
@@ -30,11 +31,10 @@ function HomepageHeader() {
 }
 
 export default function Home(): ReactNode {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+      title="Início"
+      description="Documentação do design system Bytebank: tokens, componentes e padrões de interface.">
       <HomepageHeader />
       <main>
         <HomepageFeatures />
