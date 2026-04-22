@@ -4,9 +4,8 @@
 @import '../../../styles/breakpoints';
 
 $drawer-width: 17.5rem;
-$drawer-height: 25.5rem;
-$menu-gap: 1.6rem;
-$menu-font-size: 1.8rem;
+$menu-gap: 1.2rem;
+$menu-font-size: 1.5rem;
 $drawer-bg: $color-mint-bg;
 
 .backdrop {
@@ -22,15 +21,18 @@ $drawer-bg: $color-mint-bg;
   top: 0;
   left: 0;
   width: $drawer-width;
-  min-height: $drawer-height;
+  min-height: auto;
+  max-height: 100dvh;
   background-color: $drawer-bg;
   z-index: 1000;
   box-shadow: 0.4rem 0 1.6rem rgba(0, 0, 0, 0.15);
   animation: slideIn 0.3s ease-out;
   padding: 2.4rem 1.6rem;
-  padding-top: 5.6rem;
+  padding-top: 5.2rem;
+  padding-bottom: 2.4rem;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .close-button {
@@ -57,7 +59,9 @@ $drawer-bg: $color-mint-bg;
   align-items: center;
   justify-content: flex-start;
   gap: $menu-gap;
-  overflow-y: auto;
+  flex: 0 0 auto;
+  overflow: hidden;
+  min-height: 0;
 }
 
 .menu-item {
@@ -73,9 +77,9 @@ $drawer-bg: $color-mint-bg;
   width: 100%;
   min-width: 0;
   text-align: center;
-  padding: $menu-gap 2rem;
+  padding: 1rem 1.2rem;
   font-size: $menu-font-size;
-  line-height: 1.89;
+  line-height: 1.45;
   text-decoration: none;
   transition: color 0.2s;
   background: none;
@@ -102,7 +106,8 @@ $drawer-bg: $color-mint-bg;
   width: 80%;
   height: 0.1rem;
   background-color: $color-green;
-  margin: $menu-gap 0;
+  margin: 0.4rem 0 0.6rem;
+  flex-shrink: 0;
 }
 
 @keyframes fadeIn {

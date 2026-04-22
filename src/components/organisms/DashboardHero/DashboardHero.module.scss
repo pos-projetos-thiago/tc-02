@@ -25,14 +25,50 @@
   align-items: flex-start;
   height: 100%;
   gap: 4rem;
-  
+  position: relative;
+
   @include mobile {
     flex-direction: column;
     gap: 2.4rem;
+    align-items: center;
   }
 
   .others-mode & {
     gap: 6rem;
+  }
+}
+
+.header:not(.others-mode) .content {
+  @media (min-width: 720px) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+}
+
+.greeting-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  z-index: 2;
+
+  @media (min-width: 720px) {
+    margin-top: 3.2rem;
+    margin-left: 2.4rem;
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+  }
+
+  @include mobile {
+    order: 1;
+    width: 100%;
+    max-width: 100%;
+    align-items: center;
+    text-align: center;
+    margin: 0;
+    padding-top: 1.6rem;
   }
 }
 
@@ -45,10 +81,16 @@
   flex: 1;
   position: relative;
   z-index: 2;
-  
+
   @include mobile {
     margin: 1.6rem;
+    margin-top: 0;
     gap: 1.6rem;
+    width: 100%;
+    max-width: 100%;
+    align-items: center;
+    text-align: center;
+    margin-left: 0;
   }
 }
 
@@ -58,40 +100,69 @@
   gap: 0.8rem;
 }
 
-.illustration {
-  position: absolute;
-  right: 8rem;
-  bottom: -25rem;
+.header:not(.others-mode) .illustration {
   max-width: 70rem;
   z-index: 0;
   pointer-events: none;
-  
+
+  @media (min-width: 720px) {
+    position: absolute;
+    left: 2.4rem;
+    right: auto;
+    bottom: -25rem;
+    z-index: 0;
+  }
+
   @include mobile {
+    order: 3;
     position: relative;
+    left: auto;
     right: auto;
     bottom: auto;
     max-width: 24rem;
-    margin-top: 1.6rem;
+    margin-top: 0.8rem;
     z-index: 1;
     pointer-events: auto;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.header:not(.others-mode) .balance-wrapper {
+  @media (min-width: 720px) {
+    grid-column: 2;
+    grid-row: 1;
+    z-index: 2;
   }
 
-  .others-mode & {
-    position: relative;
-    right: auto;
-    left: auto;
-    top: auto;
-    bottom: auto;
-    max-width: none;
-    z-index: 1;
+  @include mobile {
+    order: 2;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    margin-top: 0.8rem;
     display: flex;
-    align-items: center;
     justify-content: center;
-    margin-top: 4rem;
+    align-items: flex-start;
+  }
+}
 
-    @include mobile {
-      margin-top: 2rem;
-    }
+.others-mode .illustration {
+  position: relative;
+  right: auto;
+  left: auto;
+  top: auto;
+  bottom: auto;
+  max-width: none;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4rem;
+  pointer-events: auto;
+
+  @include mobile {
+    margin-top: 2rem;
   }
 }
 
@@ -101,7 +172,7 @@
   max-width: 55rem;
   opacity: 0.9;
   object-fit: contain;
-  
+
   @include mobile {
     max-width: 20rem;
     opacity: 1;
@@ -126,6 +197,10 @@
   font-weight: $font-weight-bold;
   margin: 0;
 
+  @include mobile {
+    font-size: 2.2rem;
+  }
+
   &.others-greeting {
     color: #000000;
   }
@@ -138,11 +213,9 @@
 }
 
 .balance-wrapper {
-  margin-top: 9.5rem;
-  margin-right: 10rem;
-  
-  @include mobile {
-    margin-right: 1.6rem;
+  @media (min-width: 720px) {
+    margin-top: 9.5rem;
+    margin-right: 10rem;
   }
 }
 
@@ -153,7 +226,7 @@
   align-items: flex-start;
   justify-content: flex-start;
   flex: 1;
-  
+
   @include mobile {
     margin-top: 3rem;
     margin-right: 1.6rem;

@@ -22,7 +22,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Se usuário está logado, redireciona para dashboard
     if (!isLoading && user) {
       const timer = setTimeout(() => {
         router.replace('/dashboard');

@@ -136,14 +136,15 @@
   min-height: 18rem;
 
   @include mobile {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.6rem;
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
     padding: 2rem 1.6rem;
   }
 
   li {
     margin: 0;
     padding: 0;
+    width: 100%;
   }
 }
 

@@ -1,7 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { MenuButton } from '@/components/atoms/MenuButton';
+import { DashboardMobileMenu } from '@/components/organisms/DashboardMobileMenu/DashboardMobileMenu';
 import { signOutUser } from '@/lib/auth/supabase-client-actions';
 import styles from './UserProfile.module.scss';
 
@@ -15,6 +18,7 @@ export const UserProfileSupabase = ({
   avatarSrc = '/UserProfile/avatar.svg'
 }: UserProfileProps) => {
   const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     const result = await signOutUser();
@@ -24,8 +28,12 @@ export const UserProfileSupabase = ({
   };
 
   return (
+    <>
     <nav className={styles.navbar}>
       <div className={styles.container}>
+        <div className={styles['menu-button-wrapper']}>
+          <MenuButton tone="accent" onClick={() => setMobileMenuOpen(true)} />
+        </div>
         <div className={styles['user-section']}>
           <div className={styles['user-info']}>
             <span className={styles['user-name']}>{userName}</span>
@@ -51,5 +59,10 @@ export const UserProfileSupabase = ({
         </div>
       </div>
     </nav>
+    <DashboardMobileMenu
+      isOpen={mobileMenuOpen}
+      onClose={() => setMobileMenuOpen(false)}
+    />
+    </>
   );
 };
