@@ -11,6 +11,15 @@
   position: relative;
   overflow: hidden;
 
+  &:not(.others-mode) {
+    @include tablet {
+      min-height: 24rem;
+    }
+    @include desktop {
+      min-height: 28rem;
+    }
+  }
+
   &.others-mode {
     background: #CBCBCB;
     color: #000000;
@@ -101,30 +110,48 @@
 }
 
 .header:not(.others-mode) .illustration {
-  max-width: 70rem;
-  z-index: 0;
   pointer-events: none;
 
   @media (min-width: 720px) {
     position: absolute;
+    z-index: 1;
     left: 2.4rem;
-    right: auto;
-    bottom: -25rem;
-    z-index: 0;
+    right: 2.4rem;
+    bottom: 0;
+    top: auto;
+    margin: 0 auto 0 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+  }
+
+  @include tablet {
+    max-width: min(30rem, 44%);
+    max-height: min(15rem, 46%);
+  }
+
+  @include desktop {
+    max-width: min(48rem, 50%);
+    max-height: min(22rem, 55%);
   }
 
   @include mobile {
-    order: 3;
     position: relative;
     left: auto;
     right: auto;
+    top: auto;
     bottom: auto;
+    order: 3;
     max-width: 24rem;
+    max-height: none;
+    width: 100%;
     margin-top: 0.8rem;
     z-index: 1;
     pointer-events: auto;
     display: flex;
     justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -173,8 +200,19 @@
   opacity: 0.9;
   object-fit: contain;
 
+  @include tablet {
+    max-width: 100%;
+    max-height: 15rem;
+  }
+
+  @include desktop {
+    max-width: 100%;
+    max-height: 22rem;
+  }
+
   @include mobile {
     max-width: 20rem;
+    max-height: none;
     opacity: 1;
   }
 
