@@ -17,8 +17,8 @@ const sidebars: SidebarsConfig = {
     'intro',
     {
       type: 'category',
-      label: 'Design Tokens',
-      items: ['colors', 'typography'],
+      label: 'Design tokens',
+      items: ['colors', 'typography', 'breakpoints'],
     },
     {
       type: 'category',

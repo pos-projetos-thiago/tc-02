@@ -95,10 +95,9 @@ O botão ajusta automaticamente seu tamanho em diferentes telas:
 
 ## Acessibilidade
 
-- ✅ Cursor pointer no hover
-- ✅ Transição suave (0.2s)
-- ✅ Contraste adequado (WCAG AA)
-- ✅ Feedback visual no hover
+- **Hover:** `cursor: pointer` e transição de ~0,2s
+- **Contraste:** pensado para leitura em estados padrão e hover (validar pares se mudar a paleta)
+- **Feedback visual:** transição e estados claros de interação
 
 ## Código Fonte
 

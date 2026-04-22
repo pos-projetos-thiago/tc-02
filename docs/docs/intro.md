@@ -1,71 +1,41 @@
 # Bytebank Design System
 
-Bem-vindo à documentação do **Design System do Bytebank**, uma aplicação de gerenciamento financeiro desenvolvida com Next.js, TypeScript e SCSS.
+Bem-vindo à documentação do design system do **Bytebank**: a aplicação de gestão financeira (Next.js, TypeScript e SCSS) compartilha estes fundamento visuais e de componentes.
 
-## 🎯 Objetivo
+## Objetivo
 
-Este Design System foi criado para garantir consistência visual e reutilização de componentes em toda a aplicação, seguindo os princípios de **Atomic Design**.
+Manter consistência entre telas, reduzir decisões ad hoc e documentar o que o time e a disciplina Pós-Tech possam reutilizar com clareza.
 
-## 🏗️ Estrutura
+## Organização (Atomic Design)
 
-O projeto está organizado em:
+- **Átomos:** partes básicas (ex.: `Button`, `MenuButton`)
+- **Moléculas:** blocos compostos (ex.: cartões, campos)
+- **Organismos:** seções completas (ex.: hero, modais, navegação)
+- **Templates (evolução):** layouts de página, quando a fase do produto exigir
 
-- **Atoms**: Componentes básicos e indivisíveis (Button, Input, etc)
-- **Molecules**: Combinação de átomos (FormField, Card, etc)
-- **Organisms**: Componentes complexos (Header, Footer, Hero, etc)
-- **Templates**: Layouts de páginas
+## No que esta documentação ajuda
 
-## 🎨 Fundamentos
+- **Design tokens** — paleta, tipografia e regras de [breakpoint](./breakpoints)
+- **Componentes** — variantes, props e exemplos (ex.: [Button](./components/button))
 
-### Sistema de Cores
+## Tecnologias do app
 
-O Bytebank utiliza uma paleta cuidadosamente selecionada que inclui:
-- Cor primária: `#004D61` (verde-azulado)
-- Cor de destaque: `#FF5031` (laranja)
-- Cores neutras em escala (gray-50 a gray-500)
-- Cores auxiliares (blue, purple, orange, pink, green)
+- Next.js 16, React, TypeScript
+- SCSS modules, escopo local
+- MUI (ícones e parte da UI), Supabase (auth e dados) quando aplicável
 
-### Tipografia
+## Como importar
 
-- **Fonte**: Inter (Google Fonts)
-- **Sistema REM**: Base 10 (1rem = 10px)
-- **Escala tipográfica**: De 1.3rem (13px) até 4.8rem (48px)
-
-### Responsividade
-
-- **Mobile**: até 719px
-- **Tablet**: 720px - 1919px
-- **Desktop**: 1920px+
-
-## 🚀 Tecnologias
-
-- **Next.js 16** - Framework React
-- **TypeScript** - Tipagem estática
-- **SCSS Modules** - Estilização com escopo local
-- **Material-UI** - Componentes e ícones
-- **React Hook Form + Zod** - Formulários e validação
-
-## 📦 Como usar
-
-Todos os componentes estão disponíveis em `src/components/` e podem ser importados diretamente:
+Os componentes vivem em `src/components/`. Ajuste o alias do seu `tsconfig` (ex.: `@/components/...`):
 
 ```tsx
 import { Button } from '@/components/atoms/Button';
-import { Hero } from '@/components/organisms/Hero';
 
-export default function Page() {
-  return (
-    <>
-      <Hero />
-      <Button variant="primary">Abrir conta</Button>
-    </>
-  );
+export default function Example() {
+  return <Button variant="primary">Abrir conta</Button>;
 }
 ```
 
-## 📚 Navegação
+## Navegação
 
-Explore a documentação através do menu lateral para conhecer:
-- **Design Tokens**: Cores, tipografia e espaçamentos
-- **Componentes**: Documentação completa de cada componente
-- **Guidelines**: Boas práticas e padrões de uso
+Use a barra lateral: comece por **Cores** e **Tipografia**, depois **Button** e demais páginas que forem adicionadas ao projeto.

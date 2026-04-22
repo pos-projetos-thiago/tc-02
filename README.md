@@ -1,115 +1,105 @@
-# Bytebank - Gerenciamento Financeiro
+# Bytebank — gestão financeira
 
-[![CI](https://github.com/pos-projetos-thiago/tc-01/actions/workflows/ci.yml/badge.svg)](https://github.com/pos-projetos-thiago/tc-01/actions/workflows/ci.yml)
+<div align="center">
 
-Aplicação de gerenciamento financeiro com Next.js 16, TypeScript, SCSS e autenticação real via Supabase.
+[![CI](https://img.shields.io/github/actions/workflow/status/pos-projetos-thiago/tc-01/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=CI&labelColor=0c252c)](https://github.com/pos-projetos-thiago/tc-01/actions/workflows/ci.yml)
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
 
-**Tech Challenge - Fase 1 | FIAP Pós-Tech**  
-Desenvolvido por: **Thiago Soares**
+[![Supabase](https://img.shields.io/badge/Supabase-auth_%2B_DB-3ECF8E?style=for-the-badge&logo=supabase&logoColor=1a1a1a)](https://supabase.com/)
+[![MUI](https://img.shields.io/badge/MUI-7-007FFF?style=for-the-badge&logo=mui&logoColor=white)](https://mui.com/)
+[![Sass](https://img.shields.io/badge/Sass-modules-CC6699?style=for-the-badge&logo=sass&logoColor=white)](https://sass-lang.com/)
+[![Docusaurus](https://img.shields.io/badge/Docusaurus-docs-3ECC5F?style=for-the-badge&logo=docusaurus&logoColor=1a1a1a)](https://docusaurus.io/)
+
+</div>
+
+Aplicação de **gerenciamento financeiro** com Next.js 16, TypeScript, SCSS e autenticação com **Supabase** (Postgres e sessão real entre dispositivos).
+
+**Tech Challenge — Fase 1 · FIAP Pós-Tech**  
+**Autor:** Thiago Soares
+
+---
 
 ## 🤘 Rodar o projeto
 
-### Aplicação Principal
+### Aplicação (Next.js)
 
 ```bash
 yarn install
 yarn dev
 ```
 
-Abre em http://localhost:3000
+Abre em [http://localhost:3000](http://localhost:3000)
 
 ### Autenticação (Supabase)
 
-- **Banco real:** PostgreSQL via Supabase
-- **Persistência:** Funciona entre navegadores e dispositivos
-- **Segurança:** JWT tokens, Row Level Security (RLS)
-- **Cadastro:** Crie sua conta pelo app
-- **Login:** Use email/senha criados
+- **Banco:** PostgreSQL (Supabase)
+- **Sessão:** portável entre navegadores e aparelhos, com JWT e **Row Level Security (RLS)**
+- **Conta:** cadastro e login com e-mail e senha no próprio app
 
-**Configuração:**
-1. Configure as variáveis em `.env.local`:
+**Variáveis (`.env.local`):**
+
 ```bash
-NEXT_PUBLIC_SUPABASE_URL=sua_url_aqui
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_aqui
+NEXT_PUBLIC_SUPABASE_URL=sua_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave
 ```
 
-Código: `src/lib/supabase/`, `src/lib/auth/supabase-client-actions.ts`, `src/hooks/useSupabaseAuth.ts`.
+Código de referência: `src/lib/supabase/`, `src/lib/auth/supabase-client-actions.ts`, `src/hooks/useSupabaseAuth.ts`.
 
-### Documentação do Design System (Docusaurus)
+### Documentação do design system (Docusaurus)
 
 ```bash
 yarn docs
 ```
 
-Abre em http://localhost:4000. A documentação do design system fica na pasta `/docs` do repositório.
+Abre em [http://localhost:4000](http://localhost:4000). O site fica no diretório `docs/` do repositório (tokens, componentes, guias).
 
-## Tecnologias
+---
 
-- **Next.js 16** - Framework React
-- **TypeScript** - Tipagem estática
-- **SCSS Modules** - Estilização com escopo local
-- **Supabase** - Banco PostgreSQL e autenticação
-- **Material-UI** - Componentes e ícones
-- **Docusaurus** - Documentação do Design System
-- **Atomic Design** - Metodologia de organização
+## Stack (resumo)
 
-## Estrutura de Componentes
+| Área        | Escolha                          |
+|------------|-----------------------------------|
+| Framework  | Next.js 16, App Router            |
+| Linguagem  | TypeScript                        |
+| Estilo     | SCSS Modules                      |
+| UI         | Material UI (ícones e componentes) |
+| Dados/Auth | Supabase                          |
+| Formulários| React Hook Form + Zod            |
+| Docs       | Docusaurus (design system)        |
+| Arquitetura| Atomic Design em `src/components/`|
 
-Seguindo Atomic Design:
+---
 
-```
-src/components/
-├── atoms/          # Componentes básicos (Button, MenuButton, etc)
-├── molecules/      # (será usado em fases futuras - FormField, Card, etc)
-├── organisms/      # Seções complexas (Navbar, Hero, Footer, NotFound, etc)
-└── templates/      # (será usado em fases futuras - layouts de páginas)
-```
+## Design system (visão rápida)
 
-## Design system
+- **Primary:** `#004D61` · **Accent:** `#FF5031` · **Neutros:** escala de cinza (50–500)
+- **Tipografia:** Inter (Google Fonts), escala em `rem` com base 10
+- **Breakpoints:** mobile até `719px` · tablet `720px`–`1023px` · desktop a partir de `1024px` · ajuste de container em telas muito largas a partir de `1920px`
 
-### Sistema de Cores
-- **Primary**: `#004D61` (verde-azulado)
-- **Accent**: `#FF5031` (laranja)
-- **Neutros**: Escala de gray (50-500)
+Detalhes e exemplos: `yarn docs` ou a pasta `docs/docs/`.
 
-### Tipografia
-- **Fonte**: Inter (Google Fonts)
-- **Sistema REM**: Base 10 (1rem = 10px)
-- **Escala**: 1.3rem (13px) até 4.8rem (48px)
+---
 
-### Breakpoints
-- **Mobile**: até 719px
-- **Tablet**: 720px - 1919px
-- **Desktop**: 1920px+
-
-Execute `yarn docs` para abrir a documentação interativa do design system.
-
-## Estrutura do projeto
+## Estrutura de pastas (trecho)
 
 ```
 tc-01/
-├── docs/               # Documentação Docusaurus
-├── public/             # Assets estáticos
+├── docs/                 # Site Docusaurus (design system)
+├── public/
 ├── src/
-│   ├── app/            # Pages Next.js (/, /dashboard)
-│   ├── contexts/       # DashboardContext (state management)
-│   ├── hooks/          # useSupabaseAuth (autenticação)
-│   ├── lib/
-│   │   ├── auth/       # Supabase authentication actions
-│   │   └── supabase/   # Supabase client configuration
-│   ├── components/     # Atomic Design
-│   │   ├── atoms/     
-│   │   ├── molecules/ 
-│   │   └── organisms/  
-│   └── styles/         # Design System (SCSS)
-│       ├── _colors.scss
-│       ├── _typography.scss
-│       ├── _breakpoints.scss
-│       └── globals.scss
+│   ├── app/              # Rotas (/, /dashboard, …)
+│   ├── components/       # Atomic Design: atoms, molecules, organisms
+│   ├── hooks/
+│   ├── lib/              # Supabase, auth
+│   └── styles/           # _colors, _typography, _breakpoints, globals
 └── README.md
 ```
 
+---
+
 ## Links
 
-- **Repositório**: https://github.com/pos-projetos-thiago/tc-01
-- **Deploy**: (em breve)
+- **Repositório:** [github.com/pos-projetos-thiago/tc-01](https://github.com/pos-projetos-thiago/tc-01)
+- **Deploy:** a definir

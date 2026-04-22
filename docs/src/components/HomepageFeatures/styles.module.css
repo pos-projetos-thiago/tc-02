@@ -1,11 +1,49 @@
 .features {
-  display: flex;
-  align-items: center;
-  padding: 2rem 0;
+  padding: 3.5rem 0 4rem;
   width: 100%;
+  background: var(--ifm-background-color);
+}
+
+.col {
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 997px) {
+  .col {
+    margin-bottom: 0;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.textBlock {
+  padding-top: 0.5rem;
 }
 
 .featureSvg {
-  height: 200px;
-  width: 200px;
+  height: 140px;
+  width: auto;
+  max-width: 100%;
+  opacity: 0.95;
+}
+
+.featureTitle {
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+}
+
+.featureDesc {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 0;
+}
+
+[data-theme='dark'] .featureDesc {
+  color: var(--ifm-color-emphasis-600);
 }
