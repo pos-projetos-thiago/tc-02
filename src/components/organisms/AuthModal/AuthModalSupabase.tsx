@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Visibility from '@mui/icons-material/Visibility';
@@ -91,11 +91,10 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
   const [resetSuccess, setResetSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    if (!isOpen) {
-      setShowPassword(false);
-    }
-  }, [isOpen, variant]);
+  const handleClose = useCallback(() => {
+    setShowPassword(false);
+    onClose();
+  }, [onClose]);
 
   const handleChange = useCallback((key: FieldKey, value: string) => {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -161,7 +160,7 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
       }
       
       if (result.success) {
-        onClose();
+        handleClose();
         setValues(emptyValues);
         setPrivacyAccepted(false);
         setError(null);
@@ -193,7 +192,7 @@ export const AuthModalSupabase = ({ isOpen, onClose, variant, errorMessage }: Au
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       ariaLabel={dialogLabel}
       fullHeight
       contentClassName={`${styles.content} ${styles[variant]}`}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Visibility from '@mui/icons-material/Visibility';
@@ -88,11 +88,10 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    if (!isOpen) {
-      setShowPassword(false);
-    }
-  }, [isOpen, variant]);
+  const handleClose = useCallback(() => {
+    setShowPassword(false);
+    onClose();
+  }, [onClose]);
 
   const handleChange = useCallback((key: FieldKey, value: string) => {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -122,7 +121,7 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
         
         await new Promise(resolve => setTimeout(resolve, 100));
         
-        onClose();
+        handleClose();
         setValues(emptyValues);
         setPrivacyAccepted(false);
         router.push('/dashboard');
@@ -141,7 +140,7 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
       await new Promise(resolve => setTimeout(resolve, 100));
       
       console.log('Fechando modal...');
-      onClose();
+      handleClose();
       setValues(emptyValues);
       console.log('Navegando para dashboard...');
       router.push('/dashboard');
@@ -159,7 +158,7 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       ariaLabel={dialogLabel}
       fullHeight
       contentClassName={`${styles.content} ${styles[variant]}`}
