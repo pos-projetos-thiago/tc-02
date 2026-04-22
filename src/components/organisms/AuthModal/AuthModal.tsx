@@ -1,8 +1,10 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Modal } from '@/components/molecules/Modal';
 import { Button } from '@/components/atoms/Button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -84,6 +86,13 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
   const [values, setValues] = useState(emptyValues);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShowPassword(false);
+    }
+  }, [isOpen, variant]);
 
   const handleChange = useCallback((key: FieldKey, value: string) => {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -181,23 +190,45 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
                   <label htmlFor={id} className={styles.label}>
                     {input.label}
                   </label>
-                  <input
-                    id={id}
-                    type={input.type}
-                    placeholder={input.placeholder}
-                    className={styles.input}
-                    value={values[input.fieldKey]}
-                    onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
-                    autoComplete={
-                      input.fieldKey === 'password'
-                        ? variant === 'signup'
-                          ? 'new-password'
-                          : 'current-password'
-                        : input.fieldKey === 'email'
-                          ? 'email'
-                          : 'name'
-                    }
-                  />
+                  {input.type === 'password' ? (
+                    <div className={styles['password-shell']}>
+                      <input
+                        id={id}
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder={input.placeholder}
+                        className={styles['password-input']}
+                        value={values[input.fieldKey]}
+                        onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
+                        autoComplete={
+                          variant === 'signup' ? 'new-password' : 'current-password'
+                        }
+                      />
+                      <button
+                        type="button"
+                        className={styles['password-toggle']}
+                        onClick={() => setShowPassword((v) => !v)}
+                        aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                      >
+                        {showPassword ? (
+                          <VisibilityOff sx={{ fontSize: 22 }} />
+                        ) : (
+                          <Visibility sx={{ fontSize: 22 }} />
+                        )}
+                      </button>
+                    </div>
+                  ) : (
+                    <input
+                      id={id}
+                      type={input.type}
+                      placeholder={input.placeholder}
+                      className={styles.input}
+                      value={values[input.fieldKey]}
+                      onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
+                      autoComplete={
+                        input.fieldKey === 'email' ? 'email' : 'name'
+                      }
+                    />
+                  )}
                   {'forgotPasswordText' in config &&
                     index === config.inputs.length - 1 && (
                       <button
@@ -225,9 +256,17 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
                 <span className={styles["checkbox-text"]}>{config.privacyText}</span>
               </label>
             )}
-            <Button variant={config.buttonVariant} type="submit" className={styles["submit-button"]}>
-              {config.submitLabel}
-            </Button>
+            {variant === 'signup' ? (
+              <div className={styles['submit-bar']}>
+                <Button variant={config.buttonVariant} type="submit" className={styles['submit-button']}>
+                  {config.submitLabel}
+                </Button>
+              </div>
+            ) : (
+              <Button variant={config.buttonVariant} type="submit" className={styles['submit-button']}>
+                {config.submitLabel}
+              </Button>
+            )}
           </form>
         </div>
       </div>

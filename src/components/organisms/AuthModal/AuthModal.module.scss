@@ -22,7 +22,8 @@ $modal-width-desktop: 80rem;
   
   @include mobile {
     width: 100%;
-    min-height: 100vh;
+    min-height: 0;
+    flex: 1 1 auto;
     border-radius: 0;
   }
 }
@@ -42,7 +43,11 @@ $modal-width-desktop: 80rem;
   }
 
   @include mobile {
-    padding: 1.6rem 1.2rem 2.4rem;
+    min-height: min-content;
+    flex: 0 0 auto;
+    width: 100%;
+    padding: 1.6rem 1.2rem 1.2rem;
+    padding-top: 1.2rem;
     min-width: unset;
     gap: 1.6rem;
   }
@@ -58,9 +63,15 @@ $modal-width-desktop: 80rem;
 
 .image-wrapper {
   position: relative;
+  z-index: 0;
   width: 24rem;
   height: 17rem;
   flex-shrink: 0;
+
+  @include mobile {
+    width: 20rem;
+    height: 14rem;
+  }
 
   @include tablet {
     width: 35.5rem;
@@ -83,6 +94,8 @@ $modal-width-desktop: 80rem;
   flex-direction: column;
   gap: 1.2rem;
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .signup .form-wrapper,
@@ -125,6 +138,17 @@ $modal-width-desktop: 80rem;
   display: flex;
   flex-direction: column;
   gap: 3.2rem;
+  width: 100%;
+
+  @include mobile {
+    gap: 2rem;
+  }
+}
+
+.signup .form {
+  @include mobile {
+    padding-bottom: 8.5rem;
+  }
 }
 
 .form-error {
@@ -162,6 +186,72 @@ $modal-width-desktop: 80rem;
 
   &::placeholder {
     color: $color-gray-400;
+  }
+}
+
+.password-shell {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-height: 4.8rem;
+  box-sizing: border-box;
+  border: 0.2rem solid $color-gray-200;
+  border-radius: 0.8rem;
+  background: $color-white;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0.1rem 0 rgba(0, 0, 0, 0.04);
+
+  &:focus-within {
+    border-color: $color-green;
+    box-shadow: 0 0 0 0.1rem rgba(71, 161, 56, 0.2);
+  }
+}
+
+.password-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 1%;
+  padding: 1.1rem 0.4rem 1.1rem 1.4rem;
+  font-size: $font-size-base;
+  font-family: $font-family-base;
+  border: none;
+  outline: none;
+  background: transparent;
+  line-height: 1.4;
+
+  &::placeholder {
+    color: $color-gray-400;
+  }
+}
+
+.password-toggle {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  min-width: 4.2rem;
+  max-width: 4.6rem;
+  margin: 0.35rem 0.35rem 0.35rem 0;
+  padding: 0 0.2rem;
+  border: none;
+  border-radius: 0.6rem;
+  background: rgba(222, 233, 234, 0.35);
+  color: $color-gray-500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s ease, background 0.2s ease;
+
+  &:active {
+    background: rgba(71, 161, 56, 0.12);
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: $color-green;
+    background: rgba(71, 161, 56, 0.1);
+    outline: none;
   }
 }
 
@@ -213,6 +303,9 @@ $modal-width-desktop: 80rem;
 .login .submit-button {
   width: 100%;
   margin-bottom: 1.6rem;
+  position: relative;
+  z-index: 2;
+  touch-action: manipulation;
 }
 
 .signup .submit-button {
@@ -224,12 +317,46 @@ $modal-width-desktop: 80rem;
   justify-content: center;
   text-align: center;
   margin-bottom: 2.4rem;
-  
+  position: relative;
+  z-index: 2;
+  touch-action: manipulation;
+}
+
+.signup .submit-bar {
+  @include mobile {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10001;
+    padding: 1rem 1.6rem 1.2rem;
+    padding-bottom: max(1.2rem, env(safe-area-inset-bottom, 0px));
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    border-radius: 1.2rem 1.2rem 0 0;
+    background: linear-gradient(180deg, rgba(248, 248, 248, 0.96) 0%, $color-white 32%);
+    border: 0.1rem solid rgba(222, 233, 234, 0.8);
+    border-bottom: none;
+    box-shadow:
+      0 -0.2rem 0 rgba(0, 77, 97, 0.04),
+      0 -1.2rem 3.2rem rgba(0, 77, 97, 0.08);
+    pointer-events: auto;
+    touch-action: manipulation;
+  }
+}
+
+.signup .submit-bar .submit-button {
   @include mobile {
     width: 100%;
-    min-width: auto;
-    height: 5.2rem;
+    min-width: 0;
+    min-height: 5.2rem;
+    height: auto;
     font-size: 1.6rem;
+    font-weight: $font-weight-semibold;
+    margin: 0;
+    border-radius: 0.8rem;
+    box-shadow: 0 0.2rem 0.8rem rgba(255, 80, 49, 0.3);
   }
 }
 
