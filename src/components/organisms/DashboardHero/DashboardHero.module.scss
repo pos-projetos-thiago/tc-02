@@ -25,6 +25,17 @@
     color: #000000;
     min-height: 20rem;
     height: 55rem;
+
+    @include mobile {
+      height: auto;
+      min-height: 80rem;
+      border-radius: 1.2rem;
+    }
+
+    @include tablet {
+      height: auto;
+      min-height: 64rem;
+    }
   }
 }
 
@@ -44,6 +55,19 @@
 
   .others-mode & {
     gap: 6rem;
+
+    @include mobile {
+      padding-bottom: 2.4rem;
+      gap: 1.6rem;
+    }
+
+    @include tablet {
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 2.4rem;
+      padding-bottom: 2.4rem;
+    }
   }
 }
 
@@ -103,10 +127,41 @@
   }
 }
 
+.others-mode .account-info {
+  @media (max-width: 1919px) {
+    display: contents;
+  }
+}
+
 .greeting-section {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+}
+
+.others-mode .greeting-section {
+  @include mobile {
+    order: 1;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 1.2rem;
+    padding-top: 1.6rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  @include tablet {
+    order: 1;
+    box-sizing: border-box;
+    margin: 0 auto 0;
+    margin-top: 2.4rem;
+    max-width: 100%;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
 }
 
 .header:not(.others-mode) .illustration {
@@ -188,8 +243,16 @@
   margin-top: 4rem;
   pointer-events: auto;
 
+  @include tablet {
+    order: 3;
+    margin-top: 2.4rem;
+    width: 100%;
+  }
+
   @include mobile {
-    margin-top: 2rem;
+    order: 3;
+    margin-top: 0;
+    width: 100%;
   }
 }
 
@@ -217,15 +280,27 @@
   }
 
   .others-mode & {
-    max-width: 40rem;
-    width: 40rem;
-    height: 40rem;
+    object-fit: contain;
+    max-height: none;
+    height: auto;
     opacity: 0.8;
+
+    @include tablet {
+      max-width: min(40rem, 90vw);
+      width: min(40rem, 90vw);
+      min-height: 0;
+      max-height: none;
+    }
+
+    @include desktop {
+      max-width: min(58rem, 45vw);
+      width: min(58rem, 45vw);
+      max-height: none;
+    }
 
     @include mobile {
       max-width: 24rem;
       width: 24rem;
-      height: 24rem;
     }
   }
 }
@@ -268,5 +343,30 @@
   @include mobile {
     margin-top: 3rem;
     margin-right: 1.6rem;
+  }
+}
+
+.others-mode .profile-wrapper {
+  @include mobile {
+    order: 2;
+    margin: 0 auto 0;
+    margin-top: 0.4rem;
+    margin-right: auto;
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 50rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @include tablet {
+    order: 2;
+    margin: 1.6rem auto 0;
+    margin-right: auto;
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 50rem;
+    align-items: center;
+    justify-content: center;
   }
 }

@@ -86,7 +86,7 @@
 
     .others-layout & {
       grid-area: 1 / 2 / 2 / 5;
-      max-height: 55rem;
+      max-height: none;
     }
   }
 
@@ -94,7 +94,8 @@
     grid-area: header;
 
     .others-layout & {
-      max-height: 55rem;
+      max-height: none;
+      min-height: 0;
     }
   }
 
