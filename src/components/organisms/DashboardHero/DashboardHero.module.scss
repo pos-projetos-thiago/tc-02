@@ -1,0 +1,372 @@
+@import '../../../styles/colors';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+.header {
+  background: $color-primary;
+  border-radius: 1.6rem;
+  color: $color-white;
+  height: 100%;
+  min-height: 20rem;
+  position: relative;
+  overflow: hidden;
+
+  &:not(.others-mode) {
+    @include tablet {
+      min-height: 24rem;
+    }
+    @include desktop {
+      min-height: 28rem;
+    }
+  }
+
+  &.others-mode {
+    background: #CBCBCB;
+    color: #000000;
+    min-height: 20rem;
+    height: 55rem;
+
+    @include mobile {
+      height: auto;
+      min-height: 80rem;
+      border-radius: 1.2rem;
+    }
+
+    @include tablet {
+      height: auto;
+      min-height: 64rem;
+    }
+  }
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  height: 100%;
+  gap: 4rem;
+  position: relative;
+
+  @include mobile {
+    flex-direction: column;
+    gap: 2.4rem;
+    align-items: center;
+  }
+
+  .others-mode & {
+    gap: 6rem;
+
+    @include mobile {
+      padding-bottom: 2.4rem;
+      gap: 1.6rem;
+    }
+
+    @include tablet {
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 2.4rem;
+      padding-bottom: 2.4rem;
+    }
+  }
+}
+
+.header:not(.others-mode) .content {
+  @media (min-width: 720px) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+}
+
+.greeting-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  z-index: 2;
+
+  @media (min-width: 720px) {
+    margin-top: 3.2rem;
+    margin-left: 2.4rem;
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+  }
+
+  @include mobile {
+    order: 1;
+    width: 100%;
+    max-width: 100%;
+    align-items: center;
+    text-align: center;
+    margin: 0;
+    padding-top: 1.6rem;
+  }
+}
+
+.account-info {
+  margin-top: 2.4rem;
+  margin-left: 2.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+
+  @include mobile {
+    margin: 1.6rem;
+    margin-top: 0;
+    gap: 1.6rem;
+    width: 100%;
+    max-width: 100%;
+    align-items: center;
+    text-align: center;
+    margin-left: 0;
+  }
+}
+
+.others-mode .account-info {
+  @media (max-width: $bp-tablet-max) {
+    display: contents;
+  }
+}
+
+.greeting-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.others-mode .greeting-section {
+  @include mobile {
+    order: 1;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 1.2rem;
+    padding-top: 1.6rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  @include tablet {
+    order: 1;
+    box-sizing: border-box;
+    margin: 0 auto 0;
+    margin-top: 2.4rem;
+    max-width: 100%;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.header:not(.others-mode) .illustration {
+  pointer-events: none;
+
+  @media (min-width: 720px) {
+    position: absolute;
+    z-index: 1;
+    left: 2.4rem;
+    right: 2.4rem;
+    bottom: 0;
+    top: auto;
+    margin: 0 auto 0 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+  }
+
+  @include tablet {
+    max-width: min(30rem, 44%);
+    max-height: min(15rem, 46%);
+  }
+
+  @include desktop {
+    max-width: min(48rem, 50%);
+    max-height: min(22rem, 55%);
+  }
+
+  @include mobile {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    order: 3;
+    max-width: 24rem;
+    max-height: none;
+    width: 100%;
+    margin-top: 0.8rem;
+    z-index: 1;
+    pointer-events: auto;
+    display: flex;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.header:not(.others-mode) .balance-wrapper {
+  @media (min-width: 720px) {
+    grid-column: 2;
+    grid-row: 1;
+    z-index: 2;
+  }
+
+  @include mobile {
+    order: 2;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    margin-top: 0.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+}
+
+.others-mode .illustration {
+  position: relative;
+  right: auto;
+  left: auto;
+  top: auto;
+  bottom: auto;
+  max-width: none;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4rem;
+  pointer-events: auto;
+
+  @include tablet {
+    order: 3;
+    margin-top: 2.4rem;
+    width: 100%;
+  }
+
+  @include mobile {
+    order: 3;
+    margin-top: 0;
+    width: 100%;
+  }
+}
+
+.illustration-img {
+  width: 100%;
+  height: auto;
+  max-width: 55rem;
+  opacity: 0.9;
+  object-fit: contain;
+
+  @include tablet {
+    max-width: 100%;
+    max-height: 15rem;
+  }
+
+  @include desktop {
+    max-width: 100%;
+    max-height: 22rem;
+  }
+
+  @include mobile {
+    max-width: 20rem;
+    max-height: none;
+    opacity: 1;
+  }
+
+  .others-mode & {
+    object-fit: contain;
+    max-height: none;
+    height: auto;
+    opacity: 0.8;
+
+    @include tablet {
+      max-width: min(40rem, 90vw);
+      width: min(40rem, 90vw);
+      min-height: 0;
+      max-height: none;
+    }
+
+    @include desktop {
+      max-width: min(58rem, 45vw);
+      width: min(58rem, 45vw);
+      max-height: none;
+    }
+
+    @include mobile {
+      max-width: 24rem;
+      width: 24rem;
+    }
+  }
+}
+
+.greeting {
+  font-size: 2.5rem;
+  font-weight: $font-weight-bold;
+  margin: 0;
+
+  @include mobile {
+    font-size: 2.2rem;
+  }
+
+  &.others-greeting {
+    color: #000000;
+  }
+}
+
+.date {
+  font-size: 1.3rem;
+  color: $color-white;
+  margin: 0;
+}
+
+.balance-wrapper {
+  @media (min-width: 720px) {
+    margin-top: 9.5rem;
+    margin-right: 10rem;
+  }
+}
+
+.profile-wrapper {
+  margin-top: 6rem;
+  margin-right: 6rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 1;
+
+  @include mobile {
+    margin-top: 3rem;
+    margin-right: 1.6rem;
+  }
+}
+
+.others-mode .profile-wrapper {
+  @include mobile {
+    order: 2;
+    margin: 0 auto 0;
+    margin-top: 0.4rem;
+    margin-right: auto;
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 50rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @include tablet {
+    order: 2;
+    margin: 1.6rem auto 0;
+    margin-right: auto;
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 50rem;
+    align-items: center;
+    justify-content: center;
+  }
+}

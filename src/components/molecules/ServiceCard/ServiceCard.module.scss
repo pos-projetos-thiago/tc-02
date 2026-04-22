@@ -1,0 +1,84 @@
+@import '../../../styles/colors';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1.2rem;
+  border-radius: 1.2rem;
+  border: 1px solid $color-gray-200;
+  background-color: $color-white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  text-align: center;
+  min-height: 6rem;
+  
+  &:hover {
+    background-color: rgba($color-gray-50, 0.6);
+    box-shadow: 0 6px 20px rgba($color-green, 0.08);
+    transform: translateY(-3px) scale(1.005);
+    border-color: rgba($color-green, 0.2);
+  }
+  
+  &[role="button"] {
+    &:focus {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+  
+  @include mobile {
+    padding: 2.4rem 1.6rem;
+    gap: 1.6rem;
+    min-height: 8rem;
+    
+    &:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+  }
+
+  @include desktop {
+    @media (min-height: 1024px) {
+      gap: 3rem;
+      padding: 3rem 1rem;
+    }
+  }
+}
+
+.service-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5rem;
+  height: 5rem;
+  
+  img, svg {
+    width: 5rem;
+    height: 5rem;
+    object-fit: contain;
+  }
+}
+
+.service-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.service-title {
+  font-size: 1.6rem;
+  font-weight: $font-weight-bold;
+  color: $color-black;
+  margin: 0;
+}
+
+.service-description {
+  font-size: 1.4rem;
+  color: $color-gray-500;
+  margin: 0.5rem 0 0 0;
+  text-align: center;
+}

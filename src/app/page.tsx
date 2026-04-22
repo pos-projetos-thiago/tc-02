@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/organisms/Navbar';
 import { Hero } from '@/components/organisms/Hero';
 import { Footer } from '@/components/organisms/Footer';
-import { AuthModal } from '@/components/organisms/AuthModal';
-import { useAuth } from '@/contexts/AuthContext';
+import { AuthModalSupabase } from '@/components/organisms/AuthModal/AuthModalSupabase';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 
 export default function Home() {
   const [authModalVariant, setAuthModalVariant] = useState<'signup' | 'login' | null>(null);
   const [authModalKey, setAuthModalKey] = useState(0);
-  const { user } = useAuth();
+  const { user, isLoading } = useSupabaseAuth();
   const router = useRouter();
 
   const handleAuthModalChange = useCallback((variant: 'signup' | 'login' | null) => {
@@ -22,13 +22,43 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (user) {
-      router.replace('/dashboard');
+    if (!isLoading && user) {
+      const timer = setTimeout(() => {
+        router.replace('/dashboard');
+      }, 100);
+
+      return () => clearTimeout(timer);
     }
-  }, [user, router]);
+  }, [user, isLoading, router]);
+
+  if (isLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '18px',
+        color: '#004D61'
+      }}>
+        Verificando autenticação...
+      </div>
+    );
+  }
 
   if (user) {
-    return null;
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '18px',
+        color: '#004D61'
+      }}>
+        Redirecionando para dashboard...
+      </div>
+    );
   }
 
   return (
@@ -42,7 +72,7 @@ export default function Home() {
         onOpenLogin={() => handleAuthModalChange('login')}
       />
       <Footer />
-      <AuthModal
+      <AuthModalSupabase
         key={authModalKey}
         isOpen={authModalVariant !== null}
         onClose={() => handleAuthModalChange(null)}

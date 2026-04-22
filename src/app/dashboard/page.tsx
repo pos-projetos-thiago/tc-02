@@ -2,52 +2,102 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/atoms/Button';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { useDashboard } from '@/contexts/DashboardContext';
+import { UserProfileSupabase } from '@/components/molecules/UserProfile/UserProfileSupabase';
+import { DashboardNav } from '@/components/molecules/DashboardNav';
+import { DashboardHero } from '@/components/organisms/DashboardHero';
+import { DashboardServices } from '@/components/organisms/DashboardServices';
+import { DashboardExtract } from '@/components/organisms/DashboardExtract';
+import { LoadingScreen } from '@/components/atoms/Loading';
 import styles from './dashboard.module.scss';
 
+export const dynamic = 'force-dynamic';
+
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user, isLoading } = useSupabaseAuth();
   const router = useRouter();
 
-  const handleLogout = () => {
-    logout();
-    router.replace('/');
-  };
-
   useEffect(() => {
-    if (!user) {
-      router.replace('/');
-    }
-  }, [user, router]);
+    if (!isLoading && !user) {
+      const timer = setTimeout(() => {
+        router.replace('/');
+      }, 100);
 
-  if (!user) {
+      return () => clearTimeout(timer);
+    }
+  }, [user, isLoading, router]);
+
+  if (isLoading) {
     return (
-      <div className={styles.loading} aria-live="polite">
-        Carregando…
-      </div>
+      <LoadingScreen
+        isVisible={true}
+        size="large"
+        text="Verificando autenticação..."
+      />
     );
   }
 
+  if (!user) {
+    return (
+      <LoadingScreen
+        isVisible={true}
+        size="large"
+        text="Redirecionando para login..."
+      />
+    );
+  }
+
+  const userName = user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário';
+
+  return <DashboardContent userName={userName} />;
+}
+
+function DashboardContent({ userName }: { userName: string }) {
+  const { balance, transactions, activeSection } = useDashboard();
+  const router = useRouter();
+
+  const handleEditTransactions = () => {
+    router.push('/dashboard/transacoes');
+  };
+
+  const handleDeleteTransactions = () => {
+    router.push('/dashboard/transacoes');
+  };
+
   return (
-    <main className={styles.main}>
-      <header className={styles.header}>
-        <Link href="/dashboard" className={styles.brand}>
-          Bytebank
-        </Link>
-        <Button type="button" variant="secondary" onClick={handleLogout}>
-          Sair
-        </Button>
-      </header>
-      <section className={styles.content}>
-        <h1 className={styles.title}>Olá, {user.name}!</h1>
-        <p className={styles.lead}>
-          Você está autenticado. Em breve esta área exibirá saldo, extrato e transações conforme o Tech
-          Challenge.
-        </p>
-        <p className={styles.email}>Conta: {user.email}</p>
-      </section>
-    </main>
+    <>
+      <UserProfileSupabase userName={userName} />
+      <main className={styles.main}>
+        <div className={`${styles['dashboard-grid']} ${activeSection === 'others' ? styles['others-layout'] : ''}`}>
+          <div className={styles['grid-sidebar']}>
+            <DashboardNav />
+          </div>
+
+          <div className={styles['grid-header']}>
+            <DashboardHero
+              userName={userName}
+              balance={balance}
+            />
+          </div>
+
+          {activeSection !== 'others' && (
+            <>
+              <div className={styles['grid-services']}>
+                <DashboardServices userName={userName} />
+              </div>
+
+              <div className={styles['grid-extract']}>
+                <DashboardExtract
+                  transactions={transactions}
+                  onEditClick={handleEditTransactions}
+                  onDeleteClick={handleDeleteTransactions}
+                />
+              </div>
+            </>
+          )}
+        </div>
+      </main>
+    </>
   );
 }

@@ -1,71 +1,41 @@
 # Bytebank Design System
 
-Bem-vindo à documentação do **Design System do Bytebank**, uma aplicação de gerenciamento financeiro desenvolvida com Next.js, TypeScript e SCSS.
+Bem-vindo à documentação do design system do **Bytebank**. A aplicação de gestão financeira (Next.js, TypeScript e SCSS) reutiliza os mesmos **fundamentos visuais** e a mesma organização de **componentes** em todo o app.
 
-## 🎯 Objetivo
+## Objetivo
 
-Este Design System foi criado para garantir consistência visual e reutilização de componentes em toda a aplicação, seguindo os princípios de **Atomic Design**.
+Manter consistência entre telas, reduzir decisões ad hoc e documentar o que o time e a disciplina Pós-Tech possam reutilizar com clareza.
 
-## 🏗️ Estrutura
+## Organização (Atomic Design)
 
-O projeto está organizado em:
+- **Átomos:** partes básicas (ex.: `Button`, `MenuButton`)
+- **Moléculas:** blocos compostos (ex.: cartões, campos)
+- **Organismos:** seções completas (ex.: hero, modais, navegação)
+- **Templates (evolução):** layouts de página, quando a fase do produto exigir
 
-- **Atoms**: Componentes básicos e indivisíveis (Button, Input, etc)
-- **Molecules**: Combinação de átomos (FormField, Card, etc)
-- **Organisms**: Componentes complexos (Header, Footer, Hero, etc)
-- **Templates**: Layouts de páginas
+## O que você encontra aqui
 
-## 🎨 Fundamentos
+- **Design tokens** - paleta (`_colors.scss`), tipografia e [breakpoints](./breakpoints), alinhados a `src/styles/`
+- **Componentes** - [visão geral](./components/catalog) e uma página por componente (menu **Átomos** / **Moléculas** / **Organismos** / **Templates**). O [Button](./components/button) tem o texto mais completo; as outras trazem caminho, papel e props
 
-### Sistema de Cores
+## Tecnologias do app
 
-O Bytebank utiliza uma paleta cuidadosamente selecionada que inclui:
-- Cor primária: `#004D61` (verde-azulado)
-- Cor de destaque: `#FF5031` (laranja)
-- Cores neutras em escala (gray-50 a gray-500)
-- Cores auxiliares (blue, purple, orange, pink, green)
+- **Front:** Next.js 16, React, TypeScript
+- **Estilo:** SCSS modules (estilos com escopo por componente)
+- **Outros:** MUI (ícones e parte da interface) e Supabase (login e dados), quando a tela depender deles
 
-### Tipografia
+## Como importar
 
-- **Fonte**: Inter (Google Fonts)
-- **Sistema REM**: Base 10 (1rem = 10px)
-- **Escala tipográfica**: De 1.3rem (13px) até 4.8rem (48px)
-
-### Responsividade
-
-- **Mobile**: até 719px
-- **Tablet**: 720px - 1919px
-- **Desktop**: 1920px+
-
-## 🚀 Tecnologias
-
-- **Next.js 16** - Framework React
-- **TypeScript** - Tipagem estática
-- **SCSS Modules** - Estilização com escopo local
-- **Material-UI** - Componentes e ícones
-- **React Hook Form + Zod** - Formulários e validação
-
-## 📦 Como usar
-
-Todos os componentes estão disponíveis em `src/components/` e podem ser importados diretamente:
+Os componentes ficam em `src/components/`. O projeto costuma usar um **alias** no `tsconfig` (por exemplo `@/components/...`) para encurtar os imports:
 
 ```tsx
 import { Button } from '@/components/atoms/Button';
-import { Hero } from '@/components/organisms/Hero';
 
-export default function Page() {
-  return (
-    <>
-      <Hero />
-      <Button variant="primary">Abrir conta</Button>
-    </>
-  );
+export default function Example() {
+  return <Button variant="primary">Abrir conta</Button>;
 }
 ```
 
-## 📚 Navegação
+## Navegação
 
-Explore a documentação através do menu lateral para conhecer:
-- **Design Tokens**: Cores, tipografia e espaçamentos
-- **Componentes**: Documentação completa de cada componente
-- **Guidelines**: Boas práticas e padrões de uso
+Pelo **menu à esquerda** (ou sanduíche no celular): **Cores**, **Tipografia**, **Breakpoints**, depois **Componentes** (catálogo + grupos com cada peça). **Button** concentra o exemplo mais longo; o restante está no mesmo padrão com props e descrição curta.

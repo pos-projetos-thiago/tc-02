@@ -6,7 +6,7 @@ import {
   useContext,
   useMemo,
   useSyncExternalStore,
-  type ReactNode,
+  type ReactNode
 } from 'react';
 import {
   getAuthSnapshot,
@@ -14,7 +14,7 @@ import {
   loginWithCredentials,
   registerUser,
   setSessionUser,
-  subscribeAuth,
+  subscribeAuth
 } from '@/lib/auth/auth-store';
 import { DEMO_EMAIL, DEMO_PASSWORD } from '@/lib/auth/mock-storage';
 import type { SessionUser } from '@/lib/auth/mock-storage';
@@ -43,10 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSessionUser(null);
   }, []);
 
-  const value = useMemo(
-    () => ({ user, login, signUp, logout }),
-    [user, login, signUp, logout],
-  );
+  const value = useMemo(() => ({ user, login, signUp, logout }), [user, login, signUp, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

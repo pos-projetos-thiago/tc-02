@@ -2,9 +2,9 @@ import { Navbar } from '@/components/organisms/Navbar';
 import { Footer } from '@/components/organisms/Footer';
 import { Button } from '@/components/atoms/Button';
 import Image from 'next/image';
-import styles from './NotFound.module.scss';
+import styles from './NotFoundTemplate.module.scss';
 
-export const NotFound = () => {
+export const NotFoundTemplate = () => {
   return (
     <>
       <Navbar />
@@ -19,7 +19,7 @@ export const NotFound = () => {
             Voltar ao início
           </Button>
         </div>
-        <div className={styles.imageWrapper}>
+        <div className={styles["image-wrapper"]}>
           <Image
             src="/NotFound/404.svg"
             alt="Imagem de página não encontrada"

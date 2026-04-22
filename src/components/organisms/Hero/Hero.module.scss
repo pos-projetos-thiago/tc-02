@@ -86,7 +86,7 @@
   }
 }
 
-.imageWrapper {
+.image-wrapper {
   flex-shrink: 0;
 
   @include mobile {
@@ -98,7 +98,7 @@
   }
 }
 
-.heroImage {
+.hero-image {
   @include mobile {
     width: 100%;
     height: 100%;
@@ -106,7 +106,7 @@
   }
 }
 
-.mobileActions {
+.mobile-actions {
   display: none;
 
   @include mobile {

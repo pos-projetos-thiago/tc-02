@@ -3,15 +3,17 @@ import styles from './Button.module.scss';
 
 export interface ButtonProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'accent' | 'primaryMobile' | 'secondaryMobile';
+  variant?: 'primary' | 'secondary' | 'accent' | 'danger' | 'primary-mobile' | 'secondary-mobile';
+  size?: 'normal' | 'small';
   onClick?: () => void;
   className?: string;
   href?: string;
   type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
 }
 
-export const Button = ({ children, variant = 'primary', onClick, className, href, type = 'button' }: ButtonProps) => {
-  const classNames = `${styles.button} ${styles[variant]} ${className || ''}`.trim();
+export const Button = ({ children, variant = 'primary', size = 'normal', onClick, className, href, type = 'button', disabled = false }: ButtonProps) => {
+  const classNames = `${styles.button} ${styles[variant]} ${size === 'small' ? styles.small : ''} ${className || ''}`.trim();
 
   if (href) {
     return (
@@ -22,7 +24,7 @@ export const Button = ({ children, variant = 'primary', onClick, className, href
   }
 
   return (
-    <button className={classNames} onClick={onClick} type={type}>
+    <button className={classNames} onClick={onClick} type={type} disabled={disabled}>
       {children}
     </button>
   );

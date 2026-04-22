@@ -3,6 +3,8 @@
 import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Modal } from '@/components/molecules/Modal';
 import { Button } from '@/components/atoms/Button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -84,13 +86,19 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
   const [values, setValues] = useState(emptyValues);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClose = useCallback(() => {
+    setShowPassword(false);
+    onClose();
+  }, [onClose]);
 
   const handleChange = useCallback((key: FieldKey, value: string) => {
     setValues((prev) => ({ ...prev, [key]: value }));
     setError(null);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -98,35 +106,49 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
     const password = values.password;
     const name = values.name.trim();
 
-    if (variant === 'signup') {
-      if (!name || !email || !password) {
-        setError('Preencha nome, e-mail e senha.');
-        return;
-      }
-      if (!privacyAccepted) {
-        setError('É necessário aceitar a política de privacidade.');
-        return;
-      }
-      try {
-        signUp(name, email, password);
-        onClose();
-        router.push('/dashboard');
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Não foi possível criar a conta.');
-      }
-      return;
-    }
-
-    if (!email || !password) {
-      setError('Preencha e-mail e senha.');
-      return;
-    }
     try {
+      if (variant === 'signup') {
+        if (!name || !email || !password) {
+          setError('Preencha nome, e-mail e senha.');
+          return;
+        }
+        if (!privacyAccepted) {
+          setError('É necessário aceitar a política de privacidade.');
+          return;
+        }
+        
+        signUp(name, email, password);
+        
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        handleClose();
+        setValues(emptyValues);
+        setPrivacyAccepted(false);
+        router.push('/dashboard');
+        return;
+      }
+
+      if (!email || !password) {
+        setError('Preencha e-mail e senha.');
+        return;
+      }
+      
+      console.log('Iniciando processo de login...');
       login(email, password);
-      onClose();
+      console.log('Login executado, aguardando...');
+      
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      console.log('Fechando modal...');
+      handleClose();
+      setValues(emptyValues);
+      console.log('Navegando para dashboard...');
       router.push('/dashboard');
+      console.log('Processo de login concluído!');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível entrar.');
+      const message = err instanceof Error ? err.message : 
+        variant === 'signup' ? 'Não foi possível criar a conta.' : 'Não foi possível entrar.';
+      setError(message);
     }
   };
 
@@ -136,13 +158,13 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       ariaLabel={dialogLabel}
       fullHeight
       contentClassName={`${styles.content} ${styles[variant]}`}
     >
       <div className={styles.wrapper}>
-        <div className={styles.imageWrapper}>
+        <div className={styles["image-wrapper"]}>
           <Image
             src={config.imageSrc}
             alt={config.imageAlt}
@@ -150,13 +172,13 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
             sizes="(max-width: 719px) 300px, 355px"
           />
         </div>
-        <div className={styles.formWrapper}>
+        <div className={styles["form-wrapper"]}>
           <h2 id="auth-modal-title" className={styles.title}>
             {config.title}
           </h2>
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
             {error && (
-              <p className={styles.formError} role="alert">
+              <p className={styles["form-error"]} role="alert">
                 {error}
               </p>
             )}
@@ -167,28 +189,50 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
                   <label htmlFor={id} className={styles.label}>
                     {input.label}
                   </label>
-                  <input
-                    id={id}
-                    type={input.type}
-                    placeholder={input.placeholder}
-                    className={styles.input}
-                    value={values[input.fieldKey]}
-                    onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
-                    autoComplete={
-                      input.fieldKey === 'password'
-                        ? variant === 'signup'
-                          ? 'new-password'
-                          : 'current-password'
-                        : input.fieldKey === 'email'
-                          ? 'email'
-                          : 'name'
-                    }
-                  />
+                  {input.type === 'password' ? (
+                    <div className={styles['password-shell']}>
+                      <input
+                        id={id}
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder={input.placeholder}
+                        className={styles['password-input']}
+                        value={values[input.fieldKey]}
+                        onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
+                        autoComplete={
+                          variant === 'signup' ? 'new-password' : 'current-password'
+                        }
+                      />
+                      <button
+                        type="button"
+                        className={styles['password-toggle']}
+                        onClick={() => setShowPassword((v) => !v)}
+                        aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                      >
+                        {showPassword ? (
+                          <VisibilityOff sx={{ fontSize: 22 }} />
+                        ) : (
+                          <Visibility sx={{ fontSize: 22 }} />
+                        )}
+                      </button>
+                    </div>
+                  ) : (
+                    <input
+                      id={id}
+                      type={input.type}
+                      placeholder={input.placeholder}
+                      className={styles.input}
+                      value={values[input.fieldKey]}
+                      onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
+                      autoComplete={
+                        input.fieldKey === 'email' ? 'email' : 'name'
+                      }
+                    />
+                  )}
                   {'forgotPasswordText' in config &&
                     index === config.inputs.length - 1 && (
                       <button
                         type="button"
-                        className={styles.forgotPassword}
+                        className={styles["forgot-password"]}
                         onClick={() => setError('Fluxo de recuperação de senha não está disponível nesta demonstração.')}
                       >
                         {config.forgotPasswordText}
@@ -198,7 +242,7 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
               );
             })}
             {'privacyText' in config && (
-              <label className={styles.checkboxLabel}>
+              <label className={styles["checkbox-label"]}>
                 <input
                   type="checkbox"
                   className={styles.checkbox}
@@ -208,12 +252,20 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
                     setError(null);
                   }}
                 />
-                <span className={styles.checkboxText}>{config.privacyText}</span>
+                <span className={styles["checkbox-text"]}>{config.privacyText}</span>
               </label>
             )}
-            <Button variant={config.buttonVariant} type="submit" className={styles.submitButton}>
-              {config.submitLabel}
-            </Button>
+            {variant === 'signup' ? (
+              <div className={styles['submit-bar']}>
+                <Button variant={config.buttonVariant} type="submit" className={styles['submit-button']}>
+                  {config.submitLabel}
+                </Button>
+              </div>
+            ) : (
+              <Button variant={config.buttonVariant} type="submit" className={styles['submit-button']}>
+                {config.submitLabel}
+              </Button>
+            )}
           </form>
         </div>
       </div>
