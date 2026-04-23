@@ -10,6 +10,7 @@ import { DashboardHero } from '@/components/organisms/DashboardHero';
 import { DashboardServices } from '@/components/organisms/DashboardServices';
 import { DashboardExtract } from '@/components/organisms/DashboardExtract';
 import { LoadingScreen } from '@/components/atoms/Loading';
+import { StorageWarning } from '@/components/atoms/StorageWarning';
 import styles from './dashboard.module.scss';
 
 export const dynamic = 'force-dynamic';
@@ -67,6 +68,7 @@ function DashboardContent({ userName }: { userName: string }) {
 
   return (
     <>
+      <StorageWarning />
       <UserProfileSupabase userName={userName} />
       <main className={styles.main}>
         <div className={`${styles['dashboard-grid']} ${activeSection === 'others' ? styles['others-layout'] : ''}`}>

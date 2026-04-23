@@ -1,6 +1,14 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from 'react';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { 
+  getUserBalance, 
+  updateUserBalance, 
+  getUserTransactions, 
+  addTransaction as addTransactionDB,
+  SupabaseTransaction 
+} from '@/lib/supabase/database';
 
 type DashboardSection = 'services' | 'transfers' | 'investments' | 'others' | 'cards';
 
@@ -32,36 +40,92 @@ const STORAGE_KEYS = {
   transactions: 'dashboard-transactions'
 };
 
-const getStoredBalance = (): number => {
-  if (typeof window === 'undefined') return 2000.00;
-  const stored = localStorage.getItem(STORAGE_KEYS.balance);
-  return stored ? parseFloat(stored) : 2000.00;
+type StorageValue = string | number | Transaction[] | boolean;
+
+const isLocalStorageAvailable = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  
+  try {
+    const testKey = '__localStorage_test__';
+    localStorage.setItem(testKey, 'test');
+    localStorage.removeItem(testKey);
+    return true;
+  } catch {
+    return false;
+  }
 };
 
-const getStoredTransactions = (): Transaction[] => {
-  if (typeof window === 'undefined') return [];
-  const stored = localStorage.getItem(STORAGE_KEYS.transactions);
-  return stored ? JSON.parse(stored) : [];
+
+const setStorageItem = (key: string, value: StorageValue): void => {
+  if (!isLocalStorageAvailable()) return;
+  
+  try {
+    const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+    localStorage.setItem(key, stringValue);
+  } catch (error) {
+    console.warn(`Erro ao salvar ${key} no localStorage:`, error);
+  }
 };
+
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
   const [activeSection, setActiveSection] = useState<DashboardSection>('services');
-  const [balance, setBalance] = useState(() => getStoredBalance());
-  const [transactions, setTransactions] = useState<Transaction[]>(() => getStoredTransactions());
+  const [balance, setBalance] = useState(2000.00);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const { user, isAuthenticated } = useSupabaseAuth();
 
+  // Função para converter transação do Supabase para formato local
+  const convertFromSupabase = useCallback((supabaseTransaction: SupabaseTransaction): Transaction => ({
+    id: supabaseTransaction.id,
+    type: supabaseTransaction.type,
+    subtype: supabaseTransaction.subtype,
+    investmentType: supabaseTransaction.investment_type,
+    amount: supabaseTransaction.amount,
+    description: supabaseTransaction.description,
+    date: supabaseTransaction.date
+  }), []);
+
+
+  // Carregar dados quando usuário muda
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEYS.balance, balance.toString());
-    }
+    const load = async () => {
+      if (!user?.id || !isAuthenticated) {
+        setBalance(2000.00);
+        setTransactions([]);
+        return;
+      }
+
+      try {
+        // Carregar saldo
+        const userBalance = await getUserBalance(user.id);
+        setBalance(userBalance);
+
+        // Carregar transações
+        const userTransactions = await getUserTransactions(user.id);
+        const convertedTransactions = userTransactions.map(convertFromSupabase);
+        setTransactions(convertedTransactions);
+      } catch (error) {
+        console.error('Erro ao carregar dados do usuário:', error);
+      }
+    };
+
+    load();
+  }, [user?.id, isAuthenticated, convertFromSupabase]);
+
+  // Manter localStorage como fallback
+  useEffect(() => {
+    setStorageItem(STORAGE_KEYS.balance, balance.toString());
   }, [balance]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEYS.transactions, JSON.stringify(transactions));
-    }
+    setStorageItem(STORAGE_KEYS.transactions, transactions);
   }, [transactions]);
 
-  const addTransaction = useCallback((type: string, amount: number) => {
+  const addTransaction = useCallback(async (type: string, amount: number) => {
+    if (!user?.id || !isAuthenticated) {
+      console.warn('Usuário não autenticado');
+      return;
+    }
     const transactionTypes: { [key: string]: Transaction['type'] } = {
       deposit: 'deposit',
       withdrawal: 'withdrawal',
@@ -100,24 +164,42 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       'investment-bolsa': 'bolsa'
     };
 
-    const newTransaction: Transaction = {
-      id: `txn_${Date.now()}`,
+    const transactionData = {
       type: transactionTypes[type] || 'transfer',
       subtype: subtypeMap[type],
-      investmentType: investmentTypeMap[type],
+      investment_type: investmentTypeMap[type],
       amount: amount,
       description: transactionLabels[type] || 'Transação',
       date: new Date().toISOString().split('T')[0]
     };
 
-    if (type === 'deposit') {
-      setBalance(prev => prev + amount);
-    } else {
-      setBalance(prev => prev - amount);
-    }
+    try {
+      // Salvar transação no Supabase
+      const savedTransaction = await addTransactionDB(user.id, transactionData);
+      
+      if (!savedTransaction) {
+        console.error('Falha ao salvar transação no Supabase');
+        return;
+      }
 
-    setTransactions(prev => [newTransaction, ...prev]);
-  }, []);
+      // Atualizar saldo
+      const newBalance = type === 'deposit' ? balance + amount : balance - amount;
+      const balanceUpdated = await updateUserBalance(user.id, newBalance);
+      
+      if (!balanceUpdated) {
+        console.error('Falha ao atualizar saldo no Supabase');
+        return;
+      }
+
+      // Atualizar estado local
+      setBalance(newBalance);
+      const convertedTransaction = convertFromSupabase(savedTransaction);
+      setTransactions(prev => [convertedTransaction, ...prev]);
+      
+    } catch (error) {
+      console.error('Erro ao adicionar transação:', error);
+    }
+  }, [user, isAuthenticated, balance, convertFromSupabase]);
 
   const editTransaction = useCallback((id: string, updates: Partial<Transaction>) => {
     const originalTransaction = transactions.find(t => t.id === id);
@@ -172,15 +254,35 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     setTransactions(prev => prev.filter(t => t.id !== id));
   }, [transactions]);
 
-  const resetData = useCallback(() => {
-    setBalance(2000.00);
-    setTransactions([]);
-
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEYS.balance);
-      localStorage.removeItem(STORAGE_KEYS.transactions);
+  const resetData = useCallback(async () => {
+    // Limpar localStorage
+    if (isLocalStorageAvailable()) {
+      try {
+        localStorage.removeItem(STORAGE_KEYS.balance);
+        localStorage.removeItem(STORAGE_KEYS.transactions);
+      } catch (error) {
+        console.warn('Erro ao limpar localStorage:', error);
+      }
     }
-  }, []);
+    
+    // Recarregar dados do Supabase
+    if (!user?.id || !isAuthenticated) {
+      setBalance(2000.00);
+      setTransactions([]);
+      return;
+    }
+
+    try {
+      const userBalance = await getUserBalance(user.id);
+      setBalance(userBalance);
+
+      const userTransactions = await getUserTransactions(user.id);
+      const convertedTransactions = userTransactions.map(convertFromSupabase);
+      setTransactions(convertedTransactions);
+    } catch (error) {
+      console.error('Erro ao carregar dados do usuário:', error);
+    }
+  }, [user, isAuthenticated, convertFromSupabase]);
 
   const contextValue = useMemo(() => ({
     activeSection,
