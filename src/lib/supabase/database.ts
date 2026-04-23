@@ -145,3 +145,48 @@ export async function addTransaction(
     return null;
   }
 }
+
+// Atualizar transação
+export async function updateTransaction(
+  transactionId: string,
+  updates: Partial<Omit<SupabaseTransaction, 'id' | 'user_id' | 'created_at'>>
+): Promise<SupabaseTransaction | null> {
+  try {
+    const { data, error } = await supabase
+      .from('transactions')
+      .update(updates)
+      .eq('id', transactionId)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Erro ao atualizar transação:', error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Erro ao atualizar transação:', error);
+    return null;
+  }
+}
+
+// Deletar transação
+export async function deleteTransaction(transactionId: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('transactions')
+      .delete()
+      .eq('id', transactionId);
+
+    if (error) {
+      console.error('Erro ao deletar transação:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Erro ao deletar transação:', error);
+    return false;
+  }
+}
