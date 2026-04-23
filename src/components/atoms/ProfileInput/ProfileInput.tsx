@@ -2,6 +2,8 @@
 
 import { ChangeEvent, useState } from 'react';
 import Image from 'next/image';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import styles from './ProfileInput.module.scss';
 
 export interface ProfileInputProps {
@@ -26,9 +28,13 @@ export const ProfileInput = ({
   name
 }: ProfileInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   const inputId = id || `profile-input-${label.toLowerCase().replace(/\s+/g, '-')}`;
   const inputName = name || label.toLowerCase().replace(/\s+/g, '_');
+  
+  const isPasswordType = type === 'password';
+  const actualInputType = isPasswordType && showPassword ? 'text' : type;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
@@ -42,6 +48,10 @@ export const ProfileInput = ({
     setIsFocused(false);
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className={`${styles['input-group']} ${className}`}>
       <label htmlFor={inputId} className={styles.label}>{label}</label>
@@ -49,7 +59,7 @@ export const ProfileInput = ({
         <input
           id={inputId}
           name={inputName}
-          type={type}
+          type={actualInputType}
           value={value}
           onChange={handleChange}
           onFocus={handleFocus}
@@ -60,7 +70,23 @@ export const ProfileInput = ({
           aria-describedby={`${inputId}-hint`}
           aria-invalid={false}
         />
-        {!isFocused && (
+        
+        {isPasswordType && (
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className={styles['password-toggle']}
+            aria-label={showPassword ? 'Esconder senha' : 'Mostrar senha'}
+          >
+            {showPassword ? (
+              <VisibilityOff sx={{ fontSize: 18, color: '#6b7280' }} />
+            ) : (
+              <Visibility sx={{ fontSize: 18, color: '#6b7280' }} />
+            )}
+          </button>
+        )}
+        
+        {!isPasswordType && !isFocused && (
           <div className={styles['icon-wrapper']}>
             <Image
               src="/Services/edit.svg"
