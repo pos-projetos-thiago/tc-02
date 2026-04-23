@@ -32,16 +32,52 @@ const STORAGE_KEYS = {
   transactions: 'dashboard-transactions'
 };
 
+// Função para verificar se localStorage está disponível
+const isLocalStorageAvailable = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  
+  try {
+    const testKey = '__localStorage_test__';
+    localStorage.setItem(testKey, 'test');
+    localStorage.removeItem(testKey);
+    return true;
+  } catch {
+    // localStorage não disponível (modo incógnito, quota excedida, etc.)
+    return false;
+  }
+};
+
+// Função segura para obter item do localStorage
+const getStorageItem = (key: string, defaultValue: any): any => {
+  if (!isLocalStorageAvailable()) return defaultValue;
+  
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? (key.includes('balance') ? parseFloat(stored) : JSON.parse(stored)) : defaultValue;
+  } catch (error) {
+    console.warn(`Erro ao ler ${key} do localStorage:`, error);
+    return defaultValue;
+  }
+};
+
+// Função segura para salvar item no localStorage
+const setStorageItem = (key: string, value: any): void => {
+  if (!isLocalStorageAvailable()) return;
+  
+  try {
+    const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+    localStorage.setItem(key, stringValue);
+  } catch (error) {
+    console.warn(`Erro ao salvar ${key} no localStorage:`, error);
+  }
+};
+
 const getStoredBalance = (): number => {
-  if (typeof window === 'undefined') return 2000.00;
-  const stored = localStorage.getItem(STORAGE_KEYS.balance);
-  return stored ? parseFloat(stored) : 2000.00;
+  return getStorageItem(STORAGE_KEYS.balance, 2000.00);
 };
 
 const getStoredTransactions = (): Transaction[] => {
-  if (typeof window === 'undefined') return [];
-  const stored = localStorage.getItem(STORAGE_KEYS.transactions);
-  return stored ? JSON.parse(stored) : [];
+  return getStorageItem(STORAGE_KEYS.transactions, []);
 };
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
@@ -50,15 +86,11 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [transactions, setTransactions] = useState<Transaction[]>(() => getStoredTransactions());
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEYS.balance, balance.toString());
-    }
+    setStorageItem(STORAGE_KEYS.balance, balance.toString());
   }, [balance]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEYS.transactions, JSON.stringify(transactions));
-    }
+    setStorageItem(STORAGE_KEYS.transactions, transactions);
   }, [transactions]);
 
   const addTransaction = useCallback((type: string, amount: number) => {
@@ -176,9 +208,13 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     setBalance(2000.00);
     setTransactions([]);
 
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEYS.balance);
-      localStorage.removeItem(STORAGE_KEYS.transactions);
+    if (isLocalStorageAvailable()) {
+      try {
+        localStorage.removeItem(STORAGE_KEYS.balance);
+        localStorage.removeItem(STORAGE_KEYS.transactions);
+      } catch (error) {
+        console.warn('Erro ao limpar localStorage:', error);
+      }
     }
   }, []);
 
