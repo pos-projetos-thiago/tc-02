@@ -32,7 +32,8 @@ const STORAGE_KEYS = {
   transactions: 'dashboard-transactions'
 };
 
-// Função para verificar se localStorage está disponível
+type StorageValue = string | number | Transaction[] | boolean;
+
 const isLocalStorageAvailable = (): boolean => {
   if (typeof window === 'undefined') return false;
   
@@ -42,26 +43,27 @@ const isLocalStorageAvailable = (): boolean => {
     localStorage.removeItem(testKey);
     return true;
   } catch {
-    // localStorage não disponível (modo incógnito, quota excedida, etc.)
     return false;
   }
 };
 
-// Função segura para obter item do localStorage
-const getStorageItem = (key: string, defaultValue: any): any => {
+const getStorageItem = <T extends StorageValue>(key: string, defaultValue: T): T => {
   if (!isLocalStorageAvailable()) return defaultValue;
   
   try {
     const stored = localStorage.getItem(key);
-    return stored ? (key.includes('balance') ? parseFloat(stored) : JSON.parse(stored)) : defaultValue;
+    if (!stored) return defaultValue;
+    
+    return key.includes('balance') 
+      ? parseFloat(stored) as T
+      : JSON.parse(stored) as T;
   } catch (error) {
     console.warn(`Erro ao ler ${key} do localStorage:`, error);
     return defaultValue;
   }
 };
 
-// Função segura para salvar item no localStorage
-const setStorageItem = (key: string, value: any): void => {
+const setStorageItem = (key: string, value: StorageValue): void => {
   if (!isLocalStorageAvailable()) return;
   
   try {
