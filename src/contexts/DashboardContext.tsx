@@ -7,6 +7,8 @@ import {
   updateUserBalance, 
   getUserTransactions, 
   addTransaction as addTransactionDB,
+  updateTransaction as updateTransactionDB,
+  deleteTransaction as deleteTransactionDB,
   SupabaseTransaction 
 } from '@/lib/supabase/database';
 
@@ -201,7 +203,12 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     }
   }, [user, isAuthenticated, balance, convertFromSupabase]);
 
-  const editTransaction = useCallback((id: string, updates: Partial<Transaction>) => {
+  const editTransaction = useCallback(async (id: string, updates: Partial<Transaction>) => {
+    if (!user?.id || !isAuthenticated) {
+      console.warn('Usuário não autenticado');
+      return;
+    }
+
     const originalTransaction = transactions.find(t => t.id === id);
     if (!originalTransaction) return;
 
@@ -210,49 +217,106 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     const newAmount = updates.amount !== undefined ? updates.amount : oldAmount;
     const newType = updates.type !== undefined ? updates.type : oldType;
 
-    if (newAmount !== oldAmount || newType !== oldType) {
-      setBalance(currentBalance => {
-        let adjustedBalance = currentBalance;
+    try {
+      // Converter para formato Supabase
+      const supabaseUpdates: Partial<SupabaseTransaction> = {};
+      if (updates.type) supabaseUpdates.type = updates.type;
+      if (updates.subtype) supabaseUpdates.subtype = updates.subtype;
+      if (updates.investmentType) supabaseUpdates.investment_type = updates.investmentType;
+      if (updates.amount !== undefined) supabaseUpdates.amount = updates.amount;
+      if (updates.description) supabaseUpdates.description = updates.description;
+      if (updates.date) supabaseUpdates.date = updates.date;
 
+      // Atualizar no Supabase
+      const updatedTransaction = await updateTransactionDB(id, supabaseUpdates);
+      
+      if (!updatedTransaction) {
+        console.error('Falha ao atualizar transação no Supabase');
+        return;
+      }
+
+      // Atualizar saldo se necessário
+      if (newAmount !== oldAmount || newType !== oldType) {
+        let adjustedBalance = balance;
+
+        // Reverter efeito da transação original
         if (oldType === 'deposit') {
           adjustedBalance -= oldAmount;
         } else {
           adjustedBalance += oldAmount;
         }
 
+        // Aplicar efeito da transação atualizada
         if (newType === 'deposit') {
           adjustedBalance += newAmount;
         } else {
           adjustedBalance -= newAmount;
         }
 
-        return adjustedBalance;
-      });
+        const balanceUpdated = await updateUserBalance(user.id, adjustedBalance);
+        
+        if (!balanceUpdated) {
+          console.error('Falha ao atualizar saldo no Supabase');
+          return;
+        }
+
+        setBalance(adjustedBalance);
+      }
+
+      // Atualizar estado local
+      const convertedTransaction = convertFromSupabase(updatedTransaction);
+      setTransactions(prev =>
+        prev.map(transaction =>
+          transaction.id === id ? convertedTransaction : transaction
+        )
+      );
+      
+    } catch (error) {
+      console.error('Erro ao editar transação:', error);
+    }
+  }, [user, isAuthenticated, transactions, balance, convertFromSupabase]);
+
+  const deleteTransaction = useCallback(async (id: string) => {
+    if (!user?.id || !isAuthenticated) {
+      console.warn('Usuário não autenticado');
+      return;
     }
 
-    setTransactions(prev =>
-      prev.map(transaction =>
-        transaction.id === id
-          ? { ...transaction, ...updates }
-          : transaction
-      )
-    );
-  }, [transactions]);
-
-  const deleteTransaction = useCallback((id: string) => {
     const transactionToDelete = transactions.find(t => t.id === id);
     if (!transactionToDelete) return;
 
-    setBalance(currentBalance => {
-      if (transactionToDelete.type === 'deposit') {
-        return currentBalance - transactionToDelete.amount;
-      } else {
-        return currentBalance + transactionToDelete.amount;
+    try {
+      // Deletar no Supabase
+      const deleted = await deleteTransactionDB(id);
+      
+      if (!deleted) {
+        console.error('Falha ao deletar transação no Supabase');
+        return;
       }
-    });
 
-    setTransactions(prev => prev.filter(t => t.id !== id));
-  }, [transactions]);
+      // Atualizar saldo
+      let newBalance = balance;
+      if (transactionToDelete.type === 'deposit') {
+        newBalance = balance - transactionToDelete.amount;
+      } else {
+        newBalance = balance + transactionToDelete.amount;
+      }
+
+      const balanceUpdated = await updateUserBalance(user.id, newBalance);
+      
+      if (!balanceUpdated) {
+        console.error('Falha ao atualizar saldo no Supabase');
+        return;
+      }
+
+      // Atualizar estado local
+      setBalance(newBalance);
+      setTransactions(prev => prev.filter(t => t.id !== id));
+      
+    } catch (error) {
+      console.error('Erro ao deletar transação:', error);
+    }
+  }, [user, isAuthenticated, transactions, balance]);
 
   const resetData = useCallback(async () => {
     // Limpar localStorage
