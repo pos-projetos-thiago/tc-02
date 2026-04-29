@@ -19,7 +19,7 @@ Aplicação completa de **gerenciamento financeiro** desenvolvida com Next.js 16
 > *FIAP Pós-Tech · Tech Challenge - Fase 1*  
 > **Thiago Soares · RM 373636**
 
-<!-- Vídeo -->
+<img width="1918" height="916" alt="Image" src="https://github.com/user-attachments/assets/0296dcf3-4f31-4b17-9293-b774391d0887" />
 
 ## Principais funcionalidades
 
@@ -126,11 +126,11 @@ tc-01/
 
 ## Links importantes
 
-| **Recurso**        | **URL**                                                              |
-| ------------------ | ----------------------------------------------------------------------- |
-| **Repositório**     | [github.com/pos-projetos-thiago/tc-01](https://github.com/pos-projetos-thiago/tc-01) |
-| **Documentação**    | `yarn docs` → [localhost:4000](http://localhost:4000)                  |
-| **Deploy**          | *Em breve*                                                           |
+| **Recurso**      | **URL**                                                                 |
+| ---------------- | ---------------------------------------------------------------------- |
+| **Repositório**  | [github.com/pos-projetos-thiago/tc-01](https://github.com/pos-projetos-thiago/tc-01) |
+| **Documentação** | `yarn docs` → [localhost:4000](http://localhost:4000)                  |
+| **Deploy**       | [tc-01-thiago-two.vercel.app](https://tc-01-thiago-two.vercel.app/)    |
 
 ---
 
