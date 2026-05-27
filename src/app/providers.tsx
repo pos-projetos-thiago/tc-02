@@ -1,8 +1,15 @@
 'use client';
 
-import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthProvider } from '@/hooks/useJWTAuth';
+import { DashboardProvider } from '@/contexts/DashboardContextJWT';
 import type { ReactNode } from 'react';
 
 export function Providers({ children }: { children: ReactNode }) {
-  return <AuthProvider>{children}</AuthProvider>;
+  return (
+    <AuthProvider>
+      <DashboardProvider>
+        {children}
+      </DashboardProvider>
+    </AuthProvider>
+  );
 }

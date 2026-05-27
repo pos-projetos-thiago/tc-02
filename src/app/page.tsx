@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/organisms/Navbar';
 import { Hero } from '@/components/organisms/Hero';
 import { Footer } from '@/components/organisms/Footer';
-import { AuthModalSupabase } from '@/components/organisms/AuthModal/AuthModalSupabase';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { AuthModalJWT } from '@/components/organisms/AuthModal/AuthModalJWT';
+import { useAuth } from '@/hooks/useJWTAuth';
 
 export default function Home() {
   const [authModalVariant, setAuthModalVariant] = useState<'signup' | 'login' | null>(null);
   const [authModalKey, setAuthModalKey] = useState(0);
-  const { user, isLoading } = useSupabaseAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   const handleAuthModalChange = useCallback((variant: 'signup' | 'login' | null) => {
@@ -72,7 +72,7 @@ export default function Home() {
         onOpenLogin={() => handleAuthModalChange('login')}
       />
       <Footer />
-      <AuthModalSupabase
+      <AuthModalJWT
         key={authModalKey}
         isOpen={authModalVariant !== null}
         onClose={() => handleAuthModalChange(null)}

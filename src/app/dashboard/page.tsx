@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
-import { useDashboard } from '@/contexts/DashboardContext';
-import { UserProfileSupabase } from '@/components/molecules/UserProfile/UserProfileSupabase';
+import { useAuth } from '@/hooks/useJWTAuth';
+import { useDashboard } from '@/contexts/DashboardContextJWT';
+import { UserProfileJWT } from '@/components/molecules/UserProfile/UserProfileJWT';
 import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';
 import { DashboardServices } from '@/components/organisms/DashboardServices';
@@ -16,7 +16,7 @@ import styles from './dashboard.module.scss';
 export const dynamic = 'force-dynamic';
 
 export default function DashboardPage() {
-  const { user, isLoading } = useSupabaseAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function DashboardPage() {
     );
   }
 
-  const userName = user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário';
+  const userName = user?.username || user?.email?.split('@')[0] || 'Usuário';
 
   return <DashboardContent userName={userName} />;
 }
@@ -69,7 +69,7 @@ function DashboardContent({ userName }: { userName: string }) {
   return (
     <>
       <StorageWarning />
-      <UserProfileSupabase userName={userName} />
+      <UserProfileJWT userName={userName} />
       <main className={styles.main}>
         <div className={`${styles['dashboard-grid']} ${activeSection === 'others' ? styles['others-layout'] : ''}`}>
           <div className={styles['grid-sidebar']}>
