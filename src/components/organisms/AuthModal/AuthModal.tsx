@@ -7,7 +7,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Modal } from '@/components/molecules/Modal';
 import { Button } from '@/components/atoms/Button';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useJWTAuth';
 import styles from './AuthModal.module.scss';
 
 export type AuthModalVariant = 'signup' | 'login';

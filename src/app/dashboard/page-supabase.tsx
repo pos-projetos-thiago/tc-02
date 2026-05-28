@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
-import { DashboardProvider, useDashboard } from '@/contexts/DashboardContext';
+import { DashboardProvider, useDashboard } from '@/contexts/DashboardContextJWT';
 import { UserProfileSupabase } from '@/components/molecules/UserProfile/UserProfileSupabase';
 import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';

@@ -141,8 +141,14 @@ export function useJWTAuth(): AuthContextType {
   const logout = () => {
     setUser(null);
     setToken(null);
+    // Limpar TODOS os dados de autenticação
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
+    localStorage.removeItem('temp_username');
+    // Limpar possíveis dados do Supabase ainda em cache
+    localStorage.removeItem('supabase.auth.token');
+    localStorage.removeItem('sb-auth-token');
+    sessionStorage.clear();
   };
 
   return {

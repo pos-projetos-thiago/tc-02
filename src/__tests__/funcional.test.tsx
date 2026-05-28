@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { DashboardProvider } from '@/contexts/DashboardContext';
+import { DashboardProvider } from '@/contexts/DashboardContextJWT';
 import { DashboardServices } from '@/components/organisms/DashboardServices/DashboardServices';
 
 // Mock simples

@@ -1,55 +1,67 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { MenuButton } from '@/components/atoms/MenuButton';
+import { DashboardMobileMenu } from '@/components/organisms/DashboardMobileMenu/DashboardMobileMenu';
 import { useAuth } from '@/hooks/useJWTAuth';
 import styles from './UserProfile.module.scss';
 
-interface UserProfileJWTProps {
-  userName?: string;
+export interface UserProfileProps {
+  userName: string;
+  avatarSrc?: string;
 }
 
-export function UserProfileJWT({ userName }: UserProfileJWTProps) {
-  const { user, logout } = useAuth();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+export const UserProfileJWT = ({
+  userName,
+  avatarSrc = '/UserProfile/avatar.svg'
+}: UserProfileProps) => {
+  const router = useRouter();
+  const { logout } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const displayName = userName || user?.username || user?.email?.split('@')[0] || 'Usuário';
-
-  const handleLogout = useCallback(() => {
+  const handleLogout = useCallback(async () => {
     logout();
-    setIsDropdownOpen(false);
-  }, [logout]);
-
-  const toggleDropdown = useCallback(() => {
-    setIsDropdownOpen(prev => !prev);
-  }, []);
-
-  if (!user) return null;
+    router.push('/');
+  }, [logout, router]);
 
   return (
-    <div className={styles.userProfile}>
-      <div className={styles.profileInfo} onClick={toggleDropdown}>
-        <div className={styles.avatar}>
-          {displayName.charAt(0).toUpperCase()}
+    <>
+      <nav className={styles.navbar}>
+        <div className={styles.container}>
+          <div className={styles['menu-button-wrapper']}>
+            <MenuButton tone="accent" onClick={() => setMobileMenuOpen(true)} />
+          </div>
+          <div className={styles['user-section']}>
+            <div className={styles['user-info']}>
+              <span className={styles['user-name']}>{userName}</span>
+            </div>
+            
+            <div className={styles.avatar}>
+              <Image 
+                src={avatarSrc} 
+                alt={`Avatar de ${userName}`}
+                width={40}
+                height={40}
+                className={styles['avatar-image']}
+              />
+            </div>
+            
+            <button 
+              onClick={handleLogout}
+              className={styles["logout-button"]}
+              title="Sair"
+            >
+              Sair
+            </button>
+          </div>
         </div>
-        <div className={styles.userDetails}>
-          <span className={styles.userName}>{displayName}</span>
-          <span className={styles.userEmail}>{user.email}</span>
-        </div>
-        <div className={styles.dropdownArrow}>
-          {isDropdownOpen ? '▲' : '▼'}
-        </div>
-      </div>
-
-      {isDropdownOpen && (
-        <div className={styles.dropdown}>
-          <button
-            className={styles.dropdownItem}
-            onClick={handleLogout}
-          >
-            🚪 Sair
-          </button>
-        </div>
-      )}
-    </div>
+      </nav>
+      <DashboardMobileMenu
+        isOpen={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+      />
+    </>
   );
-}
+};

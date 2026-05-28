@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import CloseIcon from '@mui/icons-material/Close';
-import { useDashboard, type DashboardSection } from '@/contexts/DashboardContext';
+import { useDashboard, type DashboardSection } from '@/contexts/DashboardContextJWT';
 import styles from '../MobileMenu/MobileMenu.module.scss';
 
 export interface DashboardMobileMenuProps {

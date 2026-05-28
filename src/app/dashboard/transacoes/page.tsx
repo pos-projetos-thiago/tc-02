@@ -2,16 +2,16 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
-import { useDashboard } from '@/contexts/DashboardContext';
-import { UserProfileSupabase } from '@/components/molecules/UserProfile/UserProfileSupabase';
-import type { Transaction } from '@/contexts/DashboardContext';
+import { useAuth } from '@/hooks/useJWTAuth';
+import { useDashboard } from '@/contexts/DashboardContextJWT';
+import { UserProfileJWT } from '@/components/molecules/UserProfile/UserProfileJWT';
+import type { Transaction } from '@/contexts/DashboardContextJWT';
 import { Button } from '@/components/atoms/Button/Button';
 import { LoadingScreen } from '@/components/atoms/Loading';
 import styles from './transacoes.module.scss';
 
 export default function TransacoesPage() {
-  const { user, isLoading } = useSupabaseAuth();
+  const { user, isLoading } = useAuth();
   const { transactions, deleteTransaction, editTransaction } = useDashboard();
   const router = useRouter();
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
@@ -162,11 +162,11 @@ export default function TransacoesPage() {
     return null;
   }
 
-  const userName = user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário';
+  const userName = user?.username || user?.email?.split('@')[0] || 'Usuário';
 
   return (
     <>
-      <UserProfileSupabase userName={userName} />
+      <UserProfileJWT userName={userName} />
       <main className={styles.main}>
         <div className={styles['dashboard-container']}>
           <div className={styles['page-header']}>

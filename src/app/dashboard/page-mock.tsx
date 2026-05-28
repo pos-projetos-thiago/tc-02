@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { DashboardProvider, useDashboard } from '@/contexts/DashboardContext';
+import { useAuth } from '@/hooks/useJWTAuth';
+import { DashboardProvider, useDashboard } from '@/contexts/DashboardContextJWT';
 import { UserProfile } from '@/components/molecules/UserProfile';
 import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';

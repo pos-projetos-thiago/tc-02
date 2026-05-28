@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
-import type { Transaction } from '@/contexts/DashboardContext';
+import type { Transaction } from '@/contexts/DashboardContextJWT';
 import styles from './TransactionItem.module.scss';
 
 export interface TransactionItemProps {

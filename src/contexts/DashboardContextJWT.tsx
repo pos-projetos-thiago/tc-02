@@ -38,15 +38,63 @@ interface DashboardContextType {
 
 const DashboardContext = createContext<DashboardContextType | null>(null);
 
-// Convert API transaction to UI format
 const convertAPITransactionToUI = (apiTransaction: APITransaction): Transaction => {
-  return {
+  const description = apiTransaction.from || apiTransaction.to || '';
+  
+  let type: Transaction['type'] = 'deposit';
+  let subtype: Transaction['subtype'] | undefined;
+  let investmentType: Transaction['investmentType'] | undefined;
+  
+  if (apiTransaction.type === 'Credit') {
+    type = 'deposit';
+  } else {
+    if (description === 'Investimento' || description.includes('Investimento')) {
+      type = 'investment';
+      if (description.includes(':')) {
+        const [, investType] = description.split(':');
+        switch (investType) {
+          case 'Fundos':
+            subtype = 'renda-variavel';
+            investmentType = 'fundos';
+            break;
+          case 'Tesouro':
+            subtype = 'renda-fixa';
+            investmentType = 'tesouro-direto';
+            break;
+          case 'Previdencia':
+            subtype = 'renda-fixa';
+            investmentType = 'previdencia';
+            break;
+          case 'Bolsa':
+            subtype = 'renda-variavel';
+            investmentType = 'bolsa';
+            break;
+          default:
+            subtype = 'renda-variavel';
+            investmentType = 'fundos';
+        }
+      } else {
+        subtype = 'renda-variavel';
+        investmentType = 'fundos';
+      }
+    } else if (description === 'Transferência' || description.includes('transferência')) {
+      type = 'transfer';
+    } else {
+      type = 'withdrawal';
+    }
+  }
+  
+  const result = {
     id: apiTransaction.id,
-    type: apiTransaction.type === 'Credit' ? 'deposit' : 'withdrawal',
-    amount: Math.abs(apiTransaction.value), // Always positive for UI
-    description: apiTransaction.from || apiTransaction.to || `${apiTransaction.type} transaction`,
+    type,
+    subtype,
+    investmentType,
+    amount: Math.abs(apiTransaction.value),
+    description: description || `${apiTransaction.type} transaction`,
     date: apiTransaction.date,
   };
+  
+  return result;
 };
 
 // Convert UI transaction type to API format
@@ -60,6 +108,15 @@ const convertUITypeToAPI = (uiType: string): { type: 'Credit' | 'Debit', descrip
       return { type: 'Debit', description: 'Transferência' };
     case 'investment':
       return { type: 'Debit', description: 'Investimento' };
+    // Tipos específicos de investimento - salvar tipo específico na descrição
+    case 'investment-fundos':
+      return { type: 'Debit', description: 'Investimento:Fundos' };
+    case 'investment-tesouro-direto':
+      return { type: 'Debit', description: 'Investimento:Tesouro' };
+    case 'investment-previdencia':
+      return { type: 'Debit', description: 'Investimento:Previdencia' };
+    case 'investment-bolsa':
+      return { type: 'Debit', description: 'Investimento:Bolsa' };
     default:
       return { type: 'Credit', description: 'Transação' };
   }
@@ -72,15 +129,17 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [account, setAccount] = useState<Account | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Calculate balance from transactions
+  // Calculate balance from transactions (starting with R$ 2.000 for new users)
   const balance = useMemo(() => {
+    const INITIAL_BALANCE = 2000; // R$ 2.000 saldo inicial
+    
     return transactions.reduce((acc, transaction) => {
       if (transaction.type === 'deposit') {
         return acc + transaction.amount;
       } else {
         return acc - transaction.amount;
       }
-    }, 0);
+    }, INITIAL_BALANCE);
   }, [transactions]);
 
   // Load account data when user is authenticated
@@ -122,9 +181,14 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const addTransaction = useCallback(async (type: string, amount: number) => {
     if (!account) throw new Error('No account loaded');
 
+    // Validação de saldo para transações de débito
+    const { type: apiType, description } = convertUITypeToAPI(type);
+    if (apiType === 'Debit' && amount > balance) {
+      throw new Error(`Saldo insuficiente. Saldo atual: R$ ${balance.toFixed(2)}`);
+    }
+
     try {
       setIsLoading(true);
-      const { type: apiType, description } = convertUITypeToAPI(type);
       
       await createTransactionAPI({
         accountId: account.id,
@@ -133,7 +197,6 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         from: description,
       });
 
-      // Reload data to get updated transactions
       await loadAccountData();
       
     } catch (error) {
@@ -142,7 +205,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [account, loadAccountData]);
+  }, [account, loadAccountData, balance]);
 
   // Edit transaction (Note: API doesn't seem to have update endpoint, so we'll simulate)
   const editTransaction = useCallback(async (id: string, updates: Partial<Transaction>) => {

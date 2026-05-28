@@ -9,8 +9,8 @@ import { TransactionButton } from '@/components/atoms/TransactionButton';
 import { ButtonGroup, type ButtonOption } from '@/components/atoms/ButtonGroup';
 import { ServiceCard } from '@/components/molecules/ServiceCard';
 import { InvestmentChart } from '@/components/molecules/InvestmentChart';
-import { useDashboard } from '@/contexts/DashboardContext';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { useDashboard } from '@/contexts/DashboardContextJWT';
+import { useAuth } from '@/hooks/useJWTAuth';
 import styles from './DashboardServices.module.scss';
 
 export interface Service {
@@ -95,8 +95,8 @@ const investmentOptions: ButtonOption[] = [
 ];
 
 export const DashboardServices = ({ services = defaultServices, userName = "Usuário" }: DashboardServicesProps) => {
-  const { activeSection, addTransaction, transactions, setActiveSection } = useDashboard();
-  const { user } = useSupabaseAuth();
+  const { activeSection, addTransaction, transactions, setActiveSection, balance } = useDashboard();
+  const { user } = useAuth();
   
   const displayName = user?.user_metadata?.full_name || userName;
   
@@ -183,6 +183,15 @@ export const DashboardServices = ({ services = defaultServices, userName = "Usu�
   const canSubmitTransaction = () => {
     if (!selectedType || !isValidAmount(amount)) return false;
     if (selectedType === 'investment' && !selectedInvestmentType) return false;
+    
+    // Validação de saldo: só permite se for depósito OU se o valor for menor/igual ao saldo
+    if (selectedType !== 'deposit') {
+      const numericAmount = parseFloat(amount.replace(',', '.'));
+      if (numericAmount > balance) {
+        return false; // Saldo insuficiente para operações que não são depósito
+      }
+    }
+    
     return true;
   };
 

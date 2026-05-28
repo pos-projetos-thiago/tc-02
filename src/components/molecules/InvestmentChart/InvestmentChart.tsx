@@ -8,7 +8,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
-import type { Transaction } from '@/contexts/DashboardContext';
+import type { Transaction } from '@/contexts/DashboardContextJWT';
 import styles from './InvestmentChart.module.scss';
 
 ChartJS.register(ArcElement, Tooltip, Legend);

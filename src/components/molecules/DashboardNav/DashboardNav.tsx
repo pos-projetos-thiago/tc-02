@@ -2,7 +2,7 @@
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { useDashboard, type DashboardSection } from '@/contexts/DashboardContext';
+import { useDashboard, type DashboardSection } from '@/contexts/DashboardContextJWT';
 import styles from './DashboardNav.module.scss';
 
 const TABS: { id: 'services' | 'transfers' | 'investments' | 'others'; label: string }[] = [
