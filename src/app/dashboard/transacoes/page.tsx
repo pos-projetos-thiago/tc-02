@@ -58,9 +58,9 @@ export default function TransacoesPage() {
     
     try {
       setDeletingId(transactionId);
-      await new Promise(resolve => setTimeout(resolve, 300));
-      deleteTransaction(transactionId);
-    } catch {
+      await deleteTransaction(transactionId);
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
       alert('Erro ao deletar transação. Tente novamente.');
     } finally {
       setDeletingId(null);
@@ -72,7 +72,7 @@ export default function TransacoesPage() {
     setFormData({ type: '', amount: '' });
   }, []);
 
-  const handleSaveEdit = useCallback(() => {
+  const handleSaveEdit = useCallback(async () => {
     if (!editingTransaction || !formData.amount.trim() || !formData.type) {
       alert('Por favor, preencha todos os campos.');
       return;
@@ -113,9 +113,13 @@ export default function TransacoesPage() {
       updates.investmentType = undefined;
     }
 
-    editTransaction(editingTransaction.id, updates);
-
-    handleCancelEdit();
+    try {
+      await editTransaction(editingTransaction.id, updates);
+      handleCancelEdit();
+    } catch (error) {
+      console.error('Error editing transaction:', error);
+      alert('Erro ao editar transação. Tente novamente.');
+    }
   }, [editingTransaction, formData, editTransaction, handleCancelEdit]);
 
   const handleAmountChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

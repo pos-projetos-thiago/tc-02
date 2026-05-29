@@ -5,6 +5,8 @@ import { useAuth } from '@/hooks/useJWTAuth';
 import { 
   getAccount, 
   createTransaction as createTransactionAPI,
+  updateTransaction as updateTransactionAPI,
+  deleteTransaction as deleteTransactionAPI,
   calculateBalance,
   type Transaction as APITransaction,
   type Account
@@ -30,7 +32,7 @@ interface DashboardContextType {
   transactions: Transaction[];
   addTransaction: (type: string, amount: number) => Promise<void>;
   editTransaction: (id: string, updates: Partial<Transaction>) => Promise<void>;
-  deleteTransaction: (id: string) => void;
+  deleteTransaction: (id: string) => Promise<void>;
   resetData: () => void;
   isLoading: boolean;
   account: Account | null;
@@ -207,25 +209,62 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     }
   }, [account, loadAccountData, balance]);
 
-  // Edit transaction (Note: API doesn't seem to have update endpoint, so we'll simulate)
+  // Edit transaction - calls API to update
   const editTransaction = useCallback(async (id: string, updates: Partial<Transaction>) => {
-    // Since API doesn't have update endpoint, we'll update locally
-    // In a real app, you'd call an API endpoint here
-    setTransactions(current =>
-      current.map(transaction =>
-        transaction.id === id
-          ? { ...transaction, ...updates }
-          : transaction
-      )
-    );
-  }, []);
+    if (!account) throw new Error('No account loaded');
+    
+    try {
+      setIsLoading(true);
+      
+      // Convert UI updates to API format
+      const apiUpdates: any = {};
+      if (updates.amount !== undefined) {
+        // Determine if it should be positive or negative based on transaction type
+        const transaction = transactions.find(t => t.id === id);
+        if (transaction?.type === 'deposit') {
+          apiUpdates.value = updates.amount;
+        } else {
+          apiUpdates.value = -Math.abs(updates.amount);
+        }
+      }
+      if (updates.description !== undefined) {
+        apiUpdates.from = updates.description;
+      }
+      
+      // Call API to update
+      await updateTransactionAPI(id, apiUpdates);
+      
+      // Reload account data to get updated transactions
+      await loadAccountData();
+      
+    } catch (error) {
+      console.error('Error updating transaction:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [account, loadAccountData, transactions]);
 
-  // Delete transaction (Note: API doesn't seem to have delete endpoint, so we'll simulate)
-  const deleteTransaction = useCallback((id: string) => {
-    // Since API doesn't have delete endpoint, we'll delete locally
-    // In a real app, you'd call an API endpoint here
-    setTransactions(current => current.filter(transaction => transaction.id !== id));
-  }, []);
+  // Delete transaction - calls API to delete
+  const deleteTransaction = useCallback(async (id: string) => {
+    if (!account) throw new Error('No account loaded');
+    
+    try {
+      setIsLoading(true);
+      
+      // Call API to delete
+      await deleteTransactionAPI(id);
+      
+      // Reload account data to get updated transactions
+      await loadAccountData();
+      
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [account, loadAccountData]);
 
   // Reset data
   const resetData = useCallback(() => {

@@ -7,6 +7,7 @@ import { ProfileForm } from '@/components/organisms/ProfileForm';
 import { Toast } from '@/components/atoms/Toast';
 import { useDashboard } from '@/contexts/DashboardContextJWT';
 import { useAuth } from '@/hooks/useJWTAuth';
+import { updateUserProfile } from '@/lib/api/transactions';
 import styles from './DashboardHero.module.scss';
 
 export interface DashboardHeroProps {
@@ -40,31 +41,84 @@ export const DashboardHero = ({
   const isOthersSection = activeSection === 'others';
 
   const handleProfileSave = async (data: { name: string; email: string; password: string }) => {
-    // TODO: Implementar edição de perfil com JWT API
-    // Por enquanto, salvar temporariamente no localStorage
-    
-    let message = "Perfil atualizado temporariamente!";
-    
-    if (data.name && data.name !== userName) {
-      // Salvar nome temporariamente
-      localStorage.setItem('temp_username', data.name);
-      message += ` Nome alterado para: ${data.name}.`;
+    try {
+      // Preparar dados para envio à API
+      const updateData: any = {};
+      let passwordChanged = false;
       
-      // Trigger re-render forçando evento
-      window.dispatchEvent(new Event('storage'));
+      if (data.name && data.name !== userName) {
+        updateData.username = data.name;
+      }
+      if (data.email && data.email !== user?.email) {
+        updateData.email = data.email;
+      }
+      if (data.password) {
+        updateData.password = data.password;
+        passwordChanged = true;
+      }
+
+      // Se não há mudanças, mostrar mensagem
+      if (Object.keys(updateData).length === 0) {
+        setToast({
+          isVisible: true,
+          message: "Nenhuma alteração detectada.",
+          type: 'info'
+        });
+        return;
+      }
+
+      // Chamar API para atualizar perfil
+      const response = await updateUserProfile(updateData);
+      
+      // Atualizar localStorage se o nome mudou
+      if (updateData.username) {
+        localStorage.setItem('temp_username', updateData.username);
+        // Trigger re-render forçando evento
+        window.dispatchEvent(new Event('storage'));
+      }
+
+      // Se senha foi alterada, fazer logout automático
+      if (passwordChanged) {
+        setToast({
+          isVisible: true,
+          message: "Senha alterada com sucesso! Redirecionando para login...",
+          type: 'success'
+        });
+        
+        // Aguardar um pouco para mostrar a mensagem, depois fazer logout
+        setTimeout(() => {
+          // Limpar dados de autenticação
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('auth_user');
+          localStorage.removeItem('temp_username');
+          sessionStorage.clear();
+          
+          // Redirecionar para a página inicial
+          window.location.href = '/';
+        }, 2500);
+        
+        return;
+      }
+
+      // Construir mensagem de sucesso para outros casos
+      let message = "Perfil atualizado com sucesso!";
+      if (updateData.username) message += ` Nome: ${updateData.username}.`;
+      if (updateData.email) message += ` Email atualizado.`;
+      
+      setToast({
+        isVisible: true,
+        message,
+        type: 'success'
+      });
+
+    } catch (error) {
+      console.error('Erro ao salvar perfil:', error);
+      setToast({
+        isVisible: true,
+        message: "Erro ao atualizar perfil. Tente novamente.",
+        type: 'error'
+      });
     }
-    if (data.email && data.email !== user?.email) {
-      message += ` Email alterado.`;
-    }
-    if (data.password) {
-      message += ` Senha alterada.`;
-    }
-    
-    setToast({
-      isVisible: true,
-      message: message + " (Mudanças locais apenas)",
-      type: 'success'
-    });
   };
 
   const handleCloseToast = () => {

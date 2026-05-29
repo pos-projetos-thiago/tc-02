@@ -57,6 +57,15 @@ const apiCall = async (endpoint: string, options: RequestInit = {}) => {
     throw new Error(errorData.message || `HTTP ${response.status}`);
   }
 
+  // Check if response has content (avoid parsing empty responses)
+  const contentLength = response.headers.get('content-length');
+  const contentType = response.headers.get('content-type');
+  
+  if (response.status === 204 || contentLength === '0' || !contentType?.includes('application/json')) {
+    // No content response (like DELETE operations)
+    return null;
+  }
+
   return response.json();
 };
 
@@ -90,6 +99,42 @@ export const createTransaction = async (transactionData: {
 export const getStatement = async (accountId: string) => {
   const response = await apiCall(`/account/${accountId}/statement`);
   return response.result.transactions as Transaction[];
+};
+
+// Update existing transaction
+export const updateTransaction = async (id: string, transactionData: Partial<{
+  type: 'Credit' | 'Debit';
+  value: number;
+  from?: string;
+  to?: string;
+  anexo?: string;
+}>): Promise<Transaction | null> => {
+  const response = await apiCall(`/account/transaction/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(transactionData),
+  });
+  return response as Transaction | null;
+};
+
+// Delete transaction
+export const deleteTransaction = async (id: string): Promise<void> => {
+  await apiCall(`/account/transaction/${id}`, {
+    method: 'DELETE',
+  });
+  // DELETE operations typically return 204 No Content, so no return value needed
+};
+
+// Update user profile
+export const updateUserProfile = async (userData: {
+  username?: string;
+  email?: string;
+  password?: string;
+}): Promise<any> => {
+  const response = await apiCall('/user/profile', {
+    method: 'PUT',
+    body: JSON.stringify(userData),
+  });
+  return response;
 };
 
 // Utility to calculate balance from transactions
