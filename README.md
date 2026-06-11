@@ -22,26 +22,26 @@
 
 <img width="1918" height="916" alt="Image" src="https://github.com/user-attachments/assets/0296dcf3-4f31-4b17-9293-b774391d0887" />
 
-## ✨ Principais funcionalidades
+## Principais funcionalidades
 
-### **🏗️ Arquitetura Avançada**
+### **Arquitetura Avançada**
 - **Microfrontends** com Module Federation (apps independentes)
 - **Containerização** completa com Docker + Docker Compose
 - **Deploy otimizado** para ambientes cloud (Vercel)
 
-### **💰 Funcionalidades Financeiras**
+### **Funcionalidades Financeiras**
 - **Dashboard financeiro** com gráficos avançados e análises
 - **Gestão completa de transações** (CRUD + filtros avançados)
 - **Upload de anexos** para comprovantes e documentos
 - **Busca inteligente** e paginação otimizada
 
-### **🎨 Experience & Design**
+### **Experience & Design**
 - **100% acessível** (WCAG 2.1, navegação teclado, screen readers)
 - **Totalmente responsivo** (mobile-first design)
 - **Design system** documentado com 25+ componentes
 - **Validação avançada** com sugestões automáticas
 
-### **⚡ Performance & Qualidade**
+### **Performance & Qualidade**
 - **SSR/SSG** otimizado com Next.js 16
 - **Testes automatizados** (Jest + React Testing Library)
 - **CI/CD** com GitHub Actions + Docker
@@ -67,22 +67,40 @@ docker ps
 - 💰 **Transactions**: [http://localhost:3002](http://localhost:3002)
 - 📈 **Analytics**: [http://localhost:3003](http://localhost:3003)
 
-### **⚙️ Desenvolvimento Local**
+### **Desenvolvimento Local**
 
-```bash
-# Instalar dependências
-yarn install
+**Scripts Rápidos (PowerShell):**
 
-# Rodar shell app (orquestrador)
-yarn dev
-
-# Rodar microfrontends individualmente
-yarn dev:dashboard     # Dashboard + gráficos
-yarn dev:transactions  # CRUD transações  
-yarn dev:analytics     # Relatórios + filtros
+**Iniciar Backend (API):**
+```powershell
+cd ../api-backend
+$env:PORT=4000; npm start
+# API: http://localhost:4000
 ```
 
-### **🧪 Testes**
+**Iniciar Frontend (Next.js):**
+```powershell
+cd tc-01  # (ou diretório atual)
+yarn dev
+# App: http://localhost:3000 (ou 3001 se a porta 3000 estiver ocupada)
+```
+
+**Iniciar Documentação (Design System):**
+```powershell
+npm run docs
+# Docs: http://localhost:3030
+```
+
+**Instalação:**
+```bash
+# Frontend
+yarn install
+
+# Backend (em ../api-backend)
+cd ../api-backend && npm install
+```
+
+### **Testes**
 
 ```bash
 # Rodar todos os testes
@@ -95,20 +113,16 @@ yarn test:watch
 yarn test:coverage
 ```
 
-### Autenticação (Supabase)
+### Autenticação (JWT)
 
-- **Banco:** PostgreSQL (Supabase)
+- **Banco:** MongoDB (In-Memory) + API JWT
 - **Sessão:** portável entre navegadores e aparelhos, com JWT e **Row Level Security (RLS)**
 - **Conta:** cadastro e login com e-mail e senha no próprio app
 
-**Variáveis (`.env.local`):**
+**Backend API:**
+A aplicação se conecta à API backend rodando em `http://localhost:4000`.
 
-```bash
-NEXT_PUBLIC_SUPABASE_URL=sua_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave
-```
-
-Código de referência: `src/lib/supabase/`, `src/lib/auth/supabase-client-actions.ts`, `src/hooks/useSupabaseAuth.ts`.
+Código de referência: `src/lib/api/transactions.ts`, `src/hooks/useJWTAuth.tsx`, `src/contexts/DashboardContextJWT.tsx`.
 
 ### Documentação do design system (Docusaurus)
 
@@ -128,7 +142,7 @@ Abre em [http://localhost:4000](http://localhost:4000). O site fica no diretóri
 | **Linguagem**        | TypeScript 5                      | Tipagem e desenvolvimento       |
 | **Styling**          | SCSS Modules                       | Estilos componentizados         |
 | **Interface**        | Material UI + Atomic Design        | Componentes e ícones            |
-| **Backend**          | Supabase (PostgreSQL + Auth)      | Banco de dados e autenticação   |
+| **Backend**          | Node.js API + JWT + MongoDB       | API RESTful com autenticação    |
 | **Formulários**      | React Hook Form + Zod              | Validação e controle de estado  |
 | **Documentação**     | Docusaurus 3                      | Design system e guias técnicos  |
 | **Testes**           | Jest + React Testing Library       | Testes unitários e integração   |

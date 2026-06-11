@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Modal } from '@/components/molecules/Modal/Modal';
 import { Button } from '@/components/atoms/Button/Button';
-import { ProfileInput } from '@/components/atoms/ProfileInput/ProfileInput';
 import { useAuth } from '@/hooks/useJWTAuth';
 import styles from './AuthModal.module.scss';
 
@@ -13,52 +16,119 @@ interface AuthModalJWTProps {
   variant: 'signup' | 'login';
 }
 
+const AUTH_CONFIG = {
+  signup: {
+    title: 'Preencha os campos abaixo para criar sua conta corrente!',
+    imageSrc: '/Modal/signup.svg',
+    imageAlt: 'Ilustração cadastro',
+    submitLabel: 'Criar conta',
+    buttonVariant: 'accent' as const,
+    privacyText: 'Li e estou ciente quanto às condições de tratamento dos meus dados conforme descrito na Política de Privacidade do banco.',
+    inputs: [
+      {
+        type: 'text' as const,
+        fieldKey: 'name' as const,
+        placeholder: 'Digite seu nome completo',
+        label: 'Nome',
+      },
+      {
+        type: 'email' as const,
+        fieldKey: 'email' as const,
+        placeholder: 'Digite seu email',
+        label: 'Email',
+      },
+      {
+        type: 'password' as const,
+        fieldKey: 'password' as const,
+        placeholder: 'Digite sua senha (mín. 6 caracteres)',
+        label: 'Senha',
+      },
+    ],
+  },
+  login: {
+    title: 'Login',
+    imageSrc: '/Modal/login.svg',
+    imageAlt: 'Ilustração login',
+    submitLabel: 'Acessar',
+    buttonVariant: 'primary' as const,
+    forgotPasswordText: 'Esqueci a senha!',
+    inputs: [
+      {
+        type: 'email' as const,
+        fieldKey: 'email' as const,
+        placeholder: 'Digite seu email',
+        label: 'Email',
+      },
+      {
+        type: 'password' as const,
+        fieldKey: 'password' as const,
+        placeholder: 'Digite sua senha',
+        label: 'Senha',
+      },
+    ],
+  },
+};
+
+type FieldKey = 'name' | 'email' | 'password';
+
+const emptyValues: Record<FieldKey, string> = {
+  name: '',
+  email: '',
+  password: '',
+};
+
 export function AuthModalJWT({ isOpen, onClose, variant }: AuthModalJWTProps) {
+  const config = AUTH_CONFIG[variant];
   const { login, signup } = useAuth();
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
+  const router = useRouter();
+  const [values, setValues] = useState(emptyValues);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    setError(''); // Clear error when user types
+  const handleChange = (key: FieldKey, value: string) => {
+    setValues(prev => ({ ...prev, [key]: value }));
+    setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
+    
+    if (variant === 'signup' && !privacyAccepted) {
+      setError('É necessário aceitar a política de privacidade.');
+      return;
+    }
 
+    setIsLoading(true);
+    
     try {
       if (variant === 'signup') {
-        // Validation for signup
-        if (!formData.username || !formData.email || !formData.password) {
+        if (!values.name.trim() || !values.email.trim() || !values.password) {
           throw new Error('Todos os campos são obrigatórios');
         }
-        if (formData.password !== formData.confirmPassword) {
-          throw new Error('As senhas não coincidem');
-        }
-        if (formData.password.length < 6) {
+        if (values.password.length < 6) {
           throw new Error('A senha deve ter pelo menos 6 caracteres');
         }
 
-        await signup(formData.username, formData.email, formData.password);
+        await signup(values.name.trim(), values.email.trim(), values.password);
       } else {
-        // Validation for login
-        if (!formData.email || !formData.password) {
+        if (!values.email.trim() || !values.password) {
           throw new Error('Email e senha são obrigatórios');
         }
 
-        await login(formData.email, formData.password);
+        await login(values.email.trim(), values.password);
       }
 
-      // Success - modal will close via redirect
-      onClose();
+      handleClose();
+      setValues(emptyValues);
+      setPrivacyAccepted(false);
+      setError('');
+      
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 100);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Erro desconhecido';
       setError(message);
@@ -67,101 +137,152 @@ export function AuthModalJWT({ isOpen, onClose, variant }: AuthModalJWTProps) {
     }
   };
 
-  const resetForm = () => {
-    setFormData({
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    });
-    setError('');
-  };
-
-  // Reset form when modal opens/closes or variant changes
   const handleClose = () => {
-    resetForm();
+    setValues(emptyValues);
+    setPrivacyAccepted(false);
+    setError('');
+    setIsLoading(false);
+    setShowPassword(false);
     onClose();
   };
 
-  return (
-    <Modal isOpen={isOpen} onClose={handleClose}>
-      <div className={styles.authModal}>
-        <h2 className={styles.title}>
-          {variant === 'signup' ? 'Criar Conta' : 'Entrar'}
-        </h2>
-        
-        <form onSubmit={handleSubmit} className={styles.form}>
-          {variant === 'signup' && (
-            <ProfileInput
-              label="Nome completo"
-              value={formData.username}
-              onChange={(value) => handleInputChange('username', value)}
-              placeholder="Seu nome"
-              required
-              disabled={isLoading}
-            />
-          )}
-          
-          <ProfileInput
-            label="Email"
-            type="email"
-            value={formData.email}
-            onChange={(value) => handleInputChange('email', value)}
-            placeholder="seu@email.com"
-            required
-            disabled={isLoading}
-          />
-          
-          <ProfileInput
-            label="Senha"
-            type="password"
-            value={formData.password}
-            onChange={(value) => handleInputChange('password', value)}
-            placeholder="Sua senha"
-            required
-            disabled={isLoading}
-          />
-          
-          {variant === 'signup' && (
-            <ProfileInput
-              label="Confirmar senha"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={(value) => handleInputChange('confirmPassword', value)}
-              placeholder="Confirme sua senha"
-              required
-              disabled={isLoading}
-            />
-          )}
+  const currentSubmitLabel = isLoading ? 'Processando...' : config.submitLabel;
 
-          {error && (
-            <div className={styles.error}>
-              {error}
-            </div>
-          )}
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      ariaLabel={variant === 'login' ? 'Login' : 'Criar conta corrente'}
+      fullHeight
+      contentClassName={`${styles.content} ${styles[variant]}`}
+    >
+      <div className={styles.wrapper}>
+        <div className={styles["image-wrapper"]}>
+          <Image
+            src={config.imageSrc}
+            alt={config.imageAlt}
+            fill
+            sizes="(max-width: 719px) 300px, 355px"
+          />
+        </div>
+        <div className={styles["form-wrapper"]}>
+          <h2 id="auth-modal-title" className={styles.title}>
+            {config.title}
+          </h2>
           
-          <div className={styles.actions}>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleClose}
-              disabled={isLoading}
-            >
-              Cancelar
-            </Button>
+          <form className={styles.form} onSubmit={handleSubmit} noValidate>
+            {error && (
+              <p className={styles["form-error"]} role="alert">
+                {error}
+              </p>
+            )}
             
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={isLoading}
-            >
-              {isLoading 
-                ? (variant === 'signup' ? 'Criando...' : 'Entrando...') 
-                : (variant === 'signup' ? 'Criar Conta' : 'Entrar')
-              }
-            </Button>
-          </div>
-        </form>
+            {config.inputs.map((input, index) => {
+              const id = `auth-${variant}-${input.fieldKey}`;
+              return (
+                <div key={input.fieldKey} className={styles.field}>
+                  <label htmlFor={id} className={styles.label}>
+                    {input.label}
+                  </label>
+                  {input.type === 'password' ? (
+                    <div className={styles['password-shell']}>
+                      <input
+                        id={id}
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder={input.placeholder}
+                        className={styles['password-input']}
+                        value={values[input.fieldKey]}
+                        onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
+                        disabled={isLoading}
+                        autoComplete={
+                          variant === 'signup' ? 'new-password' : 'current-password'
+                        }
+                        required
+                      />
+                      <button
+                        type="button"
+                        className={styles['password-toggle']}
+                        onClick={() => setShowPassword((v) => !v)}
+                        disabled={isLoading}
+                        aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                      >
+                        {showPassword ? (
+                          <VisibilityOff sx={{ fontSize: 22 }} />
+                        ) : (
+                          <Visibility sx={{ fontSize: 22 }} />
+                        )}
+                      </button>
+                    </div>
+                  ) : (
+                    <input
+                      id={id}
+                      type={input.type}
+                      placeholder={input.placeholder}
+                      className={styles.input}
+                      value={values[input.fieldKey]}
+                      onChange={(ev) => handleChange(input.fieldKey, ev.target.value)}
+                      disabled={isLoading}
+                      autoComplete={
+                        input.fieldKey === 'email' ? 'email' : 'name'
+                      }
+                      required
+                    />
+                  )}
+                  {'forgotPasswordText' in config &&
+                    index === config.inputs.length - 1 && (
+                      <button
+                        type="button"
+                        className={styles["forgot-password"]}
+                        disabled={isLoading}
+                        onClick={() => {
+                          // Aqui você pode implementar esqueci senha depois
+                          alert('Funcionalidade "Esqueci a senha" será implementada em breve!');
+                        }}
+                      >
+                        {config.forgotPasswordText}
+                      </button>
+                    )}
+                </div>
+              );
+            })}
+            
+            {variant === 'signup' && 'privacyText' in config && (
+              <label className={styles["checkbox-label"]}>
+                <input
+                  type="checkbox"
+                  className={styles.checkbox}
+                  checked={privacyAccepted}
+                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                  disabled={isLoading}
+                  required
+                />
+                <span className={styles["checkbox-text"]}>{config.privacyText}</span>
+              </label>
+            )}
+            
+            {variant === 'signup' ? (
+              <div className={styles['submit-bar']}>
+                <Button
+                  variant={config.buttonVariant}
+                  type="submit"
+                  className={styles['submit-button']}
+                  disabled={isLoading}
+                >
+                  {currentSubmitLabel}
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant={config.buttonVariant}
+                type="submit"
+                className={styles['submit-button']}
+                disabled={isLoading}
+              >
+                {currentSubmitLabel}
+              </Button>
+            )}
+          </form>
+        </div>
       </div>
     </Modal>
   );

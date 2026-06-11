@@ -6,7 +6,7 @@ import { Navbar } from '@/components/organisms/Navbar';
 import { Hero } from '@/components/organisms/Hero';
 import { Footer } from '@/components/organisms/Footer';
 import { AuthModal } from '@/components/organisms/AuthModal';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useJWTAuth';
 
 export default function Home() {
   const [authModalVariant, setAuthModalVariant] = useState<'signup' | 'login' | null>(null);
