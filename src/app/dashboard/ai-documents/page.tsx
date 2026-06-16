@@ -14,12 +14,12 @@ import { IntelligentDocumentUploader } from '@/components/organisms/IntelligentD
 import { Button } from '@/components/atoms/Button/Button';
 import { LoadingScreen } from '@/components/atoms/Loading';
 import { DocumentAnalysisResult } from '@/lib/ai/document-processor';
-import type { Transaction } from '@/contexts/DashboardContextJWT';
+// import type { Transaction } from '@/contexts/DashboardContextJWT';
 import styles from './ai-documents.module.scss';
 
 export default function AIDocumentsPage() {
   const { user, isLoading } = useAuth();
-  const { addTransaction, transactions } = useDashboard();
+  const { addTransaction } = useDashboard();
   const router = useRouter();
 
   const [processedDocuments, setProcessedDocuments] = useState<DocumentAnalysisResult[]>([]);
