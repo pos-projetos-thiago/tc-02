@@ -12,12 +12,17 @@ import { Pagination } from '@/components/molecules/Pagination';
 import type { Transaction } from '@/contexts/DashboardContextJWT';
 import { Button } from '@/components/atoms/Button/Button';
 import { LoadingScreen } from '@/components/atoms/Loading';
+import { generateExtractPDF, downloadPDF, type ExtractPDFOptions } from '@/lib/pdf/extract-generator';
+import type { FinancialTransaction, DocumentSummary } from '@/lib/ai/document-processor';
 import styles from './transacoes.module.scss';
 
 function TransacoesContent() {
   const { user, isLoading } = useAuth();
   const { transactions, deleteTransaction, editTransaction } = useDashboard();
   const router = useRouter();
+
+  // Derivar userName do user data
+  const userName = user?.username || user?.email?.split('@')[0] || 'Usuário';
 
   const {
     filteredTransactions,
@@ -167,6 +172,86 @@ function TransacoesContent() {
     updatePagination({ itemsPerPage, currentPage: 1 });
   };
 
+  // Gerar PDF do extrato
+  const handleGeneratePDF = useCallback(async () => {
+    if (!transactions || transactions.length === 0) {
+      alert('Nenhuma transação encontrada para gerar PDF.');
+      return;
+    }
+
+    try {
+      // Converter transações para o formato do PDF
+      const pdfTransactions: FinancialTransaction[] = filteredTransactions.map(t => ({
+        date: new Date(t.date).toLocaleDateString('pt-BR'),
+        amount: t.amount,
+        type: t.type === 'deposit' ? 'income' : 'expense',
+        description: getTransactionDescription(t),
+        category: t.subtype || 'outros',
+        confidence: 100
+      }));
+
+      // Calcular resumo
+      const totalIncome = pdfTransactions
+        .filter(t => t.type === 'income')
+        .reduce((sum, t) => sum + t.amount, 0);
+      
+      const totalExpenses = pdfTransactions
+        .filter(t => t.type === 'expense')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      const categories = [...new Set(pdfTransactions.map(t => t.category))];
+
+      const summary: DocumentSummary = {
+        totalTransactions: pdfTransactions.length,
+        totalIncome,
+        totalExpenses,
+        dateRange: {
+          start: pdfTransactions.length > 0 ? pdfTransactions[pdfTransactions.length - 1].date : '',
+          end: pdfTransactions.length > 0 ? pdfTransactions[0].date : ''
+        },
+        mainCategories: categories
+      };
+
+      // Gerar PDF
+      const pdfOptions: ExtractPDFOptions = {
+        userName,
+        accountNumber: '123456-7',
+        period: {
+          start: summary.dateRange.start || new Date().toLocaleDateString('pt-BR'),
+          end: summary.dateRange.end || new Date().toLocaleDateString('pt-BR')
+        },
+        transactions: pdfTransactions,
+        summary,
+        includeLogo: true,
+        theme: 'light'
+      };
+
+      const pdfBlob = await generateExtractPDF(pdfOptions);
+      const fileName = `extrato-bytebank-${new Date().toISOString().slice(0,10)}.pdf`;
+      downloadPDF(pdfBlob, fileName);
+
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      alert('Erro ao gerar PDF. Tente novamente.');
+    }
+  }, [transactions, filteredTransactions, userName]);
+
+  // Função auxiliar para descrição da transação
+  const getTransactionDescription = useCallback((transaction: Transaction): string => {
+    switch (transaction.type) {
+      case 'deposit':
+        return 'DEPÓSITO EM CONTA CORRENTE';
+      case 'withdrawal':
+        return 'SAQUE EM CONTA CORRENTE';
+      case 'transfer':
+        return 'TRANSFERÊNCIA BANCÁRIA';
+      case 'investment':
+        return `INVESTIMENTO - ${transaction.investmentType || 'APLICAÇÃO'}`;
+      default:
+        return 'MOVIMENTAÇÃO BANCÁRIA';
+    }
+  }, []);
+
   useEffect(() => {
     if (!isLoading && !user) {
       router.replace('/');
@@ -187,8 +272,6 @@ function TransacoesContent() {
     return null;
   }
 
-  const userName = user?.username || user?.email?.split('@')[0] || 'Usuário';
-
   return (
     <>
       <UserProfileJWT userName={userName} />
@@ -199,13 +282,21 @@ function TransacoesContent() {
               <h1 className={styles['page-title']}>Extrato</h1>
               <p className={styles.subtitle}>Gerencie suas movimentações financeiras</p>
             </div>
-            <Button
-              variant="secondary"
-              onClick={() => router.back()}
-              className={styles['back-button']}
-            >
-              Voltar ao Dashboard
-            </Button>
+            <div className={styles['header-actions']}>
+              <Button
+                variant="primary"
+                onClick={handleGeneratePDF}
+              >
+                Gerar PDF
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => router.back()}
+                className={styles['back-button']}
+              >
+                Voltar ao Dashboard
+              </Button>
+            </div>
           </div>
 
           <FilterBar />

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 import { Dropdown, type DropdownOption } from '@/components/atoms/Dropdown';
@@ -29,40 +30,46 @@ export interface DashboardServicesProps {
 const defaultServices: Service[] = [
   {
     id: '1',
+    title: 'OCR Transações',
+    description: 'Crie transações por comprovante',
+    icon: '/DashboardServices/ocr.svg'
+  },
+  {
+    id: '2',
     title: 'Empréstimo',
     description: '',
     icon: '/DashboardServices/emprestimo.svg'
   },
-  {
-    id: '2',
-    title: 'Meus cartões',
-    description: '',
-    icon: '/DashboardServices/cartao.svg'
-  },
-  {
-    id: '3',
-    title: 'Doações',
-    description: '',
-    icon: '/DashboardServices/doacoes.svg'
-  },
-  {
-    id: '4',
-    title: 'Pix',
-    description: '',
-    icon: '/DashboardServices/pix.svg'
-  },
-  {
-    id: '5',
-    title: 'Seguros',
-    description: '',
-    icon: '/DashboardServices/seguros.svg'
-  },
-  {
-    id: '6',
-    title: 'Crédito celular',
-    description: '',
-    icon: '/DashboardServices/celular.svg'
-  }
+    {
+      id: 'cartoes',
+      title: 'Meus cartões',
+      description: '',
+      icon: '/DashboardServices/cartao.svg'
+    },
+    {
+      id: 'doacoes',
+      title: 'Doações',
+      description: '',
+      icon: '/DashboardServices/doacoes.svg'
+    },
+    {
+      id: 'pix',
+      title: 'Pix',
+      description: '',
+      icon: '/DashboardServices/pix.svg'
+    },
+    {
+      id: 'seguros',
+      title: 'Seguros',
+      description: '',
+      icon: '/DashboardServices/seguros.svg'
+    },
+    {
+      id: 'celular',
+      title: 'Crédito celular',
+      description: '',
+      icon: '/DashboardServices/celular.svg'
+    }
 ];
 
 const transactionOptions: DropdownOption[] = [
@@ -97,12 +104,20 @@ const investmentOptions: ButtonOption[] = [
 export const DashboardServices = ({ services = defaultServices, userName = "Usuário" }: DashboardServicesProps) => {
   const { activeSection, addTransaction, transactions, setActiveSection, balance } = useDashboard();
   const { user } = useAuth();
+  const router = useRouter();
   
   const displayName = user?.user_metadata?.full_name || userName;
   
   const servicesWithActions: Service[] = [
     {
       id: '1',
+      title: 'Documentos IA',
+      description: 'Análise inteligente de documentos',
+      icon: '/DashboardServices/ai-docs.svg',
+      action: () => router.push('/dashboard/ai-documents')
+    },
+    {
+      id: 'emprestimo',
       title: 'Empréstimo',
       description: '',
       icon: '/DashboardServices/emprestimo.svg'

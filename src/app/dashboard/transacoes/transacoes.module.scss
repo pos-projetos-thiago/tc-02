@@ -62,8 +62,44 @@
   margin: 0;
 }
 
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pdf-button {
+  background: #FF5031;
+  color: white;
+  
+  &:hover {
+    background: #e04428;
+  }
+}
+
 .back-button {
   flex-shrink: 0;
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: stretch;
+
+    .pdf-button,
+    .back-button {
+      flex: 1;
+      text-align: center;
+    }
+  }
 }
 
 .transactions-card {
@@ -352,3 +388,5 @@
     gap: 1rem;
   }
 }
+
+// Remover customização - usar estilo padrão primary
