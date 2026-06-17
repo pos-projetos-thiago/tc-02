@@ -106,21 +106,15 @@ export const DashboardServices = ({ services = defaultServices, userName = "Usu�
   const { user } = useAuth();
   const router = useRouter();
   
-  const displayName = user?.user_metadata?.full_name || userName;
+  const displayName = user?.username || userName;
   
   const servicesWithActions: Service[] = [
     {
-      id: '1',
-      title: 'Documentos IA',
-      description: 'Análise inteligente de documentos',
-      icon: '/DashboardServices/ai-docs.svg',
-      action: () => router.push('/dashboard/ai-documents')
-    },
-    {
-      id: 'emprestimo',
-      title: 'Empréstimo',
+      id: 'controle-financeiro',
+      title: 'Controle Financeiro',
       description: '',
-      icon: '/DashboardServices/emprestimo.svg'
+      icon: '/DashboardServices/emprestimo.svg',
+      action: () => router.push('/dashboard/ai-documents')
     },
     {
       id: '2',

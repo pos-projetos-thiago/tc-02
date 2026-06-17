@@ -1,13 +1,11 @@
-/**
- * Componente Inteligente de Upload de Documentos
- * Aceita PDF, Excel, TXT e outros formatos
- * Usa IA para análise automática
- */
 
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import { useIntelligentDocumentProcessor } from '@/hooks/useIntelligentDocumentProcessor';
+import { useToast } from '@/hooks/useToast';
+import { Toast } from '@/components/atoms/Toast';
+import { Button } from '@/components/atoms/Button';
 import { DocumentAnalysisResult } from '@/lib/ai/document-processor';
 import styles from './IntelligentDocumentUploader.module.scss';
 
@@ -42,6 +40,7 @@ export function IntelligentDocumentUploader({
 
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast, showSuccess, showError, showInfo, hideToast } = useToast();
 
   // Manipula o drag & drop
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -62,7 +61,8 @@ export function IntelligentDocumentUploader({
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const files = Array.from(e.dataTransfer.files);
-      handleFiles(files);
+      // Chamar a função de processamento que será definida depois
+      processFiles(files);
     }
   }, []);
 
@@ -73,51 +73,60 @@ export function IntelligentDocumentUploader({
     
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
-      console.log('📁 Arquivos selecionados via input:', files.map(f => f.name));
-      handleFiles(files);
+      console.log('Arquivos selecionados via input:', files.map(f => f.name));
+      processFiles(files);
       
       // Limpar o input para permitir seleção do mesmo arquivo novamente
       e.target.value = '';
     }
-  }, [handleFiles]);
+  }, []);
 
   // Processa os arquivos selecionados
-  const handleFiles = useCallback(async (files: File[]) => {
+  const processFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) return;
 
-    console.log('🔧 Iniciando processamento de', files.length, 'arquivo(s)');
+    console.log('Iniciando processamento de', files.length, 'arquivo(s)');
 
     try {
       if (multiple && files.length > 1) {
-        console.log('📁 Processamento múltiplo');
+        console.log('Processamento múltiplo');
         const results = await processMultipleDocuments(files);
         
         results.forEach((result, index) => {
-          console.log(`📄 Resultado ${index + 1}:`, result);
+          console.log(`Resultado ${index + 1}:`, result);
           if (result.success && onDocumentProcessed) {
             onDocumentProcessed(result);
-          } else if (!result.success && onError) {
-            onError(result.error || 'Erro ao processar documento');
-          }
+            // Toast de sucesso para processamento
+            showSuccess(`Documento processado! ${result.transactions.length} transações encontradas.`);
+          } else if (!result.success) {
+        const errorMsg = result.error || 'Erro ao processar documento';
+        showError(errorMsg);
+        if (onError) onError(errorMsg);
+      }
         });
 
       } else {
-        console.log('📄 Processamento único:', files[0].name);
+        console.log('Processamento único:', files[0].name);
         const file = files[0];
         const result = await processDocument(file);
         
-        console.log('✅ Resultado:', result);
+        console.log('Resultado:', result);
         
         if (result.success && onDocumentProcessed) {
           onDocumentProcessed(result);
-        } else if (!result.success && onError) {
-          onError(result.error || 'Erro ao processar documento');
+          // Toast de sucesso para processamento
+          showSuccess(`Documento processado! ${result.transactions.length} transações encontradas.`);
+        } else if (!result.success) {
+          const errorMsg = result.error || 'Erro ao processar documento';
+          showError(errorMsg);
+          if (onError) onError(errorMsg);
         }
       }
 
     } catch (error) {
-      console.error('💥 Erro no processamento:', error);
+      console.error('Erro no processamento:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      showError(errorMessage);
       if (onError) {
         onError(errorMessage);
       }
@@ -142,10 +151,11 @@ export function IntelligentDocumentUploader({
 
   // Cria transações a partir do resultado
   const createTransactions = useCallback(async (result: DocumentAnalysisResult) => {
-    console.log('💰 Iniciando criação de transações:', result);
+    console.log('Iniciando criação de transações:', result);
     
     if (!result.success || result.transactions.length === 0) {
-      console.error('❌ Nenhuma transação válida para criar');
+      console.error('Nenhuma transação válida para criar');
+      showError('Nenhuma transação encontrada para criar');
       if (onError) onError('Nenhuma transação encontrada para criar');
       return;
     }
@@ -153,7 +163,7 @@ export function IntelligentDocumentUploader({
     try {
       // Converter transações para o formato do sistema
       const systemTransactions = result.transactions.map(t => {
-        console.log('🔄 Convertendo transação:', t);
+        console.log('Convertendo transação:', t);
         
         // Converter data
         let transactionDate = new Date();
@@ -164,13 +174,26 @@ export function IntelligentDocumentUploader({
             transactionDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
           }
         } catch (error) {
-          console.log('⚠️ Erro na conversão de data, usando hoje:', error);
+          console.log('Erro na conversão de data, usando hoje:', error);
           transactionDate = new Date();
         }
 
+        let mappedType = 'transfer';
+        
+        // Mapear baseado na categoria e tipo
+        if (t.category === 'investment') {
+          if (t.investmentType === 'Bolsa') mappedType = 'investment-bolsa';
+          else if (t.investmentType === 'Renda Fixa') mappedType = 'investment-tesouro-direto';
+          else if (t.investmentType === 'Fundos') mappedType = 'investment-fundos';
+          else mappedType = 'investment';
+        } else if (t.type === 'income') {
+          mappedType = 'deposit';
+        } else if (t.type === 'expense') {
+          mappedType = 'withdrawal';
+        }
+
         return {
-          type: t.type === 'income' ? 'deposit' : 
-                t.type === 'expense' ? 'withdrawal' : 'transfer',
+          type: mappedType,
           amount: t.amount,
           description: t.description,
           date: transactionDate,
@@ -178,18 +201,24 @@ export function IntelligentDocumentUploader({
         };
       });
 
-      console.log('📊 Transações convertidas:', systemTransactions);
+      console.log('Transações convertidas:', systemTransactions);
 
       if (onTransactionCreated) {
-        console.log('🚀 Chamando onTransactionCreated...');
+        console.log('Chamando onTransactionCreated...');
         onTransactionCreated(systemTransactions);
+        // Mostrar sucesso
+        showSuccess(`${systemTransactions.length} transações criadas com sucesso!`);
       } else {
-        console.error('❌ onTransactionCreated não está definido');
-        if (onError) onError('Erro: callback não configurado');
+        console.error('onTransactionCreated não está definido');
+        const errorMsg = 'Erro: callback não configurado';
+        showError(errorMsg);
+        if (onError) onError(errorMsg);
       }
     } catch (error) {
-      console.error('💥 Erro ao criar transações:', error);
-      if (onError) onError('Erro ao criar transações no sistema');
+      console.error('Erro ao criar transações:', error);
+      const errorMsg = 'Erro ao criar transações no sistema';
+      showError(errorMsg);
+      if (onError) onError(errorMsg);
     }
   }, [onTransactionCreated, onError]);
 
@@ -199,11 +228,11 @@ export function IntelligentDocumentUploader({
 
     const getStageText = (stage: string) => {
       switch (stage) {
-        case 'uploading': return '📤 Carregando arquivo...';
-        case 'extracting': return '📄 Extraindo conteúdo...';
-        case 'analyzing': return '🤖 Analisando com IA...';
-        case 'complete': return '✅ Processamento concluído!';
-        default: return '⏳ Processando...';
+        case 'uploading': return 'Carregando arquivo...';
+        case 'extracting': return 'Extraindo conteúdo...';
+        case 'analyzing': return 'Analisando com IA...';
+        case 'complete': return 'Processamento concluído!';
+        default: return 'Processando...';
       }
     };
 
@@ -232,7 +261,6 @@ export function IntelligentDocumentUploader({
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        onClick={openFileSelector}
       >
         <input
           ref={fileInputRef}
@@ -241,13 +269,17 @@ export function IntelligentDocumentUploader({
           multiple={multiple}
           accept=".pdf,.txt,.csv,.xlsx,.xls"
           onChange={handleChange}
+          onClick={(e) => {
+            e.stopPropagation();
+            // Permite o clique normal do input
+          }}
         />
 
         {processingState.isProcessing ? (
           renderProcessingState()
         ) : (
           <div className={styles.uploadState}>
-            <div className={styles.uploadIcon}>🤖</div>
+            <div className={styles.uploadIcon}></div>
             <h3>
               {multiple 
                 ? 'Arraste documentos aqui ou clique para selecionar'
@@ -255,160 +287,73 @@ export function IntelligentDocumentUploader({
               }
             </h3>
             <p className={styles.hint}>
-              📄 PDF • 📊 Excel • 📝 TXT • 📋 CSV
+              PDF • Excel • TXT • CSV
             </p>
             <p className={styles.aiHint}>
-              ✨ IA analisa automaticamente e extrai dados financeiros
+              Análise automática e extração de dados financeiros
             </p>
-            <div className={styles.features}>
-              <span>🔍 Detecção automática</span>
-              <span>💰 Extração de transações</span>
-              <span>📊 Geração de extrato</span>
-            </div>
           </div>
         )}
       </div>
 
-      {/* Erro */}
-      {error && (
-        <div className={styles.errorMessage}>
-          <span className={styles.errorIcon}>⚠️</span>
-          {error}
-        </div>
-      )}
-
-      {/* Resultados */}
+      {/* Resultados - Versão Simples */}
       {results.length > 0 && (
         <div className={styles.results}>
           <div className={styles.resultsHeader}>
-            <h4>🎯 Documentos Processados</h4>
+            <h4>Documentos Processados</h4>
             <button onClick={clearResults} className={styles.clearButton}>
               Limpar
             </button>
           </div>
 
           {results.map((result, index) => (
-            <div
-              key={index}
-              className={`${styles.resultItem} ${result.success ? styles.success : styles.error}`}
-            >
+            <div key={index} className={styles.resultItem}>
               {result.success ? (
-                <>
-                  <div className={styles.resultHeader}>
-                    <div className={styles.documentInfo}>
-                      <span className={styles.documentType}>
-                        {getDocumentTypeIcon(result.documentType)} {getDocumentTypeText(result.documentType)}
-                      </span>
-                      <span className={styles.confidence}>
-                        Confiança: {result.confidence}%
-                      </span>
-                    </div>
+                <div className={styles.resultContent}>
+                  <div className={styles.resultInfo}>
+                    <span className={styles.documentType}>
+                      {getDocumentTypeText(result.documentType)} - {result.summary.totalTransactions} transações
+                    </span>
                   </div>
-
-                  <div className={styles.summary}>
-                    <div className={styles.summaryStats}>
-                      <div className={styles.stat}>
-                        <span className={styles.label}>Transações:</span>
-                        <span className={styles.value}>{result.summary.totalTransactions}</span>
-                      </div>
-                      <div className={styles.stat}>
-                        <span className={styles.label}>Entradas:</span>
-                        <span className={styles.value + ' ' + styles.income}>
-                          R$ {result.summary.totalIncome.toFixed(2).replace('.', ',')}
-                        </span>
-                      </div>
-                      <div className={styles.stat}>
-                        <span className={styles.label}>Saídas:</span>
-                        <span className={styles.value + ' ' + styles.expense}>
-                          R$ {result.summary.totalExpenses.toFixed(2).replace('.', ',')}
-                        </span>
-                      </div>
-                    </div>
-
-                    {result.summary.mainCategories.length > 0 && (
-                      <div className={styles.categories}>
-                        <span className={styles.label}>Categorias:</span>
-                        <div className={styles.categoryTags}>
-                          {result.summary.mainCategories.slice(0, 3).map((category, i) => (
-                            <span key={i} className={styles.categoryTag}>
-                              {category}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
+                  
                   <div className={styles.actions}>
-                    <button
+                    <Button
                       onClick={() => createTransactions(result)}
-                      className={styles.actionButton + ' ' + styles.primary}
+                      variant="primary"
                       disabled={result.transactions.length === 0}
                     >
-                      💰 Criar {result.transactions.length} Transações
-                    </button>
-                    <button
-                      onClick={() => previewExtract(result, userName)}
-                      className={styles.actionButton + ' ' + styles.secondary}
-                    >
-                      👁️ Preview PDF
-                    </button>
-                    <button
+                      Criar Transações
+                    </Button>
+                    <Button
                       onClick={() => downloadExtract(result, userName)}
-                      className={styles.actionButton + ' ' + styles.secondary}
+                      variant="secondary"
                     >
-                      📥 Baixar Extrato
-                    </button>
+                      Baixar PDF
+                    </Button>
                   </div>
-
-                  {/* Lista de transações (resumida) */}
-                  {result.transactions.length > 0 && (
-                    <details className={styles.transactionsList}>
-                      <summary>Ver {result.transactions.length} transações encontradas</summary>
-                      <div className={styles.transactions}>
-                        {result.transactions.slice(0, 5).map((transaction, i) => (
-                          <div key={i} className={styles.transaction}>
-                            <span className={styles.transactionDate}>{transaction.date}</span>
-                            <span className={styles.transactionDesc}>{transaction.description}</span>
-                            <span className={`${styles.transactionAmount} ${styles[transaction.type]}`}>
-                              {transaction.type === 'income' ? '+' : '-'}R$ {transaction.amount.toFixed(2).replace('.', ',')}
-                            </span>
-                          </div>
-                        ))}
-                        {result.transactions.length > 5 && (
-                          <div className={styles.moreTransactions}>
-                            +{result.transactions.length - 5} transações...
-                          </div>
-                        )}
-                      </div>
-                    </details>
-                  )}
-                </>
+                </div>
               ) : (
                 <div className={styles.errorResult}>
-                  <span className={styles.errorIcon}>❌</span>
-                  <span className={styles.errorMessage}>{result.error}</span>
+                  Erro: {result.error}
                 </div>
               )}
             </div>
           ))}
         </div>
       )}
+      
+      {/* Toast */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+      />
     </div>
   );
 }
 
 // Funções auxiliares
-function getDocumentTypeIcon(type: string): string {
-  switch (type) {
-    case 'extract': return '🏦';
-    case 'receipt': return '🧾';
-    case 'invoice': return '📄';
-    case 'statement': return '📊';
-    case 'spreadsheet': return '📋';
-    default: return '📄';
-  }
-}
 
 function getDocumentTypeText(type: string): string {
   switch (type) {

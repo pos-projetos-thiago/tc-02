@@ -53,7 +53,7 @@ export function useIntelligentDocumentProcessor(): UseIntelligentDocumentProcess
    * Processa um único documento
    */
   const processDocument = useCallback(async (file: File): Promise<DocumentAnalysisResult> => {
-    console.log('🚀 Hook: Iniciando processamento do arquivo:', file.name);
+    console.log('Hook: Iniciando processamento do arquivo:', file.name);
     
     setError(null);
     setProcessingState({
@@ -65,12 +65,12 @@ export function useIntelligentDocumentProcessor(): UseIntelligentDocumentProcess
 
     try {
       // Validar arquivo
-      console.log('🔍 Hook: Validando arquivo...');
+      console.log('Hook: Validando arquivo...');
       const validation = isDocumentSupported(file);
       if (!validation.supported) {
         throw new Error(validation.reason || 'Arquivo não suportado');
       }
-      console.log('✅ Hook: Arquivo válido');
+      console.log('Hook: Arquivo válido');
 
       // Extração de texto
       setProcessingState(prev => ({
@@ -80,7 +80,7 @@ export function useIntelligentDocumentProcessor(): UseIntelligentDocumentProcess
       }));
 
       // Análise com IA
-      console.log('🤖 Hook: Chamando processFinancialDocument...');
+      console.log('Hook: Chamando processFinancialDocument...');
       setProcessingState(prev => ({
         ...prev,
         stage: 'analyzing',
@@ -88,7 +88,7 @@ export function useIntelligentDocumentProcessor(): UseIntelligentDocumentProcess
       }));
 
       const result = await processFinancialDocument(file);
-      console.log('📊 Hook: Resultado recebido:', result);
+      console.log('Hook: Resultado recebido:', result);
 
       // Completado
       setProcessingState(prev => ({

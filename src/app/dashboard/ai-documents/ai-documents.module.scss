@@ -4,7 +4,7 @@
 
 .main {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  background: #f8fafc;
   padding: 1rem 0 3rem;
 }
 
@@ -21,7 +21,7 @@
   align-items: center;
   margin-bottom: 2rem;
   padding: 2.5rem;
-  background: linear-gradient(135deg, #004D61 0%, #0066cc 100%);
+  background: #004D61;
   border-radius: 16px;
   color: white;
   box-shadow: 0 8px 32px rgba(0, 77, 97, 0.3);
@@ -31,10 +31,7 @@
       font-size: 2.5rem;
       margin-bottom: 0.75rem;
       font-weight: 800;
-      background: linear-gradient(45deg, #fff, #e0f2fe);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: white;
     }
 
     p {
@@ -85,19 +82,19 @@
   }
 
   &.error {
-    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    background: #fef2f2;
     border: 1px solid #fecaca;
     color: #dc2626;
   }
 
   &.success {
-    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    background: #f0fdf4;
     border: 1px solid #bbf7d0;
     color: #16a34a;
   }
 
   &.info {
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    background: #eff6ff;
     border: 1px solid #93c5fd;
     color: #2563eb;
   }
@@ -141,7 +138,7 @@
   .statCard {
     text-align: center;
     padding: 2rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: #f8fafc;
     border-radius: 12px;
     border: 1px solid #e2e8f0;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -184,7 +181,7 @@
 }
 
 .infoCard {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: #f8fafc;
   padding: 2rem;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
@@ -237,13 +234,6 @@
     list-style: none;
     padding-left: 0;
 
-    &::before {
-      content: '▸';
-      color: #FF5031;
-      font-weight: 700;
-      font-size: 1.1em;
-      margin-right: 0.75rem;
-    }
   }
 }
 
@@ -425,17 +415,4 @@
 // Estados especiais
 .uploader {
   // Customizações específicas se necessário
-}
-
-// Efeitos especiais
-.header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="30" cy="30" r="2"/></g></g></svg>');
-  border-radius: 16px;
-  pointer-events: none;
 }

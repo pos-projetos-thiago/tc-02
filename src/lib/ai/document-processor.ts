@@ -62,7 +62,7 @@ export async function processFinancialDocument(
   file: File
 ): Promise<DocumentAnalysisResult> {
   try {
-    console.log(`🤖 Processando documento: ${file.name} (${file.type})`);
+    console.log(`Processando documento: ${file.name} (${file.type})`);
     
     // 1. Extrair texto do documento
     const extractedText = await extractTextFromFile(file);
@@ -78,7 +78,7 @@ export async function processFinancialDocument(
       };
     }
 
-    console.log(`📄 Texto extraído: ${extractedText.length} caracteres`);
+    console.log(`Texto extraído: ${extractedText.length} caracteres`);
 
     // 2. Usar IA para analisar o documento
     const analysis = await analyzeDocumentWithAI(extractedText, file.name);
@@ -190,7 +190,7 @@ async function analyzeDocumentWithAI(
       console.log('❌ Gemini falhou:', error.message);
     }
   } else {
-    console.log('⚠️ Chave do Google Gemini não configurada');
+    console.log('Chave do Google Gemini não configurada');
   }
 
   // Fallback 2: OpenAI (se disponível)
@@ -204,7 +204,7 @@ async function analyzeDocumentWithAI(
   }
 
   // Fallback 3: Análise regex (sempre funciona)
-  console.log('🔧 Usando análise local (sem IA externa)');
+  console.log('Usando análise local (sem IA externa)');
   return await analyzeWithSimpleRegex(text, fileName);
 }
 
@@ -372,7 +372,17 @@ async function analyzeWithSimpleRegex(
 
   // Patterns melhorados
   const patterns = {
-    // Depositar R$10,00 | Sacar R$2,00 | Pagar R$100 | etc
+    // Investimentos: múltiplos padrões
+    investments: [
+      // Padrão 1: "investir R$10" ou "aplicar R$20"
+      /(investir|aplicar)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
+      // Padrão 2: "colocar R$10 para investir na bolsa"
+      /colocar\s+r?\$?\s*(\d+(?:[.,]\d{2})?)\s+para\s+(investir|aplicar).*(bolsa|renda|fundo|tesouro|poupança|investimento)/gi,
+      // Padrão 3: "investir na bolsa R$10"
+      /(investir|aplicar).*(bolsa|renda|fundo|tesouro|poupança|investimento)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
+    ],
+    
+    // Transações normais: Depositar R$10,00 | Sacar R$2,00 | Pagar R$100 | etc
     transactions: /(depositar|sacar|pagar|comprar|transferir|receber)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
     
     // Valores soltos: R$ 123,45 ou 123.50
@@ -382,8 +392,72 @@ async function analyzeWithSimpleRegex(
     dates: /(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})/gi,
   };
 
-  // Extrair transações específicas
+  // Primeiro: Extrair investimentos (prioridade)
+  console.log('Analisando texto para investimentos:', text);
   let match;
+  
+  // Testar cada padrão de investimento
+  for (const pattern of patterns.investments) {
+    pattern.lastIndex = 0; // Reset do regex global
+    while ((match = pattern.exec(text)) !== null) {
+      let amount = 0;
+      let action = '';
+      let fullMatch = match[0];
+      
+      console.log('INVESTIMENTO DETECTADO!');
+      console.log('- Match completo:', fullMatch);
+      console.log('- Grupos capturados:', match);
+      
+      // Padrão 1: investir R$10
+      if (match[1] && match[2] && !match[3]) {
+        action = match[1].toLowerCase();
+        amount = parseFloat(match[2].replace(',', '.'));
+      }
+      // Padrão 2: colocar R$10 para investir na bolsa
+      else if (match[1] && match[2] && match[3]) {
+        action = `${match[2]} na ${match[3]}`.toLowerCase();
+        amount = parseFloat(match[1].replace(',', '.'));
+      }
+      // Padrão 3: investir na bolsa R$10
+      else if (match[1] && match[2] && match[3]) {
+        action = `${match[1]} na ${match[2]}`.toLowerCase();
+        amount = parseFloat(match[3].replace(',', '.'));
+      }
+      
+      console.log('- Ação:', action);
+      console.log('- Valor numérico:', amount);
+      
+      if (!isNaN(amount) && amount > 0) {
+        let investmentType = 'Bolsa';
+        
+        // Detectar tipo de investimento
+        if (fullMatch.includes('bolsa') || action.includes('bolsa')) investmentType = 'Bolsa';
+        else if (fullMatch.includes('renda') || action.includes('renda')) investmentType = 'Renda Fixa';
+        else if (fullMatch.includes('fundo') || action.includes('fundo')) investmentType = 'Fundos';
+        else if (fullMatch.includes('tesouro') || action.includes('tesouro')) investmentType = 'Tesouro';
+        else if (fullMatch.includes('poupança') || action.includes('poupança')) investmentType = 'Poupança';
+        
+        console.log('- Tipo de investimento:', investmentType);
+        
+        const investment = {
+          date: today,
+          amount,
+          type: 'expense', // Investimento é saída de dinheiro
+          description: `Investimento - ${investmentType}`,
+          category: 'investment',
+          investmentType,
+          confidence: 90
+        };
+        
+      console.log('- Transação de investimento criada:', investment);
+      console.log('✅ INVESTIMENTO DETECTADO E PROCESSADO COM SUCESSO!');
+      
+      transactions.push(investment);
+      }
+    }
+  }
+  
+  // Segundo: Extrair transações normais
   while ((match = patterns.transactions.exec(text)) !== null) {
     const action = match[1].toLowerCase();
     const amountStr = match[2].replace(',', '.');

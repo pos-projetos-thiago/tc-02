@@ -17,16 +17,15 @@
   transition: all 0.3s ease;
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   position: relative;
-  min-height: 240px;
+  min-height: 320px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
   &:hover {
-    border-color: #FF5031;
-    background: linear-gradient(135deg, #fff5f4 0%, #fee2e2 100%);
-    transform: scale(1.02);
+    border-color: #004D61;
+    background: #f8fafc;
   }
 
   &.active {
@@ -52,6 +51,7 @@
   height: 100%;
   opacity: 0;
   cursor: pointer;
+  z-index: 10;
 }
 
 .uploadState {
@@ -59,6 +59,8 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  position: relative;
+  z-index: 1; // Garante que está abaixo do input
 
   h3 {
     color: #004D61;
@@ -66,18 +68,13 @@
     font-weight: 700;
     margin: 0;
     text-align: center;
+    pointer-events: none; // Texto não pode interceptar clique
   }
 }
 
 .uploadIcon {
   font-size: 4rem;
   margin-bottom: 1rem;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
 }
 
 .hint {
@@ -131,15 +128,9 @@
 
 .progressBar {
   height: 100%;
-  background: linear-gradient(90deg, #10b981, #059669);
+  background: #004D61;
   border-radius: 4px;
   transition: width 0.3s ease;
-  animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200px 0; }
-  100% { background-position: 200px 0; }
 }
 
 .stageText {
@@ -188,7 +179,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  background: linear-gradient(135deg, #004D61 0%, #0066cc 100%);
+  background: #004D61;
   color: white;
 
   h4 {
@@ -215,44 +206,38 @@
 }
 
 .resultItem {
-  padding: 2rem;
-  border-bottom: 1px solid #f1f5f9;
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &.success {
-    border-left: 4px solid #10b981;
-  }
-
-  &.error {
-    border-left: 4px solid #ef4444;
-  }
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+  background: #f9fafb;
 }
 
-.resultHeader {
-  margin-bottom: 1.5rem;
-}
-
-.documentInfo {
+.resultContent {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+}
 
-  .documentType {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #004D61;
-  }
+.resultInfo {
+  flex: 1;
+}
 
-  .confidence {
-    font-size: 0.9rem;
-    color: #64748b;
-    background: #f8fafc;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-  }
+.actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.documentType {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #004D61;
+}
+
+.errorResult {
+  color: #dc2626;
+  font-weight: 500;
 }
 
 // Resumo
@@ -343,18 +328,16 @@
   border: none;
 
   &.primary {
-    background: #FF5031;
+    background: #22c55e;
     color: white;
 
     &:hover {
-      background: #e04428;
-      transform: translateY(-1px);
+      background: #16a34a;
     }
 
     &:disabled {
       background: #cbd5e1;
       cursor: not-allowed;
-      transform: none;
     }
   }
 
@@ -366,7 +349,6 @@
     &:hover {
       background: #e2e8f0;
       border-color: #cbd5e1;
-      transform: translateY(-1px);
     }
   }
 }
