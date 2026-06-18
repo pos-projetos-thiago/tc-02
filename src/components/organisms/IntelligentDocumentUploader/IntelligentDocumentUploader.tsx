@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/useToast';
 import { Toast } from '@/components/atoms/Toast';
 import { Button } from '@/components/atoms/Button';
 import { DocumentAnalysisResult } from '@/lib/ai/document-processor';
+import { useDashboard } from '@/contexts/DashboardContextJWT';
 import styles from './IntelligentDocumentUploader.module.scss';
 
 interface IntelligentDocumentUploaderProps {
@@ -41,6 +42,7 @@ export function IntelligentDocumentUploader({
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast, showSuccess, showError, showInfo, hideToast } = useToast();
+  const { balance } = useDashboard(); // Obter saldo atual
 
   // Manipula o drag & drop
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -222,6 +224,40 @@ export function IntelligentDocumentUploader({
     }
   }, [onTransactionCreated, onError]);
 
+  // Função para baixar PDF com saldo atual
+  const downloadExtractWithBalance = useCallback(async (result: DocumentAnalysisResult) => {
+    try {
+      console.log('Saldo atual do usuário:', balance); // Debug
+      
+      // Usar a função generatePDF diretamente com saldo atual
+      const { generateExtractPDF, downloadPDF } = await import('@/lib/pdf/extract-generator');
+      
+      const pdfOptions = {
+        userName,
+        currentBalance: balance, // Passar saldo atual
+        period: {
+          start: result.summary.dateRange.start,
+          end: result.summary.dateRange.end
+        },
+        transactions: result.transactions,
+        summary: result.summary,
+        includeLogo: true,
+        theme: 'light' as const
+      };
+      
+      console.log('Opções do PDF:', pdfOptions); // Debug
+
+      const pdfBlob = await generateExtractPDF(pdfOptions);
+      const fileName = `extrato-bytebank-${Date.now()}.pdf`;
+      downloadPDF(pdfBlob, fileName);
+      
+      showSuccess('PDF gerado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      showError('Erro ao gerar PDF');
+    }
+  }, [userName, balance, showSuccess, showError]);
+
   // Render das diferentes etapas de processamento
   const renderProcessingState = () => {
     if (!processingState.isProcessing) return null;
@@ -325,7 +361,7 @@ export function IntelligentDocumentUploader({
                       Criar Transações
                     </Button>
                     <Button
-                      onClick={() => downloadExtract(result, userName)}
+                      onClick={() => downloadExtractWithBalance(result)}
                       variant="secondary"
                     >
                       Baixar PDF

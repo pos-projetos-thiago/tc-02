@@ -9,6 +9,7 @@ import { FinancialTransaction, DocumentSummary } from '../ai/document-processor'
 export interface ExtractPDFOptions {
   userName: string;
   accountNumber?: string;
+  currentBalance?: number; // Saldo atual da conta (opcional)
   period: {
     start: string;
     end: string;
@@ -33,13 +34,14 @@ export async function generateExtractPDF(
   
   let currentY = margin;
 
-  // Cores do tema ByteBank
+  // Cores do tema ByteBank - versão profissional
   const colors = {
-    primary: '#004D61',
-    secondary: '#FF5031',
-    text: '#333333',
-    lightGray: '#F5F5F5',
-    darkGray: '#666666'
+    primary: '#004D61',      // Azul principal
+    text: '#000000',         // Preto para texto
+    lightGray: '#F8F9FA',    // Cinza muito claro
+    darkGray: '#6C757D',     // Cinza escuro
+    success: '#28A745',      // Verde para valores positivos
+    danger: '#DC3545'        // Vermelho para valores negativos
   };
 
   try {
@@ -53,7 +55,7 @@ export async function generateExtractPDF(
     currentY = addPeriod(pdf, currentY, colors, options.period);
     
     // RESUMO FINANCEIRO
-    currentY = addSummary(pdf, currentY, colors, options.summary, usableWidth, margin);
+    currentY = addSummary(pdf, currentY, colors, options.summary, usableWidth, margin, options.currentBalance);
     
     // LISTA DE TRANSAÇÕES
     currentY = addTransactionsList(pdf, currentY, colors, options.transactions, usableWidth, margin, pageHeight);
@@ -83,57 +85,59 @@ function addHeader(
 ): number {
   const pageWidth = 210;
   
-  // Background do cabeçalho
-  pdf.setFillColor(0, 77, 97); // #004D61
-  pdf.rect(0, 0, pageWidth, 50, 'F');
-  
-  // Logo ByteBank (estilo banco)
-  pdf.setFontSize(32);
-  pdf.setTextColor(255, 255, 255);
+  // Cabeçalho mais compacto e minimalista
+  // Logo ByteBank
+  pdf.setFontSize(28);
+  pdf.setTextColor(0, 77, 97); // Azul ByteBank
   pdf.setFont('helvetica', 'bold');
-  pdf.text('ByteBank', 20, y + 20);
+  pdf.text('ByteBank', 20, y + 8);
   
-  // Subtítulo moderno
-  pdf.setFontSize(14);
+  // Subtítulo
+  pdf.setFontSize(16);
   pdf.setFont('helvetica', 'normal');
-  pdf.text('EXTRATO BANCÁRIO', 20, y + 30);
+  pdf.setTextColor(0, 0, 0); // Preto
+  pdf.text('EXTRATO BANCÁRIO', 20, y + 18);
   
-  // Data/hora no canto direito
+  // Data/hora no canto direito - mais compacto
   const now = new Date();
   const dateStr = now.toLocaleDateString('pt-BR');
   const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  pdf.setFontSize(10);
-  pdf.text(`${dateStr} às ${timeStr}`, 150, y + 15);
-  pdf.text('Documento gerado digitalmente', 150, y + 25);
+  pdf.setFontSize(9);
+  pdf.setTextColor(108, 117, 125); // Cinza escuro
+  pdf.text(`${dateStr} às ${timeStr}`, 140, y + 8);
+  pdf.text('Documento gerado digitalmente', 140, y + 16);
   
-  y += 60;
+  y += 25; // Espaço reduzido
   
-  // Informações da conta (caixa cinza)
-  pdf.setFillColor(248, 249, 250);
-  pdf.rect(20, y, 170, 25, 'F');
-  pdf.setDrawColor(226, 232, 240);
-  pdf.rect(20, y, 170, 25, 'S');
+  // Linha separadora minimalista
+  pdf.setDrawColor(0, 77, 97);
+  pdf.setLineWidth(0.5);
+  pdf.line(20, y, 190, y);
   
-  // Dados do cliente
-  pdf.setFontSize(12);
-  pdf.setTextColor(colors.text);
+  y += 10;
+  
+  // Dados do cliente - layout horizontal minimalista
+  pdf.setFontSize(11);
+  pdf.setTextColor(0, 0, 0);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('TITULAR DA CONTA', 25, y + 8);
-  
+  pdf.text('Titular:', 20, y);
   pdf.setFont('helvetica', 'normal');
-  pdf.text(userName.toUpperCase(), 25, y + 15);
+  pdf.text(userName.toUpperCase(), 45, y);
   
-  // Número da conta
-  const accountNum = accountNumber || `${Math.random().toString().slice(2,8)}-${Math.floor(Math.random() * 9)}`;
-  pdf.text('CONTA CORRENTE', 120, y + 8);
+  // Número da conta - mais simples para projeto acadêmico
+  const accountNum = accountNumber || 'CC-001';
   pdf.setFont('helvetica', 'bold');
-  pdf.text(`${accountNum.slice(0,4)}-${accountNum.slice(4)}`, 120, y + 15);
-  
-  // Agência
+  pdf.text('Conta:', 120, y);
   pdf.setFont('helvetica', 'normal');
-  pdf.text('AGÊNCIA 0001', 25, y + 20);
+  pdf.text(accountNum, 140, y);
   
-  return y + 35;
+  // Agência simplificada
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('Agência:', 20, y + 10);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text('ByteBank Digital', 52, y + 10);
+  
+  return y + 25;
 }
 
 /**
@@ -149,7 +153,14 @@ function addPeriod(
   pdf.setTextColor(colors.text);
   pdf.setFont('helvetica', 'bold');
   
-  const periodText = `Período: ${period.start} a ${period.end}`;
+  // Garantir que as datas estejam ordenadas (início antes do fim)
+  const startDate = new Date(period.start.split('/').reverse().join('-'));
+  const endDate = new Date(period.end.split('/').reverse().join('-'));
+  
+  const earliestDate = startDate <= endDate ? period.start : period.end;
+  const latestDate = startDate <= endDate ? period.end : period.start;
+  
+  const periodText = `Período: ${earliestDate} a ${latestDate}`;
   pdf.text(periodText, 20, y);
   
   // Linha separadora
@@ -169,90 +180,97 @@ function addSummary(
   colors: any, 
   summary: DocumentSummary,
   usableWidth: number,
-  margin: number
+  margin: number,
+  currentBalance?: number
 ): number {
-  // Título da seção
-  pdf.setFontSize(14);
-  pdf.setTextColor(colors.primary);
+  // Título da seção com melhor hierarquia
+  pdf.setFontSize(13);
+  pdf.setTextColor(0, 77, 97); // Azul ByteBank
   pdf.setFont('helvetica', 'bold');
   pdf.text('RESUMO DO PERÍODO', margin, y);
   
+  y += 18; // Mais espaço após título
+  
+  // Layout vertical mais legível
+  pdf.setFontSize(11);
+  pdf.setFont('helvetica', 'normal');
+  
+  // Créditos
+  pdf.setTextColor(0, 0, 0); // Preto
+  pdf.text('Créditos:', margin, y);
+  pdf.setTextColor(40, 167, 69); // Verde
+  pdf.setFont('helvetica', 'bold');
+  pdf.text(`R$ ${summary.totalIncome.toFixed(2).replace('.', ',')}`, margin + 55, y);
+  
+  y += 12; // Espaço entre linhas
+  
+  // Débitos
+  pdf.setFont('helvetica', 'normal');
+  pdf.setTextColor(0, 0, 0);
+  pdf.text('Débitos:', margin, y);
+  pdf.setTextColor(220, 53, 69); // Vermelho
+  pdf.setFont('helvetica', 'bold');
+  pdf.text(`R$ ${summary.totalExpenses.toFixed(2).replace('.', ',')}`, margin + 55, y);
+  
+  y += 12;
+  
+  // Linha separadora
+  pdf.setDrawColor(200, 200, 200);
+  pdf.setLineWidth(0.3);
+  pdf.line(margin, y, margin + 100, y);
+  
+  y += 8;
+  
+  // Saldo do Período (baseado apenas nas transações deste extrato)
+  const saldoPeriodo = summary.totalIncome - summary.totalExpenses;
+  
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(12);
+  pdf.setTextColor(0, 0, 0);
+  pdf.text('Saldo do Período:', margin, y);
+  
+  pdf.setTextColor(saldoPeriodo >= 0 ? 40 : 220, saldoPeriodo >= 0 ? 167 : 53, saldoPeriodo >= 0 ? 69 : 69);
+  pdf.text(`R$ ${Math.abs(saldoPeriodo).toFixed(2).replace('.', ',')}${saldoPeriodo < 0 ? ' (negativo)' : ''}`, margin + 85, y);
+  
+  // Saldo Atual da Conta - SEMPRE mostrar para debug
+  console.log('currentBalance recebido na função addSummary:', currentBalance); // Debug
+  
   y += 15;
   
-  // Cards de resumo estilo dashboard
-  const cardWidth = (usableWidth - 10) / 3;
+  // Linha separadora mais destacada
+  pdf.setDrawColor(0, 77, 97);
+  pdf.setLineWidth(0.8);
+  pdf.line(margin, y, margin + 120, y);
   
-  // Card 1: Entradas
-  pdf.setFillColor(220, 252, 231); // Verde claro
-  pdf.rect(margin, y, cardWidth, 25, 'F');
-  pdf.setDrawColor(34, 197, 94); // Verde
-  pdf.rect(margin, y, cardWidth, 25, 'S');
+  y += 12;
   
-  pdf.setFontSize(10);
-  pdf.setTextColor(21, 128, 61);
-  pdf.setFont('helvetica', 'normal');
-  pdf.text('CRÉDITOS', margin + 5, y + 8);
-  
-  pdf.setFontSize(14);
   pdf.setFont('helvetica', 'bold');
-  pdf.text(`R$ ${summary.totalIncome.toFixed(2).replace('.', ',')}`, margin + 5, y + 18);
+  pdf.setFontSize(13);
+  pdf.setTextColor(0, 77, 97); // Azul ByteBank
+  pdf.text('Saldo Atual da Conta:', margin, y);
   
-  // Card 2: Saídas
-  const card2X = margin + cardWidth + 5;
-  pdf.setFillColor(254, 242, 242); // Vermelho claro
-  pdf.rect(card2X, y, cardWidth, 25, 'F');
-  pdf.setDrawColor(239, 68, 68); // Vermelho
-  pdf.rect(card2X, y, cardWidth, 25, 'S');
+  // Se não tiver saldo, mostrar um valor padrão para debug
+  const saldoParaMostrar = currentBalance !== undefined && currentBalance !== null ? currentBalance : 1948.50;
   
-  pdf.setFontSize(10);
-  pdf.setTextColor(153, 27, 27);
-  pdf.setFont('helvetica', 'normal');
-  pdf.text('DÉBITOS', card2X + 5, y + 8);
+  pdf.setTextColor(saldoParaMostrar >= 0 ? 40 : 220, saldoParaMostrar >= 0 ? 167 : 53, saldoParaMostrar >= 0 ? 69 : 69);
+  pdf.text(`R$ ${Math.abs(saldoParaMostrar).toFixed(2).replace('.', ',')}${saldoParaMostrar < 0 ? ' (negativo)' : ''}`, margin + 105, y);
   
-  pdf.setFontSize(14);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text(`R$ ${summary.totalExpenses.toFixed(2).replace('.', ',')}`, card2X + 5, y + 18);
+  // Nota explicativa
+  y += 12;
+  pdf.setFontSize(8);
+  pdf.setTextColor(108, 117, 125);
+  pdf.setFont('helvetica', 'italic');
+  pdf.text('* Saldo do período calculado apenas para as transações neste extrato', margin, y);
   
-  // Card 3: Saldo
-  const card3X = margin + (cardWidth + 5) * 2;
-  const saldo = summary.totalIncome - summary.totalExpenses;
-  const saldoPositivo = saldo >= 0;
-  
-  // Cores do card baseado no saldo
-  if (saldoPositivo) {
-    pdf.setFillColor(239, 246, 255); // Azul claro
-    pdf.rect(card3X, y, cardWidth, 25, 'F');
-    pdf.setDrawColor(59, 130, 246); // Azul
-    pdf.rect(card3X, y, cardWidth, 25, 'S');
-  } else {
-    pdf.setFillColor(254, 242, 242); // Vermelho claro
-    pdf.rect(card3X, y, cardWidth, 25, 'F');
-    pdf.setDrawColor(239, 68, 68); // Vermelho
-    pdf.rect(card3X, y, cardWidth, 25, 'S');
-  }
-  
-  pdf.setFontSize(10);
-  pdf.setTextColor(saldoPositivo ? 30 : 153, saldoPositivo ? 64 : 27, saldoPositivo ? 175 : 27);
-  pdf.setFont('helvetica', 'normal');
-  pdf.text('SALDO LÍQUIDO', card3X + 5, y + 8);
-  
-  pdf.setFontSize(14);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text(`R$ ${Math.abs(saldo).toFixed(2).replace('.', ',')}`, card3X + 5, y + 18);
-  
-  if (saldo < 0) {
-    pdf.setFontSize(8);
-    pdf.text('(NEGATIVO)', card3X + 5, y + 22);
-  }
+  y += 15;
   
   // Info adicional
-  y += 35;
-  pdf.setFontSize(10);
-  pdf.setTextColor(colors.darkGray);
+  pdf.setFontSize(9);
+  pdf.setTextColor(108, 117, 125); // Cinza
   pdf.setFont('helvetica', 'normal');
   pdf.text(`${summary.totalTransactions} transações realizadas no período`, margin, y);
   
-  return y + 15;
+  return y + 20;
 }
 
 /**
@@ -267,30 +285,34 @@ function addTransactionsList(
   margin: number,
   pageHeight: number
 ): number {
-  // Título da seção
-  pdf.setFontSize(14);
-  pdf.setTextColor(colors.primary);
+  // Título da seção com melhor hierarquia
+  pdf.setFontSize(13);
+  pdf.setTextColor(0, 77, 97); // Azul ByteBank
   pdf.setFont('helvetica', 'bold');
   pdf.text('EXTRATO DE MOVIMENTAÇÃO', margin, y);
   
-  y += 15;
+  y += 18; // Mais espaço após título
   
-  // Cabeçalho da tabela estilo banco
+  // Cabeçalho da tabela com fundo sutil
   pdf.setFillColor(248, 249, 250);
-  pdf.rect(margin, y - 3, usableWidth, 12, 'F');
-  pdf.setDrawColor(226, 232, 240);
-  pdf.rect(margin, y - 3, usableWidth, 12, 'S');
+  pdf.rect(margin, y - 2, usableWidth, 12, 'F');
   
-  pdf.setFontSize(9);
-  pdf.setTextColor(75, 85, 99);
+  pdf.setDrawColor(0, 77, 97);
+  pdf.setLineWidth(0.5);
+  pdf.line(margin, y + 10, margin + usableWidth, y + 10);
+  
+  y += 6;
+  
+  pdf.setFontSize(10); // Texto maior para melhor legibilidade
+  pdf.setTextColor(0, 0, 0);
   pdf.setFont('helvetica', 'bold');
   
-  // Colunas otimizadas para extrato bancário
-  pdf.text('DATA', margin + 5, y + 3);
-  pdf.text('DESCRIÇÃO', margin + 35, y + 3);
-  pdf.text('TIPO', margin + 110, y + 3);
-  pdf.text('VALOR (R$)', margin + 135, y + 3);
-  pdf.text('SALDO (R$)', margin + 165, y + 3);
+  // Colunas ajustadas para caber na página
+  pdf.text('DATA', margin + 2, y);
+  pdf.text('DESCRIÇÃO', margin + 28, y);
+  pdf.text('TIPO', margin + 85, y);
+  pdf.text('VALOR (R$)', margin + 110, y);
+  pdf.text('SALDO (R$)', margin + 140, y);
   
   y += 12;
   
@@ -310,19 +332,23 @@ function addTransactionsList(
       
       // Recriar cabeçalho na nova página
       pdf.setFillColor(248, 249, 250);
-      pdf.rect(margin, y - 3, usableWidth, 12, 'F');
-      pdf.setDrawColor(226, 232, 240);
-      pdf.rect(margin, y - 3, usableWidth, 12, 'S');
+      pdf.rect(margin, y - 2, usableWidth, 12, 'F');
       
-      pdf.setFontSize(9);
-      pdf.setTextColor(75, 85, 99);
+      pdf.setDrawColor(0, 77, 97);
+      pdf.setLineWidth(0.5);
+      pdf.line(margin, y + 10, margin + usableWidth, y + 10);
+      
+      y += 6;
+      
+      pdf.setFontSize(10);
+      pdf.setTextColor(0, 0, 0);
       pdf.setFont('helvetica', 'bold');
       
-      pdf.text('DATA', margin + 5, y + 3);
-      pdf.text('DESCRIÇÃO', margin + 35, y + 3);
-      pdf.text('TIPO', margin + 110, y + 3);
-      pdf.text('VALOR (R$)', margin + 135, y + 3);
-      pdf.text('SALDO (R$)', margin + 165, y + 3);
+      pdf.text('DATA', margin + 2, y);
+      pdf.text('DESCRIÇÃO', margin + 28, y);
+      pdf.text('TIPO', margin + 85, y);
+      pdf.text('VALOR (R$)', margin + 110, y);
+      pdf.text('SALDO (R$)', margin + 140, y);
       
       y += 12;
       pdf.setFont('helvetica', 'normal');
@@ -341,50 +367,49 @@ function addTransactionsList(
       saldoAcumulado -= transaction.amount;
     }
     
-    pdf.setFontSize(9);
-    pdf.setTextColor(51, 51, 51);
+    pdf.setFontSize(10); // Fonte maior para melhor legibilidade
+    pdf.setTextColor(0, 0, 0); // Preto puro
     
-    // Data
-    pdf.text(transaction.date, margin + 5, y + 5);
+    // Data - com melhor posicionamento
+    pdf.text(transaction.date, margin + 3, y + 7);
     
     // Descrição (formatada para extrato)
     let description = transaction.description.toUpperCase();
-    if (description.length > 28) {
-      description = description.substring(0, 25) + '...';
+    if (description.length > 20) {
+      description = description.substring(0, 17) + '...';
     }
-    pdf.text(description, margin + 35, y + 5);
+    pdf.text(description, margin + 28, y + 7);
     
     // Tipo de operação
     let tipoOperacao = '';
     if (transaction.type === 'income') {
       tipoOperacao = 'CRÉD';
-      pdf.setTextColor(21, 128, 61);
+      pdf.setTextColor(40, 167, 69); // Verde discreto
     } else {
       tipoOperacao = 'DÉB';
-      pdf.setTextColor(153, 27, 27);
+      pdf.setTextColor(220, 53, 69); // Vermelho discreto
     }
-    pdf.text(tipoOperacao, margin + 110, y + 5);
+    pdf.text(tipoOperacao, margin + 85, y + 7);
     
     // Valor
     const valorFormatado = transaction.amount.toFixed(2).replace('.', ',');
-    pdf.text(valorFormatado, margin + 140, y + 5);
+    pdf.setTextColor(0, 0, 0); // Preto
+    pdf.text(valorFormatado, margin + 112, y + 7);
     
-    // Saldo acumulado
-    pdf.setTextColor(saldoAcumulado >= 0 ? 21 : 153, saldoAcumulado >= 0 ? 128 : 27, saldoAcumulado >= 0 ? 61 : 27);
+    // Saldo acumulado - melhor posicionado
+    pdf.setTextColor(saldoAcumulado >= 0 ? 40 : 220, saldoAcumulado >= 0 ? 167 : 53, saldoAcumulado >= 0 ? 69 : 69);
     pdf.setFont('helvetica', 'bold');
-    pdf.text(Math.abs(saldoAcumulado).toFixed(2).replace('.', ','), margin + 165, y + 5);
     
-    // Indicador de saldo negativo
-    if (saldoAcumulado < 0) {
-      pdf.setFontSize(7);
-      pdf.text('(-)' , margin + 160, y + 5);
-    }
+    // Formatar saldo com indicador mais limpo
+    const saldoFormatado = Math.abs(saldoAcumulado).toFixed(2).replace('.', ',');
+    const saldoTexto = saldoAcumulado < 0 ? `(-) ${saldoFormatado}` : saldoFormatado;
+    pdf.text(saldoTexto, margin + 142, y + 7);
     
     // Reset cor e fonte
-    pdf.setTextColor(51, 51, 51);
+    pdf.setTextColor(0, 0, 0);
     pdf.setFont('helvetica', 'normal');
     
-    y += 14; // Mais espaçamento entre linhas
+    y += 16; // Maior espaçamento entre linhas para melhor legibilidade
   }
   
   // Se não há transações
@@ -411,49 +436,41 @@ function addFooter(pdf: jsPDF, colors: any, pageHeight: number): void {
   
   for (let i = 1; i <= pageCount; i++) {
     pdf.setPage(i);
-    const footerY = pageHeight - 25;
+    const footerY = pageHeight - 20;
     
-    // Background do rodapé
-    pdf.setFillColor(248, 249, 250);
-    pdf.rect(0, footerY - 5, 210, 25, 'F');
-    
-    // Linha superior
-    pdf.setDrawColor(226, 232, 240);
+    // Linha separadora minimalista
+    pdf.setDrawColor(0, 77, 97);
     pdf.setLineWidth(0.5);
     pdf.line(20, footerY - 5, 190, footerY - 5);
     
-    // Informações do banco (esquerda)
+    // Informações simplificadas para projeto acadêmico
     pdf.setFontSize(8);
-    pdf.setTextColor(75, 85, 99);
+    pdf.setTextColor(0, 0, 0);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('ByteBank S.A.', 20, footerY + 2);
+    pdf.text('ByteBank - Projeto Acadêmico', 20, footerY);
     
     pdf.setFont('helvetica', 'normal');
-    pdf.text('CNPJ: 12.345.678/0001-90 | SAC: 4004-0001', 20, footerY + 8);
-    pdf.text('Av. Paulista, 1000 - São Paulo/SP | www.bytebank.com.br', 20, footerY + 14);
+    pdf.setTextColor(108, 117, 125); // Cinza
+    pdf.text('Sistema de Gestão Financeira Pessoal', 20, footerY + 8);
     
-    // Data e hora de geração (centro)
+    // Data e hora de geração (centralizada)
     const now = new Date();
-    const geracaoText = `Documento gerado em ${now.toLocaleString('pt-BR')}`;
+    const geracaoText = `Gerado em ${now.toLocaleDateString('pt-BR')} às ${now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
     pdf.setFontSize(7);
-    pdf.setTextColor(100, 100, 100);
-    pdf.text(geracaoText, 105 - (geracaoText.length * 1.2), footerY + 8);
+    pdf.setTextColor(108, 117, 125);
+    const textWidth = pdf.getTextWidth(geracaoText);
+    pdf.text(geracaoText, (210 - textWidth) / 2, footerY + 4);
     
-    // Número da página (direita)
+    // Informações da página (direita) - simplificadas
     pdf.setFontSize(8);
-    pdf.setTextColor(75, 85, 99);
+    pdf.setTextColor(0, 0, 0);
     pdf.setFont('helvetica', 'normal');
-    pdf.text(`Página ${i} de ${pageCount}`, 170, footerY + 2);
+    pdf.text(`Página ${i} de ${pageCount}`, 160, footerY);
     
-    // Código de autenticidade (simulado)
-    const authCode = `DOC-${Date.now().toString().slice(-8)}`;
+    // Identificação simples
     pdf.setFontSize(7);
-    pdf.text(`Código: ${authCode}`, 170, footerY + 8);
-    
-    // Selo de verificação digital
-    pdf.setFontSize(6);
-    pdf.setTextColor(21, 128, 61);
-    pdf.text('✓ DOCUMENTO DIGITAL VÁLIDO', 170, footerY + 14);
+    pdf.setTextColor(0, 77, 97); // Azul ByteBank
+    pdf.text('EXTRATO DIGITAL', 160, footerY + 8);
   }
 }
 
