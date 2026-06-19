@@ -4,16 +4,29 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useJWTAuth';
 import { useDashboard } from '@/contexts/DashboardContextJWT';
+import { FilterProvider } from '@/contexts/FilterContext';
+import { useFilters } from '@/hooks/useFilters';
 import { UserProfileJWT } from '@/components/molecules/UserProfile/UserProfileJWT';
+import { FilterBar } from '@/components/molecules/FilterBar';
+import { Pagination } from '@/components/molecules/Pagination';
 import type { Transaction } from '@/contexts/DashboardContextJWT';
 import { Button } from '@/components/atoms/Button/Button';
 import { LoadingScreen } from '@/components/atoms/Loading';
 import styles from './transacoes.module.scss';
 
-export default function TransacoesPage() {
+function TransacoesContent() {
   const { user, isLoading } = useAuth();
   const { transactions, deleteTransaction, editTransaction } = useDashboard();
   const router = useRouter();
+
+  const {
+    filteredTransactions,
+    paginatedTransactions,
+    pagination,
+    updatePagination,
+    getTransactionTypeText
+  } = useFilters(transactions || []);
+
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -24,7 +37,7 @@ export default function TransacoesPage() {
   const formatCurrency = useCallback((value: string) => {
     const numbers = value.replace(/\D/g, '');
     if (numbers === '') return '';
-    
+
     const numericValue = parseInt(numbers) / 100;
     return numericValue.toLocaleString('pt-BR', {
       minimumFractionDigits: 2,
@@ -34,7 +47,7 @@ export default function TransacoesPage() {
 
   const handleEdit = useCallback((transaction: Transaction) => {
     setEditingTransaction(transaction);
-    
+
     let editType = transaction.type;
     if (transaction.type === 'investment') {
       if (transaction.investmentType) {
@@ -43,7 +56,7 @@ export default function TransacoesPage() {
         editType = `investment-${transaction.subtype}` as Transaction['type'];
       }
     }
-    
+
     setFormData({
       type: editType,
       amount: transaction.amount.toLocaleString('pt-BR', {
@@ -55,7 +68,7 @@ export default function TransacoesPage() {
 
   const handleDelete = useCallback(async (transactionId: string) => {
     if (!confirm('Tem certeza que deseja deletar esta transação?')) return;
-    
+
     try {
       setDeletingId(transactionId);
       await deleteTransaction(transactionId);
@@ -80,7 +93,7 @@ export default function TransacoesPage() {
 
     const cleanValue = formData.amount.replace(/\./g, '').replace(',', '.');
     const amount = parseFloat(cleanValue);
-    
+
     if (isNaN(amount) || amount <= 0) {
       alert('Por favor, insira um valor válido maior que zero.');
       return;
@@ -92,7 +105,7 @@ export default function TransacoesPage() {
 
     if (formData.type.startsWith('investment-')) {
       updates.type = 'investment';
-      
+
       const investmentTypeMap = {
         'investment-fundos': { investmentType: 'fundos' as const, subtype: 'renda-variavel' as const },
         'investment-tesouro-direto': { investmentType: 'tesouro-direto' as const, subtype: 'renda-fixa' as const },
@@ -101,7 +114,7 @@ export default function TransacoesPage() {
         'investment-renda-fixa': { subtype: 'renda-fixa' as const },
         'investment-renda-variavel': { subtype: 'renda-variavel' as const }
       };
-      
+
       const mapping = investmentTypeMap[formData.type as keyof typeof investmentTypeMap];
       if (mapping) {
         updates.investmentType = 'investmentType' in mapping ? mapping.investmentType : undefined;
@@ -125,12 +138,12 @@ export default function TransacoesPage() {
   const handleAmountChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const currentValue = formData.amount;
-    
+
     if (value === '' || value.length < currentValue.length) {
       setFormData(prev => ({ ...prev, amount: value }));
       return;
     }
-    
+
     const formattedValue = formatCurrency(value);
     setFormData(prev => ({ ...prev, amount: formattedValue }));
   }, [formData.amount, formatCurrency]);
@@ -146,6 +159,14 @@ export default function TransacoesPage() {
     }
   }, [formData.amount, formatCurrency]);
 
+  const handlePageChange = (page: number) => {
+    updatePagination({ currentPage: page });
+  };
+
+  const handleItemsPerPageChange = (itemsPerPage: number) => {
+    updatePagination({ itemsPerPage, currentPage: 1 });
+  };
+
   useEffect(() => {
     if (!isLoading && !user) {
       router.replace('/');
@@ -154,10 +175,10 @@ export default function TransacoesPage() {
 
   if (isLoading) {
     return (
-      <LoadingScreen 
+      <LoadingScreen
         isVisible={true}
-        size="large" 
-        text="Carregando extrato..." 
+        size="large"
+        text="Carregando extrato..."
       />
     );
   }
@@ -187,25 +208,32 @@ export default function TransacoesPage() {
             </Button>
           </div>
 
+          <FilterBar />
+
           <div className={styles['transactions-card']}>
             <div className={styles['card-header']}>
               <h2 className={styles['card-title']}>Histórico de Transações</h2>
               <span className={styles.counter}>
-                {transactions.length} {transactions.length === 1 ? 'transação' : 'transações'}
+                {filteredTransactions.length} de {transactions.length} {filteredTransactions.length === 1 ? 'transação' : 'transações'}
               </span>
             </div>
 
             <div className={styles['card-content']}>
-              {transactions.length === 0 ? (
+              {(paginatedTransactions && paginatedTransactions.length === 0) || (!paginatedTransactions && transactions.length === 0) ? (
                 <div className={styles['empty-state']}>
-                  <h3 className={styles['empty-title']}>Nenhuma transação encontrada</h3>
+                  <h3 className={styles['empty-title']}>
+                    {transactions.length === 0 ? 'Nenhuma transação encontrada' : 'Nenhuma transação corresponde aos filtros'}
+                  </h3>
                   <p className={styles['empty-description']}>
-                    Suas transações aparecerão aqui após você fazer movimentações
+                    {transactions.length === 0
+                      ? 'Suas transações aparecerão aqui após você fazer movimentações'
+                      : 'Tente ajustar os filtros para encontrar as transações desejadas'
+                    }
                   </p>
                 </div>
               ) : (
                 <div className={styles['transaction-list']}>
-                  {transactions.map((transaction) => (
+                  {(paginatedTransactions || transactions).map((transaction) => (
                     <div key={transaction.id} className={styles['transaction-row']}>
                       <div className={styles['transaction-info']}>
                         <div className={styles['transaction-month']}>
@@ -214,16 +242,7 @@ export default function TransacoesPage() {
                         <div className={styles['transaction-main']}>
                           <div className={styles['transaction-details']}>
                             <div className={styles['transaction-type']}>
-                              {transaction.type === 'deposit' && 'Depósito'}
-                              {transaction.type === 'withdrawal' && 'Saque'}
-                              {transaction.type === 'transfer' && 'Transferência'}
-                              {transaction.type === 'investment' && transaction.investmentType === 'fundos' && 'Fundos de investimento'}
-                              {transaction.type === 'investment' && transaction.investmentType === 'tesouro-direto' && 'Tesouro Direto'}
-                              {transaction.type === 'investment' && transaction.investmentType === 'previdencia' && 'Previdência Privada'}
-                              {transaction.type === 'investment' && transaction.investmentType === 'bolsa' && 'Bolsa de Valores'}
-                              {transaction.type === 'investment' && !transaction.investmentType && transaction.subtype === 'renda-fixa' && 'Investimento - Renda Fixa'}
-                              {transaction.type === 'investment' && !transaction.investmentType && transaction.subtype === 'renda-variavel' && 'Investimento - Renda Variável'}
-                              {transaction.type === 'investment' && !transaction.investmentType && !transaction.subtype && 'Investimento'}
+                              {getTransactionTypeText(transaction)}
                             </div>
                             <div className={styles['transaction-date']}>
                               {new Date(transaction.date).toLocaleDateString('pt-BR')}
@@ -256,6 +275,17 @@ export default function TransacoesPage() {
                 </div>
               )}
             </div>
+
+            {(paginatedTransactions && paginatedTransactions.length > 0) && (
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                totalItems={pagination.totalItems}
+                itemsPerPage={pagination.itemsPerPage}
+                onPageChange={handlePageChange}
+                onItemsPerPageChange={handleItemsPerPageChange}
+              />
+            )}
           </div>
         </div>
       </main>
@@ -264,7 +294,7 @@ export default function TransacoesPage() {
         <div className={styles.modal}>
           <div className={styles['modal-content']}>
             <h2 className={styles['modal-title']}>Editar Transação</h2>
-            
+
             <form className={styles.form} onSubmit={(e) => { e.preventDefault(); handleSaveEdit(); }}>
               <div className={styles['form-group']}>
                 <label htmlFor="type" className={styles.label}>Tipo de Transação</label>
@@ -302,15 +332,15 @@ export default function TransacoesPage() {
               </div>
 
               <div className={styles['modal-actions']}>
-                <Button 
-                  type="button" 
-                  variant="secondary" 
+                <Button
+                  type="button"
+                  variant="secondary"
                   onClick={handleCancelEdit}
                 >
                   Cancelar
                 </Button>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   variant="primary"
                 >
                   Salvar Alterações
@@ -321,5 +351,13 @@ export default function TransacoesPage() {
         </div>
       )}
     </>
+  );
+}
+
+export default function TransacoesPage() {
+  return (
+    <FilterProvider>
+      <TransacoesContent />
+    </FilterProvider>
   );
 }
