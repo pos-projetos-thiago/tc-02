@@ -152,7 +152,7 @@ function addPeriod(
   period: { start: string; end: string }
 ): number {
   pdf.setFontSize(12);
-  pdf.setTextColor(...colors.text);
+  pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
   pdf.setFont('helvetica', 'bold');
   
   // Garantir que as datas estejam ordenadas (início antes do fim)

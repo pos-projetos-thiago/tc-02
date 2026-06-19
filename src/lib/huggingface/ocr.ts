@@ -140,7 +140,7 @@ async function callHuggingFaceOCR(
     }
 
     // Extrai o texto da resposta (diferentes modelos podem ter campos diferentes)
-    const extractedText = data.generated_text || data.text || '';
+    const extractedText = (data as HuggingFaceOCRResponse).generated_text || (data as HuggingFaceOCRResponse).text || '';
     
     if (!extractedText.trim()) {
       return {

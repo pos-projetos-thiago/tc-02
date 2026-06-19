@@ -6,7 +6,7 @@
 import { generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
-import pdfParse from 'pdf-parse';
+// import pdfParse from 'pdf-parse'; // Removed due to export issues
 import * as XLSX from 'xlsx';
 
 // Tipos para o sistema
@@ -27,6 +27,7 @@ export interface FinancialTransaction {
   description: string;
   category?: string;
   merchant?: string;
+  investmentType?: string;
   confidence: number;
 }
 
@@ -142,6 +143,13 @@ async function extractTextFromFile(file: File): Promise<string> {
 async function extractFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
+  
+  // Dynamic import to resolve module export issues
+  const pdfParseModule = await import('pdf-parse');
+  // Handle both CommonJS and ESM exports
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const pdfParse = (pdfParseModule as any).default || pdfParseModule;
+  
   const data = await pdfParse(buffer);
   return data.text;
 }
@@ -187,7 +195,7 @@ async function analyzeDocumentWithAI(
       console.log('🤖 Tentando Google Gemini (gratuito)...');
       return await analyzeWithGemini(text, fileName);
     } catch (error) {
-      console.log('❌ Gemini falhou:', error.message);
+      console.log('❌ Gemini falhou:', error instanceof Error ? error.message : String(error));
     }
   } else {
     console.log('Chave do Google Gemini não configurada');
@@ -199,7 +207,7 @@ async function analyzeDocumentWithAI(
       console.log('🤖 Tentando OpenAI...');
       return await analyzeWithOpenAI(text, fileName);
     } catch (error) {
-      console.log('❌ OpenAI falhou:', error.message);
+      console.log('❌ OpenAI falhou:', error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -250,7 +258,6 @@ IMPORTANTE: Responda APENAS com JSON válido, sem texto adicional.
   const result = await generateText({
     model: AI_PROVIDERS.gemini.model,
     prompt,
-    maxTokens: 2000,
     temperature: 0.1,
   });
 
@@ -329,9 +336,8 @@ Responda APENAS com JSON válido neste formato exato:
 `;
 
   const { text: aiResponse } = await generateText({
-    model: openai(AI_MODEL),
+    model: openai('gpt-3.5-turbo'),
     prompt,
-    maxTokens: 4000,
     temperature: 0.1,
   });
 
@@ -439,10 +445,10 @@ async function analyzeWithSimpleRegex(
         
         console.log('- Tipo de investimento:', investmentType);
         
-        const investment = {
+        const investment: FinancialTransaction = {
           date: today,
           amount,
-          type: 'expense', // Investimento é saída de dinheiro
+          type: 'expense' as const, // Investimento é saída de dinheiro
           description: `Investimento - ${investmentType}`,
           category: 'investment',
           investmentType,
@@ -516,7 +522,7 @@ async function analyzeWithSimpleRegex(
     .filter(t => t.type === 'expense')
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const categories = [...new Set(transactions.map(t => t.category).filter(Boolean))];
+  const categories = [...new Set(transactions.map(t => t.category).filter((cat): cat is string => Boolean(cat)))];
 
   const summary: DocumentSummary = {
     totalTransactions: transactions.length,
