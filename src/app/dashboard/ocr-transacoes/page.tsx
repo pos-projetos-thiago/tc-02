@@ -40,8 +40,14 @@ export default function OCRTransacoesPage() {
     
     // Mapeia os dados do OCR para o formato esperado
     const data = transactionData as { type?: string; amount?: number; description?: string; merchant?: string; date?: string };
+    
+    // Valida e converte o tipo para o formato correto
+    const validType = (data.type && ['deposit', 'withdrawal', 'transfer', 'investment'].includes(data.type)) 
+      ? data.type as 'deposit' | 'withdrawal' | 'transfer' | 'investment'
+      : 'transfer';
+
     const formattedTransaction: TransactionFormData = {
-      type: data.type || 'transfer',
+      type: validType,
       amount: data.amount || 0,
       description: data.description || data.merchant || 'Transação via OCR',
       date: data.date
