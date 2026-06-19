@@ -58,6 +58,7 @@ export async function generateExtractPDF(
     currentY = addSummary(pdf, currentY, colors, options.summary, usableWidth, margin, options.currentBalance);
     
     // LISTA DE TRANSAÇÕES
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     currentY = addTransactionsList(pdf, currentY, colors, options.transactions, usableWidth, margin, pageHeight);
     
     // RODAPÉ
@@ -79,10 +80,11 @@ export async function generateExtractPDF(
 function addHeader(
   pdf: jsPDF, 
   y: number, 
-  colors: any, 
+  colors: { primary: number[]; secondary: number[]; text: number[]; white: number[]; success: number[]; danger: number[] }, 
   userName: string, 
   accountNumber?: string
 ): number {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const pageWidth = 210;
   
   // Cabeçalho mais compacto e minimalista
@@ -146,7 +148,7 @@ function addHeader(
 function addPeriod(
   pdf: jsPDF, 
   y: number, 
-  colors: any, 
+  colors: { primary: number[]; secondary: number[]; text: number[]; white: number[]; success: number[]; danger: number[] }, 
   period: { start: string; end: string }
 ): number {
   pdf.setFontSize(12);
@@ -177,7 +179,7 @@ function addPeriod(
 function addSummary(
   pdf: jsPDF, 
   y: number, 
-  colors: any, 
+  colors: { primary: number[]; secondary: number[]; text: number[]; white: number[]; success: number[]; danger: number[] }, 
   summary: DocumentSummary,
   usableWidth: number,
   margin: number,
@@ -279,7 +281,7 @@ function addSummary(
 function addTransactionsList(
   pdf: jsPDF, 
   y: number, 
-  colors: any, 
+  colors: { primary: number[]; secondary: number[]; text: number[]; white: number[]; success: number[]; danger: number[] }, 
   transactions: FinancialTransaction[],
   usableWidth: number,
   margin: number,
@@ -431,7 +433,7 @@ function addTransactionsList(
 /**
  * Adiciona rodapé profissional estilo banco
  */
-function addFooter(pdf: jsPDF, colors: any, pageHeight: number): void {
+function addFooter(pdf: jsPDF, colors: { primary: number[]; secondary: number[]; text: number[]; white: number[]; success: number[]; danger: number[] }, pageHeight: number): void {
   const pageCount = pdf.getNumberOfPages();
   
   for (let i = 1; i <= pageCount; i++) {

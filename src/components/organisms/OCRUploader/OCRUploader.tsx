@@ -36,38 +36,6 @@ export function OCRUploader({
   const [processedFiles, setProcessedFiles] = useState<ProcessedFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Manipula o drag & drop
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  }, []);
-
-  // Manipula o drop de arquivos
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const files = Array.from(e.dataTransfer.files);
-      handleFiles(files);
-    }
-  }, []);
-
-  // Manipula seleção de arquivos via input
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
-      const files = Array.from(e.target.files);
-      handleFiles(files);
-    }
-  }, []);
-
   // Processa os arquivos selecionados
   const handleFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) return;
@@ -127,6 +95,38 @@ export function OCRUploader({
       }
     }
   }, [multiple, acceptDocuments, extractText, extractTextFromMultiple, onTextExtracted, onError, reset]);
+
+  // Manipula o drag & drop
+  const handleDrag = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  }, []);
+
+  // Manipula o drop de arquivos
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const files = Array.from(e.dataTransfer.files);
+      handleFiles(files);
+    }
+  }, [handleFiles]);
+
+  // Manipula seleção de arquivos via input
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (e.target.files && e.target.files[0]) {
+      const files = Array.from(e.target.files);
+      handleFiles(files);
+    }
+  }, [handleFiles]);
 
   // Abre o seletor de arquivos
   const openFileSelector = () => {

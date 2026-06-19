@@ -32,24 +32,29 @@ export function useJWTAuth(): AuthContextType {
 
   // Load token from localStorage on mount
   useEffect(() => {
-    const savedToken = localStorage.getItem('auth_token');
-    const savedUser = localStorage.getItem('auth_user');
-    
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch {
-        // Invalid saved data, clear it
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('auth_user');
+    const initAuth = () => {
+      const savedToken = localStorage.getItem('auth_token');
+      const savedUser = localStorage.getItem('auth_user');
+      
+      if (savedToken && savedUser) {
+        setToken(savedToken);
+        try {
+          setUser(JSON.parse(savedUser));
+        } catch {
+          // Invalid saved data, clear it
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('auth_user');
+        }
       }
-    }
-    
-    setIsLoading(false);
+      
+      setIsLoading(false);
+    };
+
+    initAuth();
   }, []);
 
-  // API helper with auth header
+  // API helper with auth header (currently unused but kept for future use)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const apiCall = async (endpoint: string, options: RequestInit = {}) => {
     const url = `${API_BASE_URL}${endpoint}`;
     const headers = {

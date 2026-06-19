@@ -402,7 +402,7 @@ async function analyzeWithSimpleRegex(
     while ((match = pattern.exec(text)) !== null) {
       let amount = 0;
       let action = '';
-      let fullMatch = match[0];
+      const fullMatch = match[0];
       
       console.log('INVESTIMENTO DETECTADO!');
       console.log('- Match completo:', fullMatch);
@@ -490,7 +490,7 @@ async function analyzeWithSimpleRegex(
   // Se não encontrou transações específicas, buscar valores soltos
   if (transactions.length === 0) {
     const amounts = [...text.matchAll(patterns.amounts)];
-    amounts.forEach((match, index) => {
+    amounts.forEach((match) => {
       const amountStr = match[1].replace(',', '.');
       const amount = parseFloat(amountStr);
       

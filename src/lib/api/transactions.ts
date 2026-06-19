@@ -129,7 +129,7 @@ export const updateUserProfile = async (userData: {
   username?: string;
   email?: string;
   password?: string;
-}): Promise<any> => {
+}): Promise<unknown> => {
   const response = await apiCall('/user/profile', {
     method: 'PUT',
     body: JSON.stringify(userData),

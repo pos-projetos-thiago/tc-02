@@ -27,12 +27,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Carregar sessão do localStorage na inicialização
   useEffect(() => {
-    const sessionUser = getSessionFromStorage();
-    if (sessionUser) {
-      console.log('📋 Sessão encontrada:', sessionUser);
-      setUser(sessionUser);
-    }
-    setIsLoading(false);
+    const initAuth = () => {
+      const sessionUser = getSessionFromStorage();
+      if (sessionUser) {
+        console.log('📋 Sessão encontrada:', sessionUser);
+        setUser(sessionUser);
+      }
+      setIsLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   // Login function
