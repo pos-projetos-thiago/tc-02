@@ -53,8 +53,11 @@ export default function ControleFinanceiroPage() {
         try {
           console.log('Criando transação:', transactionData);
           
+          // Cast para o tipo esperado
+          const data = transactionData as { type: string; amount: number };
+          
           // A função addTransaction espera (type: string, amount: number)
-          await addTransaction(transactionData.type, transactionData.amount);
+          await addTransaction(data.type, data.amount);
           
           createdCount++;
           console.log('Transação criada com sucesso!');
