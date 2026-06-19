@@ -1,0 +1,275 @@
+/**
+ * Estilos para o componente TransactionOCR
+ */
+
+.transactionOCR {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h3 {
+    color: #004D61;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: #666;
+    margin: 0;
+    font-size: 0.95rem;
+  }
+}
+
+.uploader {
+  margin-bottom: 2rem;
+}
+
+.detectedTransaction {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #0ea5e9;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  animation: slideIn 0.4s ease-out;
+}
+
+.transactionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(14, 165, 233, 0.2);
+
+  h4 {
+    color: #0369a1;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.clearButton {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #dc2626;
+  }
+}
+
+.transactionData {
+  display: grid;
+  gap: 1rem;
+}
+
+.dataItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  border: 1px solid rgba(14, 165, 233, 0.2);
+
+  label {
+    font-weight: 600;
+    color: #0369a1;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  span {
+    color: #1e293b;
+    font-weight: 500;
+    text-align: right;
+    flex: 1;
+    margin-left: 1rem;
+  }
+}
+
+.amount {
+  color: #059669 !important;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+}
+
+.type {
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 20px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  margin: 0 !important;
+
+  &.income {
+    background: #dcfce7 !important;
+    color: #166534 !important;
+    border: 1px solid #22c55e;
+  }
+
+  &.expense {
+    background: #fef2f2 !important;
+    color: #991b1b !important;
+    border: 1px solid #ef4444;
+  }
+}
+
+.rawTextDetails {
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(14, 165, 233, 0.3);
+  padding-top: 1.5rem;
+
+  summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: #0369a1;
+    margin-bottom: 1rem;
+    user-select: none;
+    
+    &:hover {
+      color: #0284c7;
+    }
+  }
+}
+
+.rawText {
+  margin-top: 1rem;
+}
+
+.rawTextArea {
+  width: 100%;
+  min-height: 100px;
+  padding: 1rem;
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  background: rgba(255, 255, 255, 0.9);
+  color: #374151;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: #0ea5e9;
+  }
+}
+
+.tips {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+
+  h5 {
+    color: #475569;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      color: #64748b;
+      font-size: 0.9rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #f1f5f9;
+      position: relative;
+      padding-left: 1.5rem;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &::before {
+        content: '•';
+        color: #3b82f6;
+        font-size: 1.2rem;
+        position: absolute;
+        left: 0;
+        top: 0.4rem;
+      }
+    }
+  }
+}
+
+// Animações
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .transactionOCR {
+    padding: 0 0.5rem;
+  }
+
+  .detectedTransaction {
+    padding: 1rem;
+  }
+
+  .transactionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .dataItem {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+
+    span {
+      margin-left: 0;
+      margin-top: 0.25rem;
+      text-align: left;
+    }
+  }
+
+  .tips {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h3 {
+    font-size: 1.25rem;
+  }
+
+  .detectedTransaction {
+    margin-bottom: 1rem;
+  }
+
+  .transactionData {
+    gap: 0.75rem;
+  }
+
+  .dataItem {
+    padding: 0.5rem 0.75rem;
+  }
+}

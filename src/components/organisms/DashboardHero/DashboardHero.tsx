@@ -43,7 +43,7 @@ export const DashboardHero = ({
   const handleProfileSave = async (data: { name: string; email: string; password: string }) => {
     try {
       // Preparar dados para envio à API
-      const updateData: any = {};
+      const updateData: Record<string, unknown> = {};
       let passwordChanged = false;
       
       if (data.name && data.name !== userName) {
@@ -68,11 +68,12 @@ export const DashboardHero = ({
       }
 
       // Chamar API para atualizar perfil
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const response = await updateUserProfile(updateData);
       
       // Atualizar localStorage se o nome mudou
       if (updateData.username) {
-        localStorage.setItem('temp_username', updateData.username);
+        localStorage.setItem('temp_username', updateData.username as string);
         // Trigger re-render forçando evento
         window.dispatchEvent(new Event('storage'));
       }

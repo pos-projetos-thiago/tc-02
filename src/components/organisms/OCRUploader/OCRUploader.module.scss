@@ -1,0 +1,311 @@
+/**
+ * Estilos para o componente OCRUploader
+ */
+
+.ocrUploader {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.dropZone {
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  position: relative;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    border-color: #004D61;
+    background: #f0f8ff;
+  }
+
+  &.active {
+    border-color: #004D61;
+    background: #e6f3ff;
+    transform: scale(1.02);
+  }
+
+  &.processing {
+    border-color: #FF5031;
+    background: #fff5f4;
+    cursor: wait;
+  }
+}
+
+.fileInput {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.uploadState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  h3 {
+    color: #333;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.uploadIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.hint {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.documentHint {
+  color: #FF5031;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0.5rem 0 0 0;
+}
+
+.processingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  p {
+    margin: 0;
+    color: #FF5031;
+    font-weight: 600;
+
+    &.hint {
+      color: #666;
+      font-weight: normal;
+      font-size: 0.9rem;
+    }
+
+    &.subHint {
+      color: #999;
+      font-weight: normal;
+      font-size: 0.8rem;
+      font-style: italic;
+    }
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #FF5031;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.results {
+  margin-top: 2rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.resultsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+
+  h4 {
+    margin: 0;
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+}
+
+.clearButton {
+  background: #FF5031;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #e04428;
+  }
+}
+
+.resultItem {
+  padding: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &.success {
+    border-left: 4px solid #28a745;
+  }
+
+  &.error {
+    border-left: 4px solid #dc3545;
+  }
+}
+
+.fileInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  .fileName {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .fileSize {
+    color: #666;
+    font-size: 0.9rem;
+  }
+}
+
+.textResult {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 500;
+    color: #333;
+    font-size: 0.9rem;
+  }
+
+  .textArea {
+    width: 100%;
+    min-height: 120px;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    resize: vertical;
+    background: #fafafa;
+
+    &:focus {
+      outline: none;
+      border-color: #004D61;
+      background: #fff;
+    }
+  }
+
+  .textStats {
+    font-size: 0.8rem;
+    color: #666;
+    text-align: right;
+  }
+}
+
+.errorResult {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #ffeaea;
+  border-radius: 6px;
+
+  .errorIcon {
+    font-size: 1.2rem;
+  }
+
+  .errorMessage {
+    color: #dc3545;
+    font-weight: 500;
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .dropZone {
+    padding: 2rem 1rem;
+    min-height: 150px;
+  }
+
+  .uploadState h3 {
+    font-size: 1.1rem;
+  }
+
+  .results {
+    margin-top: 1rem;
+  }
+
+  .resultsHeader {
+    padding: 0.75rem 1rem;
+    
+    h4 {
+      font-size: 1rem;
+    }
+  }
+
+  .resultItem {
+    padding: 1rem;
+  }
+
+  .fileInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
+
+// Estados de hover e foco melhorados
+.dropZone:focus-within {
+  border-color: #004D61;
+  background: #f0f8ff;
+  outline: 2px solid #004D61;
+  outline-offset: 2px;
+}
+
+// Animações suaves
+.results {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

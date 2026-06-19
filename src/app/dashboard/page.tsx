@@ -24,11 +24,15 @@ export default function DashboardPage() {
 
   // Atualizar displayName quando user muda
   useEffect(() => {
-    if (user) {
-      const tempName = localStorage.getItem('temp_username');
-      const defaultName = user.username || user.email?.split('@')[0] || 'Usuário';
-      setDisplayName(tempName || defaultName);
-    }
+    const updateDisplayName = () => {
+      if (user) {
+        const tempName = localStorage.getItem('temp_username');
+        const defaultName = user.username || user.email?.split('@')[0] || 'Usuário';
+        setDisplayName(tempName || defaultName);
+      }
+    };
+
+    updateDisplayName();
   }, [user]);
 
   // Escutar mudanças no localStorage
