@@ -7,7 +7,7 @@
 import React, { useState } from 'react';
 
 export default function TestAIPage() {
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
 
   const testWithSampleText = async () => {

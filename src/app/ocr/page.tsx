@@ -132,7 +132,7 @@ export default function OCRPage() {
               <li>Arraste imagens para a área de upload ou clique para selecionar</li>
               <li>Formatos suportados: JPEG, PNG, WebP</li>
               <li>Tamanho máximo: 10MB por arquivo</li>
-              <li>Para documentos, use o modo "OCR para Documentos"</li>
+              <li>Para documentos, use o modo &quot;OCR para Documentos&quot;</li>
             </ul>
           </div>
           

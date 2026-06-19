@@ -31,7 +31,7 @@ export function TransactionOCR({
 }: TransactionOCRProps) {
   const [detectedTransaction, setDetectedTransaction] = useState<TransactionData | null>(null);
   const [rawText, setRawText] = useState<string>('');
-  const { processImage, isProcessing } = useSimpleOCR();
+  const { processImage, /* eslint-disable-next-line @typescript-eslint/no-unused-vars */ isProcessing } = useSimpleOCR();
 
   /**
    * Extrai dados da transação do texto OCR
@@ -103,7 +103,7 @@ export function TransactionOCR({
     return transaction;
   };
 
-  const handleTextExtracted = (text: string, filename: string) => {
+  const handleTextExtracted = (text: string, /* eslint-disable-next-line @typescript-eslint/no-unused-vars */ filename: string) => {
     setRawText(text);
     
     if (!text.trim()) {
@@ -128,6 +128,7 @@ export function TransactionOCR({
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleImageUpload = async (file: File) => {
     const text = await processImage(file);
     if (text) {

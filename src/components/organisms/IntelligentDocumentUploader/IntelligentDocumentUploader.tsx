@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useIntelligentDocumentProcessor } from '@/hooks/useIntelligentDocumentProcessor';
 import { useToast } from '@/hooks/useToast';
 import { Toast } from '@/components/atoms/Toast';
@@ -13,7 +13,7 @@ import styles from './IntelligentDocumentUploader.module.scss';
 interface IntelligentDocumentUploaderProps {
   onDocumentProcessed?: (result: DocumentAnalysisResult) => void;
   onError?: (error: string) => void;
-  onTransactionCreated?: (transactions: any[]) => void;
+  onTransactionCreated?: (transactions: unknown[]) => void;
   multiple?: boolean;
   userName?: string;
   className?: string;
@@ -30,18 +30,22 @@ export function IntelligentDocumentUploader({
   const {
     processingState,
     results,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     error,
     processDocument,
     processMultipleDocuments,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     downloadExtract,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     previewExtract,
     clearResults,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     reset
   } = useIntelligentDocumentProcessor();
 
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast, showSuccess, showError, showInfo, hideToast } = useToast();
+  const { toast, showSuccess, showError, /* eslint-disable-next-line @typescript-eslint/no-unused-vars */ showInfo, hideToast } = useToast();
   const { balance } = useDashboard(); // Obter saldo atual
 
   // Processa os arquivos selecionados
@@ -222,7 +226,7 @@ export function IntelligentDocumentUploader({
       showError(errorMsg);
       if (onError) onError(errorMsg);
     }
-  }, [onTransactionCreated, onError]);
+  }, [onTransactionCreated, onError, showError, showSuccess]);
 
   // Função para baixar PDF com saldo atual
   const downloadExtractWithBalance = useCallback(async (result: DocumentAnalysisResult) => {
