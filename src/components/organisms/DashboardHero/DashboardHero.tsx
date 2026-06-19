@@ -73,7 +73,7 @@ export const DashboardHero = ({
       
       // Atualizar localStorage se o nome mudou
       if (updateData.username) {
-        localStorage.setItem('temp_username', updateData.username);
+        localStorage.setItem('temp_username', updateData.username as string);
         // Trigger re-render forçando evento
         window.dispatchEvent(new Event('storage'));
       }

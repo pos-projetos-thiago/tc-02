@@ -7,7 +7,7 @@
 import React, { useState } from 'react';
 
 export default function TestAIPage() {
-  const [result, setResult] = useState<unknown>(null);
+  const [result, setResult] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
 
   const testWithSampleText = async () => {
@@ -66,7 +66,7 @@ export default function TestAIPage() {
           fontFamily: 'monospace'
         }}>
           <h3>Resultado:</h3>
-          <pre>{JSON.stringify(result as Record<string, unknown>, null, 2)}</pre>
+          <pre>{JSON.stringify(result, null, 2)}</pre>
         </div>
       )}
     </div>

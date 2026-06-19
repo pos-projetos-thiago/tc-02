@@ -81,7 +81,10 @@ const emptyValues: Record<FieldKey, string> = {
 
 export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
   const config = AUTH_CONFIG[variant];
-  const { login, signUp } = useAuth();
+  const { login } = useAuth();
+  const signUp = (_name: string, _email: string, _password: string) => {
+    console.log('SignUp não implementado');
+  };
   const router = useRouter();
   const [values, setValues] = useState(emptyValues);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);

@@ -176,7 +176,7 @@ export function useIntelligentDocumentProcessor(): UseIntelligentDocumentProcess
   const generatePDF = useCallback(async (
     result: DocumentAnalysisResult, 
     userName: string
-  ): Promise<Blob> => {
+  ): Promise<void> => {
     if (!result.success || result.transactions.length === 0) {
       throw new Error('Não há dados suficientes para gerar o PDF');
     }
@@ -197,7 +197,9 @@ export function useIntelligentDocumentProcessor(): UseIntelligentDocumentProcess
       theme: 'light'
     };
 
-    return await generateExtractPDF(pdfOptions);
+    const pdfBlob = await generateExtractPDF(pdfOptions);
+    const fileName = `extrato-bytebank-${Date.now()}.pdf`;
+    downloadPDF(pdfBlob, fileName);
   }, []);
 
   /**
@@ -208,9 +210,7 @@ export function useIntelligentDocumentProcessor(): UseIntelligentDocumentProcess
     userName: string
   ): Promise<void> => {
     try {
-      const pdfBlob = await generatePDF(result, userName);
-      const fileName = `extrato-bytebank-${Date.now()}.pdf`;
-      downloadPDF(pdfBlob, fileName);
+      await generatePDF(result, userName);
     } catch (error) {
       console.error('Erro ao baixar PDF:', error);
       throw error;
@@ -225,13 +225,31 @@ export function useIntelligentDocumentProcessor(): UseIntelligentDocumentProcess
     userName: string
   ): Promise<void> => {
     try {
-      const pdfBlob = await generatePDF(result, userName);
+      // Para preview, criar uma nova função que retorna blob
+      if (!result.success || result.transactions.length === 0) {
+        throw new Error('Não há dados suficientes para gerar o PDF');
+      }
+
+      const dateRange = result.summary.dateRange;
+      const startDate = dateRange.start || new Date().toLocaleDateString('pt-BR');
+      const endDate = dateRange.end || startDate;
+
+      const pdfOptions: ExtractPDFOptions = {
+        userName,
+        period: { start: startDate, end: endDate },
+        transactions: result.transactions,
+        summary: result.summary,
+        includeLogo: true,
+        theme: 'light'
+      };
+
+      const pdfBlob = await generateExtractPDF(pdfOptions);
       previewPDF(pdfBlob);
     } catch (error) {
       console.error('Erro ao abrir preview:', error);
       throw error;
     }
-  }, [generatePDF]);
+  }, []);
 
   /**
    * Limpa apenas os resultados

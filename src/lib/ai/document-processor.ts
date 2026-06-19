@@ -6,7 +6,7 @@
 import { generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
-import * as pdfParse from 'pdf-parse';
+import pdfParse from 'pdf-parse';
 import * as XLSX from 'xlsx';
 
 // Tipos para o sistema

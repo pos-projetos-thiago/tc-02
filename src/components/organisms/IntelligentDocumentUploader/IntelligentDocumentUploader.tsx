@@ -45,7 +45,7 @@ export function IntelligentDocumentUploader({
 
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast, showSuccess, showError, /* eslint-disable-next-line @typescript-eslint/no-unused-vars */ showInfo, hideToast } = useToast();
+  const { toast, showSuccess, showError, hideToast } = useToast();
   const { balance } = useDashboard(); // Obter saldo atual
 
   // Processa os arquivos selecionados
@@ -188,9 +188,10 @@ export function IntelligentDocumentUploader({
         
         // Mapear baseado na categoria e tipo
         if (t.category === 'investment') {
-          if (t.investmentType === 'Bolsa') mappedType = 'investment-bolsa';
-          else if (t.investmentType === 'Renda Fixa') mappedType = 'investment-tesouro-direto';
-          else if (t.investmentType === 'Fundos') mappedType = 'investment-fundos';
+          const investmentType = (t as { investmentType?: string }).investmentType;
+          if (investmentType === 'Bolsa') mappedType = 'investment-bolsa';
+          else if (investmentType === 'Renda Fixa') mappedType = 'investment-tesouro-direto';
+          else if (investmentType === 'Fundos') mappedType = 'investment-fundos';
           else mappedType = 'investment';
         } else if (t.type === 'income') {
           mappedType = 'deposit';
@@ -240,8 +241,8 @@ export function IntelligentDocumentUploader({
         userName,
         currentBalance: balance, // Passar saldo atual
         period: {
-          start: result.summary.dateRange.start,
-          end: result.summary.dateRange.end
+          start: result.summary.dateRange.start || new Date().toLocaleDateString('pt-BR'),
+          end: result.summary.dateRange.end || new Date().toLocaleDateString('pt-BR')
         },
         transactions: result.transactions,
         summary: result.summary,

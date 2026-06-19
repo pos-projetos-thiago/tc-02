@@ -52,7 +52,7 @@ export default function DashboardPage() {
 
   return (
     <DashboardProvider>
-      <DashboardContent userName={user.name} />
+      <DashboardContent userName={(user as { name?: string }).name || user.email?.split('@')[0] || 'Usuário'} />
     </DashboardProvider>
   );
 }
