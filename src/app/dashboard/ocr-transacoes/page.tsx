@@ -73,15 +73,8 @@ export default function OCRTransacoesPage() {
     setError(null);
 
     try {
-      const transactionPayload = {
-        type: detectedTransaction.type,
-        amount: detectedTransaction.amount,
-        description: detectedTransaction.description,
-        // Se há data detectada, usa ela; senão usa data atual
-        date: detectedTransaction.date ? new Date(detectedTransaction.date) : new Date(),
-      };
-
-      await addTransaction(transactionPayload);
+      // A função addTransaction espera apenas (type: string, amount: number)
+      await addTransaction(detectedTransaction.type, detectedTransaction.amount);
       
       setSuccess('Transação criada com sucesso!');
       setDetectedTransaction(null);
