@@ -44,45 +44,6 @@ export function IntelligentDocumentUploader({
   const { toast, showSuccess, showError, showInfo, hideToast } = useToast();
   const { balance } = useDashboard(); // Obter saldo atual
 
-  // Manipula o drag & drop
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  }, []);
-
-  // Manipula o drop de arquivos
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const files = Array.from(e.dataTransfer.files);
-      // Chamar a função de processamento que será definida depois
-      processFiles(files);
-    }
-  }, []);
-
-  // Manipula seleção de arquivos via input
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (e.target.files && e.target.files.length > 0) {
-      const files = Array.from(e.target.files);
-      console.log('Arquivos selecionados via input:', files.map(f => f.name));
-      processFiles(files);
-      
-      // Limpar o input para permitir seleção do mesmo arquivo novamente
-      e.target.value = '';
-    }
-  }, []);
-
   // Processa os arquivos selecionados
   const processFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) return;
@@ -133,9 +94,48 @@ export function IntelligentDocumentUploader({
         onError(errorMessage);
       }
     }
-  }, [multiple, processDocument, processMultipleDocuments, onDocumentProcessed, onError]);
+  }, [multiple, processDocument, processMultipleDocuments, onDocumentProcessed, onError, showError, showSuccess]);
 
-  // Abre o seletor de arquivos
+  // Manipula o drag over/leave
+  const handleDrag = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  }, []);
+
+  // Manipula o drop de arquivos
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const files = Array.from(e.dataTransfer.files);
+      processFiles(files);
+    }
+  }, [processFiles]);
+
+  // Manipula seleção de arquivos via input
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files);
+      console.log('Arquivos selecionados via input:', files.map(f => f.name));
+      processFiles(files);
+      
+      // Limpar o input para permitir seleção do mesmo arquivo novamente
+      e.target.value = '';
+    }
+  }, [processFiles]);
+
+  // Abre o seletor de arquivos (não usado mas mantido para compatibilidade)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const openFileSelector = useCallback((e?: React.MouseEvent) => {
     e?.preventDefault();
     e?.stopPropagation();

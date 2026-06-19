@@ -7,6 +7,7 @@ import {
   createTransaction as createTransactionAPI,
   updateTransaction as updateTransactionAPI,
   deleteTransaction as deleteTransactionAPI,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   calculateBalance,
   type Transaction as APITransaction,
   type Account
@@ -170,13 +171,17 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   // Load data when user changes
   useEffect(() => {
-    if (user) {
-      loadAccountData();
-    } else {
-      // Clear data when user logs out
-      setTransactions([]);
-      setAccount(null);
-    }
+    const initData = async () => {
+      if (user) {
+        await loadAccountData();
+      } else {
+        // Clear data when user logs out
+        setTransactions([]);
+        setAccount(null);
+      }
+    };
+
+    initData();
   }, [user, loadAccountData]);
 
   // Add new transaction
@@ -217,7 +222,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       
       // Convert UI updates to API format
-      const apiUpdates: any = {};
+      const apiUpdates: Record<string, unknown> = {};
       if (updates.amount !== undefined) {
         // Determine if it should be positive or negative based on transaction type
         const transaction = transactions.find(t => t.id === id);
