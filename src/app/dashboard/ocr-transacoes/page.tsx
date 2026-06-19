@@ -200,7 +200,10 @@ export default function OCRTransacoesPage() {
                   <div className={styles.previewItem}>
                     <label>Tipo:</label>
                     <span className={styles.transactionType}>
-                      {detectedTransaction.type === 'income' ? '💰 Entrada' : '💸 Saída'}
+                      {detectedTransaction.type === 'deposit' ? '💰 Depósito' : 
+                       detectedTransaction.type === 'withdrawal' ? '💸 Saque' :
+                       detectedTransaction.type === 'transfer' ? '🔄 Transferência' :
+                       detectedTransaction.type === 'investment' ? '📈 Investimento' : '💸 Saída'}
                     </span>
                   </div>
 
