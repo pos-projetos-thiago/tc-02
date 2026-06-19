@@ -35,15 +35,16 @@ export default function OCRTransacoesPage() {
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
 
   // Manipula transação detectada pelo OCR
-  const handleTransactionDetected = useCallback((transactionData: any) => {
+  const handleTransactionDetected = useCallback((transactionData: unknown) => {
     setError(null);
     
     // Mapeia os dados do OCR para o formato esperado
+    const data = transactionData as { type?: string; amount?: number; description?: string; merchant?: string; date?: string };
     const formattedTransaction: TransactionFormData = {
-      type: transactionData.type || 'transfer',
-      amount: transactionData.amount || 0,
-      description: transactionData.description || transactionData.merchant || 'Transação via OCR',
-      date: transactionData.date
+      type: data.type || 'transfer',
+      amount: data.amount || 0,
+      description: data.description || data.merchant || 'Transação via OCR',
+      date: data.date
     };
 
     setDetectedTransaction(formattedTransaction);
@@ -103,9 +104,13 @@ export default function OCRTransacoesPage() {
 
   // Atualiza transações recentes quando transactions muda
   useEffect(() => {
-    if (transactions && transactions.length > 0) {
-      setRecentTransactions(transactions.slice(0, 5));
-    }
+    const updateRecentTransactions = () => {
+      if (transactions && transactions.length > 0) {
+        setRecentTransactions(transactions.slice(0, 5));
+      }
+    };
+
+    updateRecentTransactions();
   }, [transactions]);
 
   // Redireciona se não autenticado

@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
     // Parse do FormData
     const formData = await request.formData();
     const file = formData.get('file') as File;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const analysisMode = formData.get('analysisMode') as string || 'intelligent';
 
     // Validações básicas

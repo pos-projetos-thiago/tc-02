@@ -16,6 +16,7 @@ export default function ControleFinanceiroPage() {
   const { addTransaction } = useDashboard();
   const router = useRouter();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [processedDocuments, setProcessedDocuments] = useState<DocumentAnalysisResult[]>([]);
   const [isCreatingTransactions, setIsCreatingTransactions] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +33,7 @@ export default function ControleFinanceiroPage() {
   }, []);
 
   // Cria transações no sistema
-  const handleTransactionCreated = useCallback(async (systemTransactions: any[]) => {
+  const handleTransactionCreated = useCallback(async (systemTransactions: unknown[]) => {
     console.log('Página: handleTransactionCreated chamado com:', systemTransactions);
     
     if (systemTransactions.length === 0) {

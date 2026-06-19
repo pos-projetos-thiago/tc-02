@@ -194,6 +194,22 @@ function TransacoesContent() {
     updatePagination({ itemsPerPage, currentPage: 1 })
   }
 
+  // Função auxiliar para descrição da transação
+  const getTransactionDescription = useCallback((transaction: Transaction): string => {
+    switch (transaction.type) {
+      case 'deposit':
+        return 'DEPÓSITO EM CONTA CORRENTE'
+      case 'withdrawal':
+        return 'SAQUE EM CONTA CORRENTE'
+      case 'transfer':
+        return 'TRANSFERÊNCIA BANCÁRIA'
+      case 'investment':
+        return `INVESTIMENTO - ${transaction.investmentType || 'APLICAÇÃO'}`
+      default:
+        return 'MOVIMENTAÇÃO BANCÁRIA'
+    }
+  }, []);
+
   // Gerar PDF do extrato
   const handleGeneratePDF = useCallback(async () => {
     if (!transactions || transactions.length === 0) {
@@ -255,23 +271,7 @@ function TransacoesContent() {
       console.error('Erro ao gerar PDF:', error)
       alert('Erro ao gerar PDF. Tente novamente.')
     }
-  }, [transactions, filteredTransactions, userName])
-
-  // Função auxiliar para descrição da transação
-  const getTransactionDescription = useCallback((transaction: Transaction): string => {
-    switch (transaction.type) {
-      case 'deposit':
-        return 'DEPÓSITO EM CONTA CORRENTE'
-      case 'withdrawal':
-        return 'SAQUE EM CONTA CORRENTE'
-      case 'transfer':
-        return 'TRANSFERÊNCIA BANCÁRIA'
-      case 'investment':
-        return `INVESTIMENTO - ${transaction.investmentType || 'APLICAÇÃO'}`
-      default:
-        return 'MOVIMENTAÇÃO BANCÁRIA'
-    }
-  }, [])
+  }, [transactions, filteredTransactions, userName, getTransactionDescription])
 
   useEffect(() => {
     if (!isLoading && !user) {
