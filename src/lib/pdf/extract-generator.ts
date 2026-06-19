@@ -34,14 +34,14 @@ export async function generateExtractPDF(
   
   let currentY = margin;
 
-  // Cores do tema ByteBank - versão profissional
+  // Cores do tema ByteBank - versão profissional (RGB arrays)
   const colors = {
-    primary: '#004D61',      // Azul principal
-    text: '#000000',         // Preto para texto
-    lightGray: '#F8F9FA',    // Cinza muito claro
-    darkGray: '#6C757D',     // Cinza escuro
-    success: '#28A745',      // Verde para valores positivos
-    danger: '#DC3545'        // Vermelho para valores negativos
+    primary: [0, 77, 97],      // Azul principal
+    secondary: [59, 130, 246],  // Azul secundário
+    text: [0, 0, 0],           // Preto para texto
+    white: [255, 255, 255],     // Branco
+    success: [40, 167, 69],     // Verde para valores positivos
+    danger: [220, 53, 69]       // Vermelho para valores negativos
   };
 
   try {
@@ -152,7 +152,7 @@ function addPeriod(
   period: { start: string; end: string }
 ): number {
   pdf.setFontSize(12);
-  pdf.setTextColor(colors.text);
+  pdf.setTextColor(...colors.text);
   pdf.setFont('helvetica', 'bold');
   
   // Garantir que as datas estejam ordenadas (início antes do fim)
@@ -166,7 +166,7 @@ function addPeriod(
   pdf.text(periodText, 20, y);
   
   // Linha separadora
-  pdf.setDrawColor(colors.lightGray);
+  pdf.setDrawColor(200, 200, 200); // Cinza claro
   pdf.setLineWidth(0.5);
   pdf.line(20, y + 5, 190, y + 5);
   
@@ -419,7 +419,7 @@ function addTransactionsList(
     pdf.setFillColor(248, 249, 250);
     pdf.rect(margin, y, usableWidth, 20, 'F');
     
-    pdf.setTextColor(colors.darkGray);
+    pdf.setTextColor(108, 117, 125); // Cinza escuro
     pdf.setFont('helvetica', 'italic');
     pdf.setFontSize(11);
     pdf.text('Nenhuma movimentação encontrada no período selecionado.', margin + 10, y + 12);

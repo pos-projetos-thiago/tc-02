@@ -257,7 +257,7 @@ export default function OCRTransacoesPage() {
                 <div className={styles.sectionHeader}>
                   <h3>📋 Transações Recentes</h3>
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     size="small"
                     onClick={() => router.push('/dashboard/transacoes')}
                   >

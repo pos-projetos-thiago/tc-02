@@ -247,7 +247,7 @@ function TransacoesContent() {
           start: pdfTransactions.length > 0 ? pdfTransactions[pdfTransactions.length - 1].date : '',
           end: pdfTransactions.length > 0 ? pdfTransactions[0].date : ''
         },
-        mainCategories: categories.filter(Boolean)
+        mainCategories: categories.filter((cat): cat is string => Boolean(cat))
       }
 
       // Gerar PDF

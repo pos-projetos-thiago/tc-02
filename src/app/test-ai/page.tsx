@@ -30,7 +30,8 @@ export default function TestAIPage() {
       setResult(data);
     } catch (error) {
       console.error('Erro no teste:', error);
-      setResult({ error: error.message });
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      setResult({ error: errorMessage });
     } finally {
       setLoading(false);
     }
@@ -65,7 +66,7 @@ export default function TestAIPage() {
           fontFamily: 'monospace'
         }}>
           <h3>Resultado:</h3>
-          <pre>{JSON.stringify(result, null, 2)}</pre>
+          <pre>{JSON.stringify(result as Record<string, unknown>, null, 2)}</pre>
         </div>
       )}
     </div>

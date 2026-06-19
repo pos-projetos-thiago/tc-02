@@ -13,7 +13,7 @@ import {
   type Account
 } from '@/lib/api/transactions';
 
-type DashboardSection = 'services' | 'transfers' | 'investments' | 'others' | 'cards';
+export type DashboardSection = 'services' | 'transfers' | 'investments' | 'others' | 'cards';
 
 // Adapter: Convert API Transaction to our UI Transaction format
 export interface Transaction {
