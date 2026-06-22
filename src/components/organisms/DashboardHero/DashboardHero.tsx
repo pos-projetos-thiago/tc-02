@@ -5,9 +5,9 @@ import Image from 'next/image';
 import { BalanceCard } from '@/components/molecules/BalanceCard';
 import { ProfileForm } from '@/components/organisms/ProfileForm';
 import { Toast } from '@/components/atoms/Toast';
-import { useDashboard } from '@/contexts/DashboardContext';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
-import { supabase } from '@/lib/supabase/client';
+import { useDashboard } from '@/contexts/DashboardContextJWT';
+import { useAuth } from '@/hooks/useJWTAuth';
+import { updateUserProfile } from '@/lib/api/transactions';
 import styles from './DashboardHero.module.scss';
 
 export interface DashboardHeroProps {
@@ -20,7 +20,7 @@ export const DashboardHero = ({
   userName = "Usuário"
 }: DashboardHeroProps) => {
   const { activeSection } = useDashboard();
-  const { user } = useSupabaseAuth();
+  const { user } = useAuth();
   const [toast, setToast] = useState({
     isVisible: false,
     message: '',
@@ -41,79 +41,82 @@ export const DashboardHero = ({
   const isOthersSection = activeSection === 'others';
 
   const handleProfileSave = async (data: { name: string; email: string; password: string }) => {
-    const originalName = userName;
-    const originalEmail = user?.email || "";
-    const changes = [];
-    const errors = [];
-
     try {
-      if (data.email !== originalEmail && data.email.trim()) {
-        const { error } = await supabase.auth.updateUser({
-          email: data.email.trim()
+      // Preparar dados para envio à API
+      const updateData: Record<string, unknown> = {};
+      let passwordChanged = false;
+      
+      if (data.name && data.name !== userName) {
+        updateData.username = data.name;
+      }
+      if (data.email && data.email !== user?.email) {
+        updateData.email = data.email;
+      }
+      if (data.password) {
+        updateData.password = data.password;
+        passwordChanged = true;
+      }
+
+      // Se não há mudanças, mostrar mensagem
+      if (Object.keys(updateData).length === 0) {
+        setToast({
+          isVisible: true,
+          message: "Nenhuma alteração detectada.",
+          type: 'info'
+        });
+        return;
+      }
+
+      // Chamar API para atualizar perfil
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const response = await updateUserProfile(updateData);
+      
+      // Atualizar localStorage se o nome mudou
+      if (updateData.username) {
+        localStorage.setItem('temp_username', updateData.username as string);
+        // Trigger re-render forçando evento
+        window.dispatchEvent(new Event('storage'));
+      }
+
+      // Se senha foi alterada, fazer logout automático
+      if (passwordChanged) {
+        setToast({
+          isVisible: true,
+          message: "Senha alterada com sucesso! Redirecionando para login...",
+          type: 'success'
         });
         
-        if (error) {
-          errors.push(`Erro ao atualizar email: ${error.message}`);
-        } else {
-          changes.push(`Email: "${originalEmail}" → "${data.email}"`);
-        }
-      }
-
-      if (data.password.trim()) {
-        const { error } = await supabase.auth.updateUser({
-          password: data.password.trim()
-        });
+        // Aguardar um pouco para mostrar a mensagem, depois fazer logout
+        setTimeout(() => {
+          // Limpar dados de autenticação
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('auth_user');
+          localStorage.removeItem('temp_username');
+          sessionStorage.clear();
+          
+          // Redirecionar para a página inicial
+          window.location.href = '/';
+        }, 2500);
         
-        if (error) {
-          errors.push(`Erro ao atualizar senha: ${error.message}`);
-        } else {
-          changes.push(`Senha alterada com sucesso`);
-        }
+        return;
       }
 
-      if (data.name !== originalName && data.name.trim()) {
-        const { error } = await supabase.auth.updateUser({
-          data: { 
-            display_name: data.name.trim(),
-            full_name: data.name.trim()
-          }
-        });
-        
-        if (error) {
-          errors.push(`Erro ao atualizar nome: ${error.message}`);
-        } else {
-          changes.push(`Nome: "${originalName}" → "${data.name}"`);
-        }
-      }
-
-      let message = "";
-      let type: 'success' | 'info' | 'error' = 'success';
-
-      if (errors.length > 0) {
-        message = `Alguns erros ocorreram: ${errors.join(" • ")}`;
-        type = 'error';
-      } else if (changes.length === 0) {
-        message = "Nenhuma alteração foi feita no perfil";
-        type = 'info';
-      } else if (changes.length === 1) {
-        message = `Perfil atualizado! ${changes[0]}`;
-        type = 'success';
-      } else {
-        message = `Perfil atualizado com ${changes.length} alterações: ${changes.join(" • ")}`;
-        type = 'success';
-      }
-
+      // Construir mensagem de sucesso para outros casos
+      let message = "Perfil atualizado com sucesso!";
+      if (updateData.username) message += ` Nome: ${updateData.username}.`;
+      if (updateData.email) message += ` Email atualizado.`;
+      
       setToast({
         isVisible: true,
         message,
-        type
+        type: 'success'
       });
 
     } catch (error) {
-      console.error('Erro ao atualizar perfil:', error);
+      console.error('Erro ao salvar perfil:', error);
       setToast({
         isVisible: true,
-        message: `Erro inesperado ao atualizar perfil. Tente novamente.`,
+        message: "Erro ao atualizar perfil. Tente novamente.",
         type: 'error'
       });
     }

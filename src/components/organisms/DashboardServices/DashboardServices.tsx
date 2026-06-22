@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 import { Dropdown, type DropdownOption } from '@/components/atoms/Dropdown';
@@ -9,8 +10,8 @@ import { TransactionButton } from '@/components/atoms/TransactionButton';
 import { ButtonGroup, type ButtonOption } from '@/components/atoms/ButtonGroup';
 import { ServiceCard } from '@/components/molecules/ServiceCard';
 import { InvestmentChart } from '@/components/molecules/InvestmentChart';
-import { useDashboard } from '@/contexts/DashboardContext';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { useDashboard } from '@/contexts/DashboardContextJWT';
+import { useAuth } from '@/hooks/useJWTAuth';
 import styles from './DashboardServices.module.scss';
 
 export interface Service {
@@ -29,40 +30,46 @@ export interface DashboardServicesProps {
 const defaultServices: Service[] = [
   {
     id: '1',
+    title: 'OCR Transações',
+    description: 'Crie transações por comprovante',
+    icon: '/DashboardServices/ocr.svg'
+  },
+  {
+    id: '2',
     title: 'Empréstimo',
     description: '',
     icon: '/DashboardServices/emprestimo.svg'
   },
-  {
-    id: '2',
-    title: 'Meus cartões',
-    description: '',
-    icon: '/DashboardServices/cartao.svg'
-  },
-  {
-    id: '3',
-    title: 'Doações',
-    description: '',
-    icon: '/DashboardServices/doacoes.svg'
-  },
-  {
-    id: '4',
-    title: 'Pix',
-    description: '',
-    icon: '/DashboardServices/pix.svg'
-  },
-  {
-    id: '5',
-    title: 'Seguros',
-    description: '',
-    icon: '/DashboardServices/seguros.svg'
-  },
-  {
-    id: '6',
-    title: 'Crédito celular',
-    description: '',
-    icon: '/DashboardServices/celular.svg'
-  }
+    {
+      id: 'cartoes',
+      title: 'Meus cartões',
+      description: '',
+      icon: '/DashboardServices/cartao.svg'
+    },
+    {
+      id: 'doacoes',
+      title: 'Doações',
+      description: '',
+      icon: '/DashboardServices/doacoes.svg'
+    },
+    {
+      id: 'pix',
+      title: 'Pix',
+      description: '',
+      icon: '/DashboardServices/pix.svg'
+    },
+    {
+      id: 'seguros',
+      title: 'Seguros',
+      description: '',
+      icon: '/DashboardServices/seguros.svg'
+    },
+    {
+      id: 'celular',
+      title: 'Crédito celular',
+      description: '',
+      icon: '/DashboardServices/celular.svg'
+    }
 ];
 
 const transactionOptions: DropdownOption[] = [
@@ -95,17 +102,19 @@ const investmentOptions: ButtonOption[] = [
 ];
 
 export const DashboardServices = ({ services = defaultServices, userName = "Usuário" }: DashboardServicesProps) => {
-  const { activeSection, addTransaction, transactions, setActiveSection } = useDashboard();
-  const { user } = useSupabaseAuth();
+  const { activeSection, addTransaction, transactions, setActiveSection, balance } = useDashboard();
+  const { user } = useAuth();
+  const router = useRouter();
   
-  const displayName = user?.user_metadata?.full_name || userName;
+  const displayName = user?.username || userName;
   
   const servicesWithActions: Service[] = [
     {
-      id: '1',
-      title: 'Empréstimo',
+      id: 'controle-financeiro',
+      title: 'Controle Financeiro',
       description: '',
-      icon: '/DashboardServices/emprestimo.svg'
+      icon: '/DashboardServices/emprestimo.svg',
+      action: () => router.push('/dashboard/ai-documents')
     },
     {
       id: '2',
@@ -183,6 +192,15 @@ export const DashboardServices = ({ services = defaultServices, userName = "Usu�
   const canSubmitTransaction = () => {
     if (!selectedType || !isValidAmount(amount)) return false;
     if (selectedType === 'investment' && !selectedInvestmentType) return false;
+    
+    // Validação de saldo: só permite se for depósito OU se o valor for menor/igual ao saldo
+    if (selectedType !== 'deposit') {
+      const numericAmount = parseFloat(amount.replace(',', '.'));
+      if (numericAmount > balance) {
+        return false; // Saldo insuficiente para operações que não são depósito
+      }
+    }
+    
     return true;
   };
 

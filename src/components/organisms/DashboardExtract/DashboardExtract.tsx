@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { TransactionItem } from '@/components/molecules/TransactionItem';
-import type { Transaction } from '@/contexts/DashboardContext';
+import type { Transaction } from '@/contexts/DashboardContextJWT';
 import styles from './DashboardExtract.module.scss';
 
 export interface DashboardExtractProps {

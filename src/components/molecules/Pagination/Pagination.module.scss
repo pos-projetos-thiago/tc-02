@@ -1,0 +1,149 @@
+@import '../../../styles/colors';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  align-items: center;
+  padding: 2rem;
+  border-top: 1px solid $color-gray-200;
+  
+  @include mobile {
+    padding: 1.6rem 1.2rem;
+  }
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 100%;
+  
+  @include mobile {
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+}
+
+.infoText {
+  font-size: 1.3rem;
+  color: $color-gray-500;
+  font-weight: $font-weight-medium;
+  
+  @include mobile {
+    font-size: 1.2rem;
+  }
+}
+
+.itemsPerPage {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.label {
+  font-size: 1.2rem;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+.select {
+  padding: 0.6rem 1rem;
+  border: 1px solid $color-gray-200;
+  border-radius: 0.6rem;
+  font-size: 1.2rem;
+  color: $color-text-secondary;
+  background-color: $color-white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+  
+  &:hover {
+    border-color: $color-gray-300;
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  
+  @include mobile {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+.button {
+  min-width: 8rem;
+}
+
+.pages {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  
+  @include mobile {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+.pageButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  border: 1px solid $color-gray-200;
+  border-radius: 0.6rem;
+  background-color: $color-white;
+  color: $color-text-secondary;
+  font-size: 1.3rem;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: $color-primary;
+    color: $color-primary;
+    background-color: rgba($color-primary, 0.05);
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+  
+  &.active {
+    background-color: $color-primary;
+    border-color: $color-primary;
+    color: $color-white;
+    
+    &:hover {
+      background-color: darken($color-primary, 5%);
+      color: $color-white;
+    }
+  }
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  color: $color-gray-400;
+  font-size: 1.4rem;
+  font-weight: $font-weight-bold;
+}

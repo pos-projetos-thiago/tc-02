@@ -1,6 +1,8 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // Habilitar output standalone para Docker
+  output: 'standalone',
   sassOptions: {
     silenceDeprecations: ['import', 'global-builtin', 'color-functions'],
   },

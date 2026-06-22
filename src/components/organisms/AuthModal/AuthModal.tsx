@@ -7,7 +7,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Modal } from '@/components/molecules/Modal';
 import { Button } from '@/components/atoms/Button';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useJWTAuth';
 import styles from './AuthModal.module.scss';
 
 export type AuthModalVariant = 'signup' | 'login';
@@ -81,7 +81,11 @@ const emptyValues: Record<FieldKey, string> = {
 
 export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
   const config = AUTH_CONFIG[variant];
-  const { login, signUp } = useAuth();
+  const { login } = useAuth();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const signUp = (_name: string, _email: string, _password: string) => {
+      console.log('SignUp não implementado');
+    };
   const router = useRouter();
   const [values, setValues] = useState(emptyValues);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);

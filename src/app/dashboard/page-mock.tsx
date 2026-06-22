@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { DashboardProvider, useDashboard } from '@/contexts/DashboardContext';
+import { useAuth } from '@/hooks/useJWTAuth';
+import { DashboardProvider, useDashboard } from '@/contexts/DashboardContextJWT';
 import { UserProfile } from '@/components/molecules/UserProfile';
 import { DashboardNav } from '@/components/molecules/DashboardNav';
 import { DashboardHero } from '@/components/organisms/DashboardHero';
@@ -52,7 +52,7 @@ export default function DashboardPage() {
 
   return (
     <DashboardProvider>
-      <DashboardContent userName={user.name} />
+      <DashboardContent userName={(user as { name?: string }).name || user.email?.split('@')[0] || 'Usuário'} />
     </DashboardProvider>
   );
 }

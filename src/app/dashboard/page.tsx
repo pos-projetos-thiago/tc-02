@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useJWTAuth';
 import { useDashboard } from '@/contexts/DashboardContextJWT';
@@ -18,6 +18,35 @@ export const dynamic = 'force-dynamic';
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
+
+  // Mover hooks para o topo (SEMPRE chamados na mesma ordem)
+  const [displayName, setDisplayName] = useState('Usuário');
+
+  // Atualizar displayName quando user muda
+  useEffect(() => {
+    const updateDisplayName = () => {
+      if (user) {
+        const tempName = localStorage.getItem('temp_username');
+        const defaultName = user.username || user.email?.split('@')[0] || 'Usuário';
+        setDisplayName(tempName || defaultName);
+      }
+    };
+
+    updateDisplayName();
+  }, [user]);
+
+  // Escutar mudanças no localStorage
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const tempName = localStorage.getItem('temp_username');
+      if (tempName) {
+        setDisplayName(tempName);
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -49,9 +78,7 @@ export default function DashboardPage() {
     );
   }
 
-  const userName = user?.username || user?.email?.split('@')[0] || 'Usuário';
-
-  return <DashboardContent userName={userName} />;
+  return <DashboardContent userName={displayName} />;
 }
 
 function DashboardContent({ userName }: { userName: string }) {
