@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { execSync } = require('child_process');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const fs = require('fs');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const path = require('path');
 
 console.log('🐳 Setup Docker para Bytebank');
@@ -13,7 +16,7 @@ function checkDockerInstalled() {
     execSync('docker --version', { stdio: 'pipe' });
     console.log('✅ Docker está instalado');
     return true;
-  } catch (error) {
+  } catch {
     console.log('❌ Docker não está instalado');
     console.log('');
     console.log('💡 Para instalar Docker:');
@@ -30,7 +33,7 @@ function checkDockerComposeInstalled() {
     execSync('docker-compose --version', { stdio: 'pipe' });
     console.log('✅ Docker Compose está instalado');
     return true;
-  } catch (error) {
+  } catch {
     console.log('❌ Docker Compose não está instalado');
     console.log('💡 Docker Compose vem incluído no Docker Desktop');
     return false;
