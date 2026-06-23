@@ -1,6 +1,6 @@
 import styles from './Hero.module.scss';
 import Image from 'next/image';
-import { Button } from '@/shared/components/atoms';
+import { Button } from '../atoms/Button';
 
 export interface HeroProps {
   onOpenSignUp?: () => void;

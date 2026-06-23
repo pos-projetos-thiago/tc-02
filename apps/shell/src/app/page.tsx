@@ -13,17 +13,10 @@ export default function HomePage() {
   // Check authentication status
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
-    if (token) {
-      setIsAuthenticated(true);
-      // Redirect to dashboard if already logged in
-      router.replace('/dashboard');
-    }
-  }, [router]);
+    setIsAuthenticated(!!token);
+  }, []);
 
-  // Don't render anything while checking auth to avoid flash
-  if (isAuthenticated) {
-    return null;
-  }
+  // Mostrar sempre a home page, não redirecionar automaticamente
 
   return (
     <>
