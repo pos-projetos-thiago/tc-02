@@ -1,0 +1,134 @@
+@import '../../styles/colors';
+@import '../../styles/typography';
+@import '../../styles/breakpoints';
+
+.balance-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  width: 20rem;
+  position: relative;
+  z-index: 2;
+  
+  @include mobile {
+    width: 100%;
+    max-width: 28rem;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.balance-header {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  margin-bottom: 1.6rem;
+  width: 100%;
+
+  @include mobile {
+    justify-content: center;
+  }
+}
+
+.balance-label {
+  font-size: 2.0rem;
+  color: $color-white;
+  font-weight: $font-weight-regular;
+  margin: 0;
+}
+
+.eye-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.eye-icon {
+  width: 1.9rem;
+  height: 1.3rem;
+  display: block;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+}
+
+.balance-divider {
+  width: 14rem;
+  max-width: 90%;
+  height: 0.2rem;
+  background-color: $color-accent;
+  margin: 0 0 1.6rem;
+  border-radius: 0.1rem;
+  align-self: flex-start;
+
+  @include mobile {
+    align-self: center;
+  }
+}
+
+.account-info-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+
+  @include mobile {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.account-type {
+  font-size: $font-size-xs;
+  line-height: $line-height-tight;
+  color: $color-white;
+  font-weight: $font-weight-regular;
+  margin: 0 0 0.8rem 0;
+  opacity: 0.8;
+  align-self: flex-start;
+  text-align: left;
+  width: 100%;
+
+  @include mobile {
+    align-self: center;
+    text-align: center;
+    max-width: 100%;
+  }
+}
+
+.balance-value {
+  font-size: 3.0rem;
+  font-weight: $font-weight-regular;
+  color: $color-white;
+  line-height: 1.1;
+  margin: 0;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+  transform: translateY(0);
+  
+  &.changing {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+
+  @include mobile {
+    align-self: center;
+    width: 100%;
+    text-align: center;
+  }
+}

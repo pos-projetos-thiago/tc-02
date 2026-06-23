@@ -1,0 +1,151 @@
+# Docker Compose para Arquitetura de Microfrontends
+version: '3.8'
+
+services:
+  # Shell App (Host) - Porta 3000
+  shell:
+    build: 
+      context: ./apps/shell
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+    volumes:
+      - ./apps/shell:/app
+      - ./apps/shared:/app/shared
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    networks:
+      - bytebank-network
+    restart: unless-stopped
+    command: yarn dev
+
+  # Dashboard Microfrontend - Porta 3001
+  dashboard:
+    build:
+      context: ./apps/dashboard
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+    volumes:
+      - ./apps/dashboard:/app
+      - ./apps/shared:/app/shared
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - bytebank-network
+    restart: unless-stopped
+    command: yarn dev
+
+  # Transactions Microfrontend - Porta 3002  
+  transactions:
+    build:
+      context: ./apps/transactions
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+    volumes:
+      - ./apps/transactions:/app
+      - ./apps/shared:/app/shared
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - bytebank-network
+    restart: unless-stopped
+    command: yarn dev
+
+  # Analytics Microfrontend - Porta 3003
+  analytics:
+    build:
+      context: ./apps/analytics
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+      - HUGGINGFACE_API_TOKEN=${HUGGINGFACE_API_TOKEN}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./apps/analytics:/app
+      - ./apps/shared:/app/shared
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - bytebank-network
+    restart: unless-stopped
+    command: yarn dev
+
+  # Backend API - Porta 4000
+  backend:
+    build:
+      context: ../api-backend
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+      - JWT_SECRET=seu_jwt_secret_aqui
+      - MONGODB_URI=mongodb://mongo:27017/bytebank
+    volumes:
+      - ../api-backend:/app
+      - /app/node_modules
+    networks:
+      - bytebank-network
+    restart: unless-stopped
+    depends_on:
+      - mongo
+
+  # MongoDB
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=bytebank
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - bytebank-network
+    restart: unless-stopped
+
+  # Nginx (Reverse Proxy)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx-microfrontends.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - shell
+      - dashboard
+      - transactions
+      - analytics
+      - backend
+    networks:
+      - bytebank-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  bytebank-network:
+    driver: bridge
+
+volumes:
+  mongo_data:

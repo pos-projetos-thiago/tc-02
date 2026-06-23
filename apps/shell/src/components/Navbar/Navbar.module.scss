@@ -1,0 +1,29 @@
+@import '@/shared/styles/colors';
+@import '@/shared/styles/typography';
+@import '@/shared/styles/breakpoints';
+
+.navbar {
+  width: 100%;
+  background-color: $color-white;
+  border-bottom: 1px solid $color-gray-200;
+  padding: 1.6rem 0;
+}
+
+.container {
+  @include container-padding;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    color: $color-primary;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 1.6rem;
+  align-items: center;
+}

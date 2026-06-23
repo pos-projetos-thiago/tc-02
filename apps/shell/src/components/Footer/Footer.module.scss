@@ -1,0 +1,18 @@
+@import '@/shared/styles/colors';
+@import '@/shared/styles/typography';
+@import '@/shared/styles/breakpoints';
+
+.footer {
+  background-color: $color-primary;
+  color: $color-white;
+  padding: 3.2rem 0;
+  text-align: center;
+}
+
+.container {
+  @include container-padding;
+
+  p {
+    font-size: $font-size-sm;
+  }
+}
