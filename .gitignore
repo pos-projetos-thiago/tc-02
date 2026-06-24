@@ -15,7 +15,6 @@ out/
 
 # Misc
 .DS_Store
-*.tsbuildinfo
 
 # Debug
 npm-debug.log*
@@ -34,6 +33,15 @@ next-env.d.ts
 
 # Cursor
 .cursor/
+
+# VS Code — configurações pessoais de editor, não devem ser versionadas
+.vscode/
+
+# Yarn Berry — arquivos gerados localmente que não devem ser versionados
+# install-state.gz: cache interno de resolução, gerado automaticamente pelo `yarn install`
+.yarn/install-state.gz
+# cache/: pacotes baixados localmente (modo sem PnP com node-modules linker)
+.yarn/cache/
 
 # Package locks específicos para microfrontends
 apps/shell/package-lock.json
