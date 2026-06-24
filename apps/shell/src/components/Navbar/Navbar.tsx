@@ -64,36 +64,12 @@ export const Navbar = ({
         </div>
 
         <div className={styles.actions}>
-          {user ? (
-            <>
-              <span style={{ 
-                color: '#47A138', 
-                fontSize: '14px', 
-                marginRight: '8px',
-                fontWeight: '600'
-              }}>
-                ✅ {user.username}
-              </span>
-              <Button 
-                variant="secondary" 
-                onClick={() => {
-                  logout();
-                  window.location.reload();
-                }}
-              >
-                Sair
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button variant="primary" onClick={openSignUp}>
-                Abrir minha conta
-              </Button>
-              <Button variant="secondary" onClick={openLogin}>
-                Já tenho conta
-              </Button>
-            </>
-          )}
+          <Button variant="primary" onClick={openSignUp}>
+            Abrir minha conta
+          </Button>
+          <Button variant="secondary" onClick={openLogin}>
+            Já tenho conta
+          </Button>
         </div>
       </div>
     </nav>

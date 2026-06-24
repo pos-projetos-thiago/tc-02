@@ -121,14 +121,13 @@ export function AuthModal({ isOpen, onClose, variant }: AuthModalProps) {
         await login(values.email.trim(), values.password);
       }
 
+      // Login realizado! Fechar modal e ir direto para dashboard
       handleClose();
-      setValues(emptyValues);
-      setPrivacyAccepted(false);
-      setError('');
       
+      // Aguardar um momento para fechar o modal e navegar
       setTimeout(() => {
         router.push('/dashboard');
-      }, 100);
+      }, 300);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Erro desconhecido';
       setError(message);

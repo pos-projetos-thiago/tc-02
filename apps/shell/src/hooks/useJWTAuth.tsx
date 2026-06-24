@@ -39,13 +39,7 @@ const testBackend = async (): Promise<boolean> => {
   }
   
   if (!backendAvailable) {
-    console.warn(
-      '⚠️ Backend não disponível em http://localhost:4000\n' +
-      '📝 Usando modo simulação para demonstração\n' +
-      '🚀 Para usar o backend real, inicie o servidor da API'
-    );
-  } else {
-    console.log('✅ Backend conectado com sucesso!');
+    console.warn('Backend não disponível em http://localhost:4000 - usando modo simulação');
   }
   
   return backendAvailable;
@@ -60,7 +54,7 @@ export function useJWTAuth(): AuthContextType {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load token from localStorage on mount
+  // Load token from localStorage on mount (EXATAMENTE como no monólito)
   useEffect(() => {
     const initAuth = () => {
       const savedToken = localStorage.getItem('auth_token');
@@ -69,7 +63,8 @@ export function useJWTAuth(): AuthContextType {
       if (savedToken && savedUser) {
         setToken(savedToken);
         try {
-          setUser(JSON.parse(savedUser));
+          const parsedUser = JSON.parse(savedUser);
+          setUser(parsedUser);
         } catch {
           // Invalid saved data, clear it
           localStorage.removeItem('auth_token');

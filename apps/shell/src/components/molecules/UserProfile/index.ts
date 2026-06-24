@@ -1,0 +1,1 @@
+export { UserProfileJWT } from './UserProfileJWT';
