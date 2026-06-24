@@ -7587,9 +7587,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tc-01@workspace:.":
+"tc-02@workspace:.":
   version: 0.0.0-use.local
-  resolution: "tc-01@workspace:."
+  resolution: "tc-02@workspace:."
   dependencies:
     "@ai-sdk/google": ^3.0.82
     "@ai-sdk/openai": ^3.0.71

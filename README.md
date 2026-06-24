@@ -1,230 +1,329 @@
 # Bytebank - Microfrontends
 
-<div align="center">
+Aplicação de gerenciamento financeiro pessoal desenvolvida com arquitetura de microfrontends para o Tech Challenge Fase 2 da FIAP Pós-Tech.
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/pos-projetos-thiago/tc-02/ci.yml?style=for-the-badge&label=CI&logo=github)
-![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
-![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-
-![Docker](https://img.shields.io/badge/Docker-Containers-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Module Federation](https://img.shields.io/badge/Module%20Federation-Microfrontends-FF6B6B?style=for-the-badge&logo=webpack&logoColor=white)
-![Material UI](https://img.shields.io/badge/MUI-7-007FFF?style=for-the-badge&logo=mui)
-![Sass](https://img.shields.io/badge/Sass-Modules-CC6699?style=for-the-badge&logo=sass)
-![Docusaurus](https://img.shields.io/badge/Docusaurus-Design%20System-3ECC5F?style=for-the-badge&logo=docusaurus&logoColor=white)
-
-</div>
-
-**Aplicação avançada de gerenciamento financeiro** desenvolvida com arquitetura de **microfrontends**, containerizada com Docker e otimizada para ambientes cloud. Inclui filtros avançados, upload de anexos e performance otimizada.
-
-> *FIAP Pós-Tech · Tech Challenge - Fase 2*  
-> **Thiago Soares · RM 373636**
-
-<img width="1918" height="916" alt="Image" src="https://github.com/user-attachments/assets/0296dcf3-4f31-4b17-9293-b774391d0887" />
-
-## Principais funcionalidades
-
-### **Arquitetura Avançada**
-- **Microfrontends** com Module Federation (apps independentes)
-- **Containerização** completa com Docker + Docker Compose
-- **Deploy otimizado** para ambientes cloud (Vercel)
-
-### **Funcionalidades Financeiras**
-- **Dashboard financeiro** com gráficos avançados e análises
-- **Gestão completa de transações** (CRUD + filtros avançados)
-- **Upload de anexos** para comprovantes e documentos
-- **Busca inteligente** e paginação otimizada
-
-### **Experience & Design**
-- **100% acessível** (WCAG 2.1, navegação teclado, screen readers)
-- **Totalmente responsivo** (mobile-first design)
-- **Design system** documentado com 25+ componentes
-- **Validação avançada** com sugestões automáticas
-
-### **Performance & Qualidade**
-- **SSR/SSG** otimizado com Next.js 16
-- **Testes automatizados** (Jest + React Testing Library)
-- **CI/CD** com GitHub Actions + Docker
-- **TypeScript** com tipagem estática completa
+> **FIAP Pós-Tech · Front-End Engineering · Tech Challenge - Fase 2**  
+> Thiago Soares · RM 373636
 
 ---
 
-## 🤘 Rodar o projeto
+## Visão geral do projeto
 
-### **🐳 Docker (Recomendado)**
+O Bytebank é uma aplicação bancária digital que permite ao usuário gerenciar transações financeiras, visualizar saldo, investimentos e extrato. A aplicação foi migrada de uma arquitetura monolítica (Next.js) para uma arquitetura de microfrontends utilizando Module Federation.
+
+**Funcionalidades implementadas:**
+
+- Autenticação com JWT (login, cadastro, logout)
+- Dashboard financeiro com saldo, transações, investimentos e cartões
+- Extrato completo com filtros avançados e paginação
+- Criação, edição e exclusão de transações
+- Gráfico de investimentos (Renda Fixa / Renda Variável)
+- Atualização de perfil do usuário
+- Interface responsiva (mobile, tablet, desktop)
+
+**Separação da aplicação:**
+
+- **Frontend principal (`tc-02/`)** — monólito Next.js original, fonte da verdade para componentes e lógica. Roda na porta `3000`.
+- **Shell Microfrontend (`tc-02/apps/shell/`)** — aplicação Next.js que serve como host da arquitetura de microfrontends. Roda na porta `3010`.
+- **Backend API (`tc02-bytebank-api/`)** — API REST com Node.js, autenticação JWT e MongoDB em memória. Roda na porta `4000`.
+
+---
+
+## Arquitetura do projeto
+
+```
+Fase1/
+├── tc-02/                        # Repositório do frontend
+│   ├── src/                      # Frontend principal (monólito) — porta 3000
+│   │   ├── app/                  # Next.js App Router (rotas, layouts)
+│   │   ├── components/           # Componentes (atoms, molecules, organisms)
+│   │   ├── contexts/             # Estado global (DashboardContext, FilterContext)
+│   │   ├── hooks/                # Custom hooks (useJWTAuth, useFilters)
+│   │   └── lib/                  # API, utilitários, PDF, OCR, IA
+│   │
+│   └── apps/
+│       ├── shell/                # Shell microfrontend — porta 3010
+│       │   └── src/
+│       │       ├── app/          # Rotas do shell (/, /dashboard, /dashboard/transacoes)
+│       │       ├── components/   # Componentes migrados do monólito
+│       │       ├── contexts/     # DashboardContextJWT
+│       │       ├── hooks/        # useJWTAuth
+│       │       └── lib/          # API client
+│       ├── dashboard/            # MF Dashboard — porta 3001 (em desenvolvimento)
+│       ├── transactions/         # MF Transactions — porta 3002 (em desenvolvimento)
+│       ├── analytics/            # MF Analytics — porta 3003 (em desenvolvimento)
+│       └── shared/               # Design system compartilhado (@bytebank/shared)
+│
+└── tc02-bytebank-api/            # Repositório do backend — porta 4000
+    ├── src/
+    │   ├── routes/               # Endpoints REST
+    │   ├── controllers/          # Lógica de negócio
+    │   └── models/               # Modelos de dados
+    └── package.json
+```
+
+**Responsabilidades:**
+
+| Parte | Responsabilidade |
+|-------|-----------------|
+| `src/` (monólito) | Fonte da verdade. Contém todas as funcionalidades implementadas e validadas. |
+| `apps/shell/` | Aplicação host da arquitetura de microfrontends. Dashboard e transações migrados do monólito. |
+| `apps/dashboard/` | Microfrontend de dashboard — expõe componentes via Module Federation (em desenvolvimento). |
+| `apps/transactions/` | Microfrontend de transações — expõe extrato via Module Federation (em desenvolvimento). |
+| `apps/analytics/` | Microfrontend de relatórios e IA (em desenvolvimento). |
+| `apps/shared/` | Design system: atoms, molecules, utilitários e tipos TypeScript compartilhados. |
+| `tc02-bytebank-api/` | Backend REST com JWT, MongoDB em memória e backup em JSON. |
+
+---
+
+## Pré-requisitos
+
+| Ferramenta | Versão recomendada |
+|------------|--------------------|
+| Node.js | 18 ou 20 LTS |
+| npm | 9+ (incluso com Node.js) |
+| Git | qualquer versão recente |
+
+Para verificar suas versões:
 
 ```bash
-# Rodar toda a arquitetura de microfrontends
+node -v
+npm -v
+git --version
+```
+
+> O projeto usa `yarn` nos scripts internos, mas pode ser executado com `npm` normalmente.
+
+---
+
+## Clonando os projetos
+
+São necessários dois repositórios separados. Clone ambos dentro da mesma pasta `Fase1/`:
+
+```bash
+# Crie a pasta raiz
+mkdir Fase1
+cd Fase1
+
+# Clone o frontend
+git clone https://github.com/pos-projetos-thiago/tc-02
+
+# Clone o backend
+git clone https://github.com/pos-projetos-thiago/tc02-bytebank-api
+```
+
+Estrutura esperada após clonar:
+
+```
+Fase1/
+├── tc-02/
+└── tc02-bytebank-api/
+```
+
+---
+
+## Executando o ambiente completo
+
+### 1. Backend API
+
+Diretório: `Fase1/tc02-bytebank-api/`
+
+```bash
+cd tc02-bytebank-api
+npm install
+npm run dev
+```
+
+A API ficará disponível em: `http://localhost:4000`
+
+Endpoints principais:
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/user` | Cadastrar usuário |
+| POST | `/user/auth` | Login (retorna JWT) |
+| PUT | `/user/profile` | Atualizar perfil |
+| GET | `/account` | Buscar conta e transações |
+| POST | `/account/transaction` | Criar transação |
+| PUT | `/account/transaction/:id` | Editar transação |
+| DELETE | `/account/transaction/:id` | Deletar transação |
+| GET | `/health` | Health check |
+
+> O backend usa MongoDB em memória. Os dados são preservados durante a execução mas perdidos ao reiniciar o servidor.
+
+---
+
+### 2. Frontend principal
+
+Diretório: `Fase1/tc-02/`
+
+```bash
+cd tc-02
+npm install
+npm run dev
+```
+
+A aplicação ficará disponível em: `http://localhost:3000`
+
+Inclui todas as funcionalidades: dashboard, extrato, filtros, paginação, OCR, upload de documentos com IA e geração de PDF.
+
+---
+
+### 3. Shell Microfrontend
+
+Diretório: `Fase1/tc-02/apps/shell/`
+
+```bash
+cd tc-02/apps/shell
+npm install
+npm run dev
+```
+
+A aplicação ficará disponível em: `http://localhost:3010`
+
+Inclui: landing page, autenticação, dashboard financeiro completo e extrato de transações.
+
+> O shell requer que o backend esteja rodando em `http://localhost:4000` para autenticação e dados. Sem o backend, a aplicação entra em modo de demonstração com login simulado.
+
+---
+
+## Portas utilizadas
+
+| Serviço | Porta | URL |
+|---------|-------|-----|
+| Backend API | 4000 | http://localhost:4000 |
+| Frontend principal | 3000 | http://localhost:3000 |
+| Shell Microfrontend | 3010 | http://localhost:3010 |
+
+> Os microfrontends remotos (dashboard :3001, transactions :3002, analytics :3003) estão em desenvolvimento e ainda não são consumidos pelo shell.
+
+---
+
+## Executando com Docker
+
+O projeto inclui configuração Docker para o frontend principal:
+
+```bash
+# Na raiz de tc-02/
 docker-compose up -d
-
-# Verificar se todos os serviços estão rodando
-docker ps
 ```
 
-**Serviços disponíveis:**
-- 🏠 **Shell App** (host): [http://localhost:3000](http://localhost:3000)
-- 📊 **Dashboard**: [http://localhost:3001](http://localhost:3001) 
-- 💰 **Transactions**: [http://localhost:3002](http://localhost:3002)
-- 📈 **Analytics**: [http://localhost:3003](http://localhost:3003)
+Isso sobe o frontend na porta `3000` e configura o proxy para o backend.
 
-### **Desenvolvimento Local**
-
-**Scripts Rápidos (PowerShell):**
-
-**Iniciar Backend (API):**
-```powershell
-cd ../api-backend
-$env:PORT=4000; npm start
-# API: http://localhost:4000
-```
-
-**Iniciar Frontend (Next.js):**
-```powershell
-cd tc-01  # (ou diretório atual)
-yarn dev
-# App: http://localhost:3000 (ou 3001 se a porta 3000 estiver ocupada)
-```
-
-**Iniciar Documentação (Design System):**
-```powershell
-npm run docs
-# Docs: http://localhost:3030
-```
-
-**Instalação:**
-```bash
-# Frontend
-yarn install
-
-# Backend (em ../api-backend)
-cd ../api-backend && npm install
-```
-
-### **Testes**
+Para a arquitetura de microfrontends (experimental):
 
 ```bash
-# Rodar todos os testes
-yarn test
-
-# Testes em watch mode
-yarn test:watch
-
-# Coverage completo
-yarn test:coverage
+docker-compose -f docker-compose.microfrontends.yml up -d
 ```
 
-### Autenticação (JWT)
+> O Docker Compose de microfrontends requer que `tc02-bytebank-api/` esteja em `../api-backend` relativo à pasta `tc-02/`.
 
-- **Banco:** MongoDB (In-Memory) + API JWT
-- **Sessão:** portável entre navegadores e aparelhos, com JWT e **Row Level Security (RLS)**
-- **Conta:** cadastro e login com e-mail e senha no próprio app
+---
 
-**Backend API:**
-A aplicação se conecta à API backend rodando em `http://localhost:4000`.
+## Desenvolvimento
 
-Código de referência: `src/lib/api/transactions.ts`, `src/hooks/useJWTAuth.tsx`, `src/contexts/DashboardContextJWT.tsx`.
-
-### Documentação do design system (Docusaurus)
+### Comandos do frontend principal (`tc-02/`)
 
 ```bash
-yarn docs
+npm run dev          # Servidor de desenvolvimento na porta 3000
+npm run build        # Build de produção
+npm run start        # Servidor de produção
+npm run lint         # Lint com ESLint
+npm run test         # Testes com Jest
+npm run test:watch   # Testes em modo watch
 ```
 
-Abre em [http://localhost:4000](http://localhost:4000). O site fica no diretório `docs/` do repositório (tokens, componentes, guias).
+### Comandos do shell (`tc-02/apps/shell/`)
+
+```bash
+npm run dev          # Servidor de desenvolvimento na porta 3010
+npm run build        # Build de produção
+npm run lint         # Lint com ESLint
+```
+
+### Comandos do backend (`tc02-bytebank-api/`)
+
+```bash
+npm install          # Instalar dependências
+npm run dev          # Servidor com hot reload na porta 4000
+npm start            # Servidor de produção
+```
 
 ---
 
 ## Stack tecnológica
 
-| **Área**             | **Tecnologia**                    | **Finalidade**                  |
-| -------------------- | ---------------------------------- | ------------------------------- |
-| **Framework**        | Next.js 16, App Router            | Base da aplicação               |
-| **Linguagem**        | TypeScript 5                      | Tipagem e desenvolvimento       |
-| **Styling**          | SCSS Modules                       | Estilos componentizados         |
-| **Interface**        | Material UI + Atomic Design        | Componentes e ícones            |
-| **Backend**          | Node.js API + JWT + MongoDB       | API RESTful com autenticação    |
-| **Formulários**      | React Hook Form + Zod              | Validação e controle de estado  |
-| **Documentação**     | Docusaurus 3                      | Design system e guias técnicos  |
-| **Testes**           | Jest + React Testing Library       | Testes unitários e integração   |
+| Área | Tecnologia |
+|------|------------|
+| Framework | Next.js 16, App Router |
+| Linguagem | TypeScript 5 |
+| Estilização | SCSS Modules |
+| Componentes | Material UI (MUI) + Atomic Design |
+| Gráficos | Chart.js + react-chartjs-2 |
+| Formulários | React Hook Form + Zod |
+| Autenticação | JWT (JSON Web Token) |
+| Banco de dados | MongoDB (in-memory) |
+| Containerização | Docker + Docker Compose |
+| CI/CD | GitHub Actions |
 
 ---
 
-## Design system
+## Solução de problemas
 
-### Cores principais
-- **Primary:** `#004D61` (azul Bytebank)
-- **Accent:** `#FF5031` (laranja destaque)  
-- **Neutros:** escala de cinza (50–500)
+**Erro: `Module not found` nos componentes do shell**
 
-### Tipografia
-- **Fonte:** Inter (Google Fonts)
-- **Sistema:** escala em `rem` com base 10
-- **Pesos:** 300, 400, 500, 600, 700
+Verifique se as dependências estão instaladas dentro de `apps/shell/`:
 
-### Responsividade
-- **Mobile:** até `719px`
-- **Tablet:** `720px` – `1023px`  
-- **Desktop:** `1024px` em diante
-- **Large:** `1920px` + (container ajustado)
-
-> **Documentação completa:** Execute `yarn docs` ou acesse `docs/docs/`
-
----
-
-## 🏗️ Arquitetura de Microfrontends
-
-### **📦 Estrutura Modular**
-
-```
-tc-02/
-├── apps/                           # Microfrontends independentes
-│   ├── shell/                      # 🏠 App principal (host)
-│   │   ├── src/app/               # Next.js App Router
-│   │   ├── webpack.config.js      # Module Federation
-│   │   └── Dockerfile
-│   ├── dashboard/                  # 📊 Dashboard + Analytics  
-│   │   ├── src/components/        # Gráficos + Cards
-│   │   ├── webpack.config.js      # Module Federation
-│   │   └── Dockerfile
-│   ├── transactions/               # 💰 Gestão de Transações
-│   │   ├── src/features/          # CRUD + Filtros + Upload
-│   │   ├── webpack.config.js      # Module Federation  
-│   │   └── Dockerfile
-│   └── analytics/                  # 📈 Relatórios Avançados
-│       ├── src/reports/           # Charts + Filters + Export
-│       ├── webpack.config.js      # Module Federation
-│       └── Dockerfile
-├── shared/                         # 📚 Bibliotecas compartilhadas
-│   ├── components/                 # Design System (atoms → organisms)
-│   ├── hooks/                      # Custom React hooks
-│   ├── lib/                        # Utils + API + Auth
-│   └── styles/                     # SCSS globals + tokens
-├── docs/                           # 📖 Site Docusaurus (design system)
-├── docker-compose.yml              # 🐳 Orquestração completa
-└── README.md
+```bash
+cd apps/shell
+npm install
 ```
 
-### **🔗 Comunicação Entre Microfrontends**
+**Erro de autenticação (401 na API)**
 
-- **Module Federation** - Compartilhamento de componentes
-- **Shared Context** - Estado global (usuário, auth, tema)
-- **Event Bus** - Comunicação assíncrona entre apps
-- **Shared Routing** - Navegação unificada
+O token JWT expirou ou é inválido. Faça logout e login novamente. O frontend limpa o token automaticamente em caso de 401.
+
+**Backend não está respondendo**
+
+Verifique se o backend está rodando em `http://localhost:4000/health`. Se não estiver, o shell entra em modo de demonstração automaticamente — o login aceita qualquer email válido.
+
+**Erro de porta em uso**
+
+Se as portas 3000, 3010 ou 4000 estiverem ocupadas:
+
+```bash
+# Windows: verificar processo na porta
+netstat -ano | findstr :3000
+
+# Encerrar processo pelo PID
+taskkill /PID <PID> /F
+```
+
+**Problemas com node_modules**
+
+```bash
+# Remover e reinstalar
+rm -rf node_modules
+npm install
+```
 
 ---
 
-## Links importantes
+## Status dos microfrontends
 
-| **Recurso**      | **URL**                                                                 |
-| ---------------- | ---------------------------------------------------------------------- |
-| **Repositório**  | [github.com/pos-projetos-thiago/tc-02](https://github.com/pos-projetos-thiago/tc-02) |
-| **Documentação** | `yarn docs` → [localhost:4000](http://localhost:4000)                  |
-| **Deploy**       | [Em breve - Microfrontends + Docker](https://tc-02-thiago.vercel.app) |
+| App | Porta | Status | Descrição |
+|-----|-------|--------|-----------|
+| shell | 3010 | Funcional | Host com dashboard e transações |
+| dashboard | 3001 | Em desenvolvimento | Expõe componentes via Module Federation |
+| transactions | 3002 | Em desenvolvimento | Expõe extrato via Module Federation |
+| analytics | 3003 | Em desenvolvimento | Relatórios e IA |
+| shared | — | Funcional | Design system compartilhado |
 
 ---
 
-<div align="center">
+## Links
 
-**Desenvolvido com ❤️ e 🤘 para o Tech Challenge**
-
-</div>
+| Recurso | URL |
+|---------|-----|
+| Repositório frontend | https://github.com/pos-projetos-thiago/tc-02 |
+| Repositório backend | https://github.com/pos-projetos-thiago/tc02-bytebank-api |
