@@ -1,18 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styles from './Navbar.module.scss';
 import Image from 'next/image';
 import { Button } from '../atoms/Button';
+import { useAuth } from '../../hooks/useJWTAuth';
 
-export const Navbar = () => {
-  const [showAuthModal, setShowAuthModal] = useState(false);
+export interface NavbarProps {
+  authModalVariant?: 'signup' | 'login' | null;
+  onAuthModalChange?: (variant: 'signup' | 'login' | null) => void;
+}
 
-  const handleLogin = () => {
-    // Simula login para demonstração
-    localStorage.setItem('auth_token', 'demo-token-microfrontend');
-    window.location.reload();
-  };
+export const Navbar = ({ 
+  authModalVariant: authModalVariantProp, 
+  onAuthModalChange 
+}: NavbarProps) => {
+  const [authModalVariantInternal, setAuthModalVariantInternal] = useState<'signup' | 'login' | null>(null);
+  const [authModalKey, setAuthModalKey] = useState(0);
+  const { user, logout } = useAuth();
+
+  // Determine se está sendo controlado externamente
+  const isControlled = onAuthModalChange !== undefined;
+  const authModalVariant = isControlled ? authModalVariantProp ?? null : authModalVariantInternal;
+
+  const openSignUp = useCallback(() => {
+    if (isControlled) {
+      onAuthModalChange!('signup');
+    } else {
+      setAuthModalKey((k) => k + 1);
+      setAuthModalVariantInternal('signup');
+    }
+  }, [isControlled, onAuthModalChange]);
+
+  const openLogin = useCallback(() => {
+    if (isControlled) {
+      onAuthModalChange!('login');
+    } else {
+      setAuthModalKey((k) => k + 1);
+      setAuthModalVariantInternal('login');
+    }
+  }, [isControlled, onAuthModalChange]);
 
   return (
     <nav className={styles.navbar}>
@@ -37,12 +64,36 @@ export const Navbar = () => {
         </div>
 
         <div className={styles.actions}>
-          <Button variant="primary" onClick={handleLogin}>
-            Abrir minha conta
-          </Button>
-          <Button variant="secondary" onClick={handleLogin}>
-            Já tenho conta
-          </Button>
+          {user ? (
+            <>
+              <span style={{ 
+                color: '#47A138', 
+                fontSize: '14px', 
+                marginRight: '8px',
+                fontWeight: '600'
+              }}>
+                ✅ {user.username}
+              </span>
+              <Button 
+                variant="secondary" 
+                onClick={() => {
+                  logout();
+                  window.location.reload();
+                }}
+              >
+                Sair
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="primary" onClick={openSignUp}>
+                Abrir minha conta
+              </Button>
+              <Button variant="secondary" onClick={openLogin}>
+                Já tenho conta
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </nav>

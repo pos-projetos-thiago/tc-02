@@ -1,28 +1,39 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
 import { Hero } from '../components/Hero';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { AuthModal } from '../components/AuthModal';
 
 export default function HomePage() {
-  const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authModalVariant, setAuthModalVariant] = useState<'signup' | 'login' | null>(null);
+  const [authModalKey, setAuthModalKey] = useState(0);
 
-  // Check authentication status
-  useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    setIsAuthenticated(!!token);
+  const handleAuthModalChange = useCallback((variant: 'signup' | 'login' | null) => {
+    if (variant !== null) {
+      setAuthModalKey((k) => k + 1);
+    }
+    setAuthModalVariant(variant);
   }, []);
-
-  // Mostrar sempre a home page, não redirecionar automaticamente
 
   return (
     <>
-      <Navbar />
-      <Hero />
+      <Navbar
+        authModalVariant={authModalVariant}
+        onAuthModalChange={handleAuthModalChange}
+      />
+      <Hero
+        onOpenSignUp={() => handleAuthModalChange('signup')}
+        onOpenLogin={() => handleAuthModalChange('login')}
+      />
       <Footer />
+      <AuthModal
+        key={authModalKey}
+        isOpen={authModalVariant !== null}
+        onClose={() => handleAuthModalChange(null)}
+        variant={authModalVariant ?? 'signup'}
+      />
     </>
   );
 }
