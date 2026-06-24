@@ -9,6 +9,11 @@
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Module Federation](https://img.shields.io/badge/Module%20Federation-Webpack-FF6B6B?style=for-the-badge&logo=webpack&logoColor=white)
 ![Material UI](https://img.shields.io/badge/MUI-7-007FFF?style=for-the-badge&logo=mui)
+![Sass](https://img.shields.io/badge/Sass-Modules-CC6699?style=for-the-badge&logo=sass)
+![Jest](https://img.shields.io/badge/Jest-Testes-C21325?style=for-the-badge&logo=jest&logoColor=white)
+![Chart.js](https://img.shields.io/badge/Chart.js-Gráficos-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-Autenticação-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-Proxy-009639?style=for-the-badge&logo=nginx&logoColor=white)
 
 </div>
 
@@ -168,68 +173,84 @@ Fase1/
 
 ---
 
-## Como executar
+## 🚀 Como executar
 
-### Opção 1 — Monólito (recomendado para avaliação rápida)
+Existem três formas de rodar o projeto. Escolha a que faz mais sentido pra você:
 
-Roda a aplicação completa com todas as funcionalidades:
+---
 
+### Opção 1 — Monólito recomendado para avaliação rápida
+
+Essa é a forma mais simples. Sobe o frontend completo com todas as funcionalidades funcionando.
+
+Você vai precisar de **dois terminais abertos**.
+
+**Terminal 1 — Backend:**
 ```bash
-# Terminal 1: Backend
 cd tc02-bytebank-api
 npm install
 npm run dev
-# API disponível em: http://localhost:4000
+```
+> A API vai estar em: http://localhost:4000
 
-# Terminal 2: Frontend
+**Terminal 2 — Frontend:**
+```bash
 cd tc-02
 yarn install
 yarn dev
-# App disponível em: http://localhost:3000
 ```
+> A aplicação vai estar em: http://localhost:3000
+
+---
 
 ### Opção 2 — Shell Microfrontend
 
-Roda o host da arquitetura de microfrontends com dashboard e transações:
+Roda o host da arquitetura de microfrontends com dashboard e transações migrados.
+
+> Antes de começar, certifique-se que o backend do **Terminal 1** acima está rodando em `localhost:4000`.
 
 ```bash
-# Backend deve estar rodando em localhost:4000
-
 cd tc-02/apps/shell
 yarn install
 yarn dev
-# Shell disponível em: http://localhost:3010
 ```
+> O shell fica disponível em: http://localhost:3010
 
-> O shell entra em modo de demonstração automaticamente se o backend não estiver disponível — o login aceita qualquer e-mail válido.
+> **Sem backend?** Sem problema. O shell detecta automaticamente e entra em modo de demonstração — o login aceita qualquer e-mail válido para você explorar a interface.
 
-### Opção 3 — Docker Compose (arquitetura completa)
+---
 
-Sobe todos os serviços: shell, dashboard, transactions, analytics, backend, MongoDB e Nginx.
+### Opção 3 — Docker Compose arquitetura completa
+
+Sobe tudo de uma vez: shell, dashboard, transactions, analytics, backend, MongoDB e Nginx.
+
+> **Pré-requisito:** o repositório `tc02-bytebank-api/` precisa estar na pasta `../api-backend` em relação ao `tc-02/`. Se você clonou os dois dentro de `Fase1/`, renomeie a pasta do backend para `api-backend` ou ajuste o compose.
 
 ```bash
 cd tc-02
 docker-compose -f docker-compose.microfrontends.yml up -d
 ```
 
-Requer que `tc02-bytebank-api/` esteja em `../api-backend` relativo a `tc-02/`.
-
+Verifique se todos os containers subiram:
 ```bash
-# Verificar status
 docker ps
+```
 
-# Acompanhar logs
+Para acompanhar os logs em tempo real:
+```bash
 yarn mf:logs
+```
 
-# Derrubar
+Para derrubar tudo:
+```bash
 yarn mf:down
 ```
 
-**Serviços disponíveis com Docker:**
+**O que sobe com o Docker:**
 
 | Serviço | URL |
 |---------|-----|
-| Shell (host) | http://localhost:3000 |
+| Shell (host MF) | http://localhost:3000 |
 | Dashboard MF | http://localhost:3001 |
 | Transactions MF | http://localhost:3002 |
 | Analytics MF | http://localhost:3003 |
