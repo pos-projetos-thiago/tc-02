@@ -10,8 +10,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Bytebank - Microfrontends',
-  description: 'Aplicação avançada de gerenciamento financeiro com arquitetura de microfrontends',
+  title: 'Bytebank - Gerenciamento Financeiro',
+  description: 'Plataforma moderna de gerenciamento financeiro com controle de saldo, transferências e investimentos.',
   keywords: ['bytebank', 'microfrontends', 'gerenciamento financeiro', 'next.js', 'module federation'],
   authors: [{ name: 'Thiago Soares', url: 'https://github.com/pos-projetos-thiago' }],
   robots: {
@@ -19,8 +19,8 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'Bytebank - Microfrontends',
-    description: 'Aplicação avançada de gerenciamento financeiro com arquitetura de microfrontends',
+    title: 'Bytebank - Gerenciamento Financeiro',
+    description: 'Plataforma moderna de gerenciamento financeiro com controle de saldo, transferências e investimentos.',
     type: 'website',
     locale: 'pt_BR',
   },

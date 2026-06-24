@@ -3,7 +3,6 @@
 import { useCallback, useState } from 'react';
 import { Hero } from '../components/Hero';
 import { Navbar } from '../components/Navbar';
-import { Footer } from '../components/Footer';
 import { AuthModal } from '../components/AuthModal';
 
 export default function HomePage() {
@@ -27,7 +26,6 @@ export default function HomePage() {
         onOpenSignUp={() => handleAuthModalChange('signup')}
         onOpenLogin={() => handleAuthModalChange('login')}
       />
-      <Footer />
       <AuthModal
         key={authModalKey}
         isOpen={authModalVariant !== null}
