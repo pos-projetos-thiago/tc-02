@@ -46,12 +46,12 @@ const apiCall = async (endpoint: string, options: RequestInit = {}) => {
   
   if (!response.ok) {
     if (response.status === 401) {
-      // Token expired or invalid - handle gracefully
-      console.warn('API: Token inválido (401), dados podem estar desatualizados');
+      console.warn('API: Erro 401 recebido - verificando se token realmente expirou');
       
-      // Only clear auth if we're absolutely sure the token is invalid
-      // For now, just throw the error and let components handle it
-      throw new Error('Token de autenticação inválido');
+      // NÃO limpa automaticamente o token - apenas loga o erro
+      // Deixa o componente lidar com a falha de forma controlada
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Erro de autenticação (401)');
     }
     
     const errorData = await response.json().catch(() => ({}));

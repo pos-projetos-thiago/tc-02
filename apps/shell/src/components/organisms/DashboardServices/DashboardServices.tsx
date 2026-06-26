@@ -105,16 +105,34 @@ export const DashboardServices = ({ userName = 'Usuário' }: DashboardServicesPr
     return true;
   };
 
-  const handleTransaction = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [transactionError, setTransactionError] = useState('');
+  const [transactionSuccess, setTransactionSuccess] = useState('');
+
+  const handleTransaction = async () => {
     if (!selectedType || !amount) return;
     if (selectedType === 'investment' && !selectedInvestmentType) return;
     const numericAmount = parseFloat(amount.replace(',', '.'));
     if (!numericAmount || numericAmount <= 0) return;
-    const transactionType = selectedType === 'investment' ? selectedInvestmentType : selectedType;
-    addTransaction(transactionType, numericAmount);
-    setSelectedType('');
-    setSelectedInvestmentType('');
-    setAmount('');
+
+    setTransactionError('');
+    setTransactionSuccess('');
+    setIsSubmitting(true);
+
+    try {
+      const transactionType = selectedType === 'investment' ? selectedInvestmentType : selectedType;
+      await addTransaction(transactionType, numericAmount);
+      setSelectedType('');
+      setSelectedInvestmentType('');
+      setAmount('');
+      setTransactionSuccess('Transação realizada com sucesso!');
+      setTimeout(() => setTransactionSuccess(''), 3000);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Erro ao realizar transação.';
+      setTransactionError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderContent = () => {
@@ -172,9 +190,20 @@ export const DashboardServices = ({ userName = 'Usuário' }: DashboardServicesPr
                   <CurrencyInput placeholder="0,00" value={amount} onChange={setAmount} />
                 </div>
 
-                <TransactionButton onClick={handleTransaction} disabled={!canSubmitTransaction()}>
-                  Concluir transação
+                <TransactionButton onClick={handleTransaction} disabled={!canSubmitTransaction() || isSubmitting}>
+                  {isSubmitting ? 'Processando...' : 'Concluir transação'}
                 </TransactionButton>
+
+                {transactionError && (
+                  <p style={{ color: '#BF1313', fontSize: '1.3rem', marginTop: '0.8rem' }}>
+                    {transactionError}
+                  </p>
+                )}
+                {transactionSuccess && (
+                  <p style={{ color: '#47A138', fontSize: '1.3rem', marginTop: '0.8rem' }}>
+                    {transactionSuccess}
+                  </p>
+                )}
               </div>
 
               <div className={styles['transaction-illustration']}>

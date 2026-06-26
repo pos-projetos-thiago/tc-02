@@ -1,0 +1,365 @@
+@import '../../../styles/colors';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+@import '../../../styles/functions';
+
+.main {
+  min-height: calc(100dvh - 7.2rem);
+  background-color: $color-mint-bg;
+  padding: 2rem 1.6rem;
+}
+
+.dashboard-container {
+  max-width: 90rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2.4rem;
+
+  @include mobile {
+    flex-direction: column;
+    gap: 1.6rem;
+  }
+}
+
+.header-content { flex: 1; }
+
+.page-title {
+  font-size: 3rem;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  margin: 0 0 0.6rem 0;
+
+  @include mobile { font-size: 2.4rem; }
+}
+
+.subtitle {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+// Filtros
+.filter-bar {
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 20rem;
+  padding: 1rem 1.4rem;
+  border: 1px solid $color-gray-200;
+  border-radius: 0.8rem;
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  background-color: $color-white;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+
+  &::placeholder { color: $color-gray-400; }
+}
+
+.type-select {
+  padding: 1rem 1.4rem;
+  border: 1px solid $color-gray-200;
+  border-radius: 0.8rem;
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  background-color: $color-white;
+  cursor: pointer;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+// Card de transações
+.transactions-card {
+  background-color: $color-white;
+  border-radius: 1.2rem;
+  border: 1px solid $color-gray-200;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 2rem 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid $color-gray-200;
+
+  @include mobile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+    padding: 1.6rem 2rem;
+  }
+}
+
+.card-title {
+  font-size: 1.8rem;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.counter {
+  background-color: $color-gray-50;
+  color: $color-gray-500;
+  padding: 0.6rem 1.2rem;
+  border-radius: 2rem;
+  font-size: 1.2rem;
+  font-weight: $font-weight-medium;
+}
+
+.card-content {
+  flex: 1;
+  padding: 0;
+}
+
+.transaction-list {
+  padding: 1.6rem 2.4rem 2.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+
+  @include mobile {
+    padding: 1.2rem 2rem 2rem;
+    gap: 1rem;
+  }
+}
+
+.transaction-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem;
+  border-radius: 0.8rem;
+  border: 1px solid $color-gray-200;
+  background-color: $color-white;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: 0 1px 3px rgba($color-primary, 0.1);
+    transform: translateY(-1px);
+  }
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+    padding: 1.6rem;
+  }
+}
+
+.transaction-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.transaction-month {
+  font-size: 1.2rem;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  text-transform: capitalize;
+  margin-bottom: 0.4rem;
+}
+
+.transaction-main {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: center;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+}
+
+.transaction-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.transaction-type {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+}
+
+.transaction-date {
+  font-size: 1.3rem;
+  color: $color-gray-500;
+}
+
+.transaction-amount {
+  font-size: 1.6rem;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.transaction-actions {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+
+  @include mobile {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+// Empty state
+.empty-state {
+  padding: 6rem 3.2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.empty-title {
+  font-size: 1.8rem;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.empty-description {
+  font-size: $font-size-base;
+  color: $color-gray-500;
+  margin: 0;
+  max-width: 40rem;
+}
+
+// Paginação
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6rem;
+  padding: 1.6rem 2.4rem;
+  border-top: 1px solid $color-gray-200;
+}
+
+.pagination-info {
+  font-size: 1.4rem;
+  color: $color-gray-500;
+  min-width: 6rem;
+  text-align: center;
+}
+
+// Modal de edição
+.modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: $color-white;
+  padding: 2.4rem;
+  border-radius: 1.2rem;
+  max-width: 50rem;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  border: 1px solid $color-gray-200;
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+  margin: 0 0 1.6rem 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.label {
+  font-size: 1.4rem;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+}
+
+.input,
+.select {
+  padding: 1.2rem 1.6rem;
+  border: 1px solid $color-gray-200;
+  border-radius: 0.8rem;
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  background-color: $color-white;
+  font-family: inherit;
+  transition: all 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+
+  &::placeholder { color: $color-gray-400; }
+}
+
+.select { cursor: pointer; }
+
+.modal-actions {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: flex-end;
+  margin-top: 0.8rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid $color-gray-200;
+
+  @include mobile {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

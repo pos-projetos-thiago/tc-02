@@ -148,9 +148,13 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   // Load account data when user is authenticated
   const loadAccountData = useCallback(async () => {
+    // ✅ FIX: Verificar explicitamente se token existe antes de prosseguir
     if (!user || !token) {
+      console.log('⏳ Aguardando autenticação completa...', { user: !!user, token: !!token });
       return;
     }
+
+    console.log('🚀 Carregando dados da conta com token válido');
 
     try {
       setIsLoading(true);
@@ -162,11 +166,17 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       const uiTransactions = accountData.transactions.map(convertAPITransactionToUI);
       setTransactions(uiTransactions);
       
+      console.log('✅ Dados da conta carregados com sucesso');
       
     } catch (error) {
-      console.error('Erro ao carregar dados da conta:', error);
+      console.error('❌ Erro ao carregar dados da conta:', error);
       
-      // Em caso de erro, manter dados vazios mas usuário logado
+      // Se for erro de autenticação (UNAUTHORIZED), redirecionamento já iniciou
+      if (error instanceof Error && error.message === 'UNAUTHORIZED') {
+        return;
+      }
+      
+      // Em caso de erro genérico, manter dados vazios
       setTransactions([]);
       setAccount(null);
     } finally {
@@ -176,17 +186,20 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   // Load data when user changes
   useEffect(() => {
+    // ✅ FIX: Garantir que o efeito é acionado quando token muda
     const initData = async () => {
-      if (user) {
+      if (user && token) {
+        console.log('🔄 useEffect disparado - iniciando carregamento dos dados');
         await loadAccountData();
       } else {
+        console.log('🧹 Limpando dados (usuário deslogado)');
         setTransactions([]);
         setAccount(null);
       }
     };
 
     initData();
-  }, [user, loadAccountData]);
+  }, [user, token, loadAccountData]); // ✅ CRÍTICO: Incluir token nas dependências!
 
   // Add new transaction
   const addTransaction = useCallback(async (type: string, amount: number) => {

@@ -21,29 +21,9 @@ interface AuthContextType {
 // API Base URL
 const API_BASE_URL = 'http://localhost:4000';
 
-// Check if backend is available (will be checked on first API call)
-let backendAvailable: boolean | null = null;
-
-// Test backend connectivity
-const testBackend = async (): Promise<boolean> => {
-  if (backendAvailable !== null) return backendAvailable;
-  
-  try {
-    const response = await fetch(`${API_BASE_URL}/health`, { 
-      method: 'GET',
-      signal: AbortSignal.timeout(3000) // 3 second timeout
-    });
-    backendAvailable = response.ok;
-  } catch {
-    backendAvailable = false;
-  }
-  
-  if (!backendAvailable) {
-    console.warn('Backend não disponível em http://localhost:4000 - usando modo simulação');
-  }
-  
-  return backendAvailable;
-};
+// ✅ FIX: Removido singleton backendAvailable e fallback demo-mode.
+// O login SEMPRE usa o backend real em http://localhost:4000.
+// Token demo não é aceito pela API e causava 401 em /account.
 
 // Auth Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -98,64 +78,38 @@ export function useJWTAuth(): AuthContextType {
     return response.json();
   };
 
-  // Login function
+  // Login function — usa SEMPRE o backend real (http://localhost:4000)
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
       
-      // Test backend availability first
-      const isBackendAvailable = await testBackend();
-      
-      if (isBackendAvailable) {
-        const response = await fetch(`${API_BASE_URL}/user/auth`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-        });
+      const response = await fetch(`${API_BASE_URL}/user/auth`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Erro ao fazer login');
-        }
-
-        const data = await response.json();
-        const authToken = data.result.token;
-
-        // Decode JWT to get user info (simple decode, no verification needed on client)
-        const payload = JSON.parse(atob(authToken.split('.')[1]));
-        const userData = {
-          id: payload.id,
-          username: payload.username,
-          email: payload.email,
-        };
-
-        // Save to state and localStorage
-        setToken(authToken);
-        setUser(userData);
-        localStorage.setItem('auth_token', authToken);
-        localStorage.setItem('auth_user', JSON.stringify(userData));
-      } else {
-        // Fallback: simulate backend for demo purposes
-        
-        // Simple validation for demo
-        if (!email.includes('@')) {
-          throw new Error('Email inválido');
-        }
-        
-        // Create demo token (not real JWT, just for demo)
-        const demoUser = {
-          id: 'demo-' + Date.now(),
-          username: email.split('@')[0],
-          email: email,
-        };
-        
-        const demoToken = 'demo-jwt-' + btoa(JSON.stringify(demoUser));
-        
-        setToken(demoToken);
-        setUser(demoUser);
-        localStorage.setItem('auth_token', demoToken);
-        localStorage.setItem('auth_user', JSON.stringify(demoUser));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao fazer login');
       }
+
+      const data = await response.json();
+      const authToken = data.result.token;
+
+      // Decode JWT to get user info (simple decode, no verification needed on client)
+      const payload = JSON.parse(atob(authToken.split('.')[1]));
+      const userData = {
+        id: payload.id,
+        username: payload.username,
+        email: payload.email,
+      };
+
+      // Save to state and localStorage
+      setToken(authToken);
+      setUser(userData);
+      localStorage.setItem('auth_token', authToken);
+      localStorage.setItem('auth_user', JSON.stringify(userData));
 
     } catch (error) {
       console.error('Login error:', error);
@@ -165,57 +119,25 @@ export function useJWTAuth(): AuthContextType {
     }
   };
 
-  // Signup function
+  // Signup function — usa SEMPRE o backend real (http://localhost:4000)
   const signup = async (username: string, email: string, password: string) => {
     try {
       setIsLoading(true);
 
-      // Test backend availability first
-      const isBackendAvailable = await testBackend();
-      
-      if (isBackendAvailable) {
-        // First create user
-        const response = await fetch(`${API_BASE_URL}/user`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, email, password }),
-        });
+      // First create user
+      const response = await fetch(`${API_BASE_URL}/user`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password }),
+      });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Erro ao criar conta');
-        }
-
-        // Then auto-login
-        await login(email, password);
-      } else {
-        // Fallback: simulate backend for demo purposes
-        
-        // Basic validation
-        if (!email.includes('@')) {
-          throw new Error('Email inválido');
-        }
-        if (password.length < 6) {
-          throw new Error('A senha deve ter pelo menos 6 caracteres');
-        }
-        if (!username.trim()) {
-          throw new Error('Nome é obrigatório');
-        }
-        
-        // Simulate user creation and login
-        const demoUser = {
-          id: 'demo-' + Date.now(),
-          username: username.trim(),
-          email: email,
-        };
-        
-        const demoToken = 'demo-jwt-' + btoa(JSON.stringify(demoUser));
-        
-        setToken(demoToken);
-        setUser(demoUser);
-        localStorage.setItem('auth_token', demoToken);
-        localStorage.setItem('auth_user', JSON.stringify(demoUser));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao criar conta');
       }
+
+      // Then auto-login
+      await login(email, password);
 
     } catch (error) {
       console.error('Signup error:', error);
