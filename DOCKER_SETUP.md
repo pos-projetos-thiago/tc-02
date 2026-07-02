@@ -60,7 +60,7 @@ npm run docker:rebuild
 ## 📁 Estrutura Docker
 
 ```
-tc-01/
+tc-02/
 ├── Dockerfile              # Imagem do Frontend
 ├── docker-compose.yml      # Orquestração completa
 ├── docker/

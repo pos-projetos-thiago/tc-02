@@ -1,9 +1,8 @@
 version: '3.8'
 
 services:
-  # Frontend Next.js (Aplicação principal)
   frontend:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     ports:
@@ -20,31 +19,18 @@ services:
       - backend
     restart: unless-stopped
 
-  # Backend API (JWT)
   backend:
-    image: node:18-alpine
-    working_dir: /app
-    volumes:
-      - ../api-backend:/app
+    build:
+      context: ../tc02-bytebank-api
     ports:
       - "4000:4000"
     environment:
       - NODE_ENV=production
       - PORT=4000
-    command: >
-      sh -c "
-        if [ ! -d node_modules ]; then
-          echo 'Instalando dependências do backend...';
-          npm install;
-        fi;
-        echo 'Iniciando backend...';
-        npm start
-      "
     networks:
       - bytebank-network
     restart: unless-stopped
 
-  # Nginx (Load Balancer e Proxy)
   nginx:
     image: nginx:alpine
     ports:
@@ -62,6 +48,3 @@ services:
 networks:
   bytebank-network:
     driver: bridge
-
-volumes:
-  node_modules_backend:

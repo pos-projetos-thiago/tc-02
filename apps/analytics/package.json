@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev -p 3003",
     "build": "next build",
-    "start": "next start -p 3003", 
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx"
+    "start": "next start -p 3003",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "build:spa": "webpack --config webpack.spa.js",
+    "watch:spa": "webpack --config webpack.spa.js --watch"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.82",
@@ -24,17 +26,19 @@
     "react": "19.2.3",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "19.2.3",
+    "single-spa-react": "^6.0.2",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
-    "@types/react-dom": "^19", 
-    "@module-federation/nextjs-mf": "^8.7.0",
+    "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "sass": "^1.98.0",
+    "ts-loader": "^9.5.2",
     "typescript": "^5",
-    "webpack": "^5.97.0"
+    "webpack": "^5.97.0",
+    "webpack-cli": "^5.1.4"
   }
 }

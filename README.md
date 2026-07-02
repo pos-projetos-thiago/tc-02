@@ -153,8 +153,8 @@ git --version
 O projeto é composto por dois repositórios. Clone ambos dentro da mesma pasta raiz:
 
 ```bash
-mkdir Fase1
-cd Fase1
+mkdir fase2
+cd fase2
 
 # Frontend (este repositório)
 git clone https://github.com/pos-projetos-thiago/tc-02
@@ -166,7 +166,7 @@ git clone https://github.com/pos-projetos-thiago/tc02-bytebank-api
 Estrutura esperada:
 
 ```
-Fase1/
+fase2/
 ├── tc-02/
 └── tc02-bytebank-api/
 ```
@@ -224,7 +224,7 @@ yarn dev
 
 Sobe tudo de uma vez: shell, dashboard, transactions, analytics, backend, MongoDB e Nginx.
 
-> **Pré-requisito:** o repositório `tc02-bytebank-api/` precisa estar na pasta `../api-backend` em relação ao `tc-02/`. Se você clonou os dois dentro de `Fase1/`, renomeie a pasta do backend para `api-backend` ou ajuste o compose.
+> **Pré-requisito:** o repositório `tc02-bytebank-api/` precisa estar na pasta `../api-backend` em relação ao `tc-02/`. Se você clonou os dois dentro de `fase2/`, renomeie a pasta do backend para `api-backend` ou ajuste o compose.
 
 ```bash
 cd tc-02
@@ -250,12 +250,11 @@ yarn mf:down
 
 | Serviço | URL |
 |---------|-----|
-| Shell (host MF) | http://localhost:3000 |
+| Shell (host MF) | http://localhost:3010 |
 | Dashboard MF | http://localhost:3001 |
 | Transactions MF | http://localhost:3002 |
 | Analytics MF | http://localhost:3003 |
 | Backend API | http://localhost:4000 |
-| Nginx (proxy) | http://localhost:80 |
 
 ---
 

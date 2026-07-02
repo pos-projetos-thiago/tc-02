@@ -22,10 +22,11 @@ COPY . .
 
 # Build da aplicação
 ENV NEXT_TELEMETRY_DISABLED 1
+# build:spa compila src/spa.tsx → public/spa.js (Single SPA parcel)
 RUN \
-  if [ -f yarn.lock ]; then yarn build; \
-  elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm run build; \
+  if [ -f yarn.lock ]; then yarn build:spa && yarn build; \
+  elif [ -f package-lock.json ]; then npm run build:spa && npm run build; \
+  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm run build:spa && pnpm run build; \
   else echo "Lockfile not found." && exit 1; \
   fi
 

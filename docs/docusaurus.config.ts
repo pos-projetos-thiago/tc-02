@@ -18,13 +18,13 @@ const config: Config = {
   url: 'https://pos-projetos-thiago.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  // Use '/tc-01/' quando for fazer deploy no GitHub Pages
+  // Use '/tc-02/' quando for fazer deploy no GitHub Pages
   baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'pos-projetos-thiago', // Usually your GitHub org/user name.
-  projectName: 'tc-01', // Usually your repo name.
+  projectName: 'tc-02', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -42,7 +42,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/pos-projetos-thiago/tc-01/tree/dev/docs/',
+          editUrl: 'https://github.com/pos-projetos-thiago/tc-02/tree/dev/docs/',
         },
         blog: false,
         theme: {
@@ -72,7 +72,7 @@ const config: Config = {
           label: 'Documentação',
         },
         {
-          href: 'https://github.com/pos-projetos-thiago/tc-01',
+          href: 'https://github.com/pos-projetos-thiago/tc-02',
           label: 'Código no GitHub',
           position: 'right',
         },
@@ -114,12 +114,12 @@ const config: Config = {
           title: 'Repositório',
           items: [
             {
-              label: 'tc-01 no GitHub',
-              href: 'https://github.com/pos-projetos-thiago/tc-01',
+              label: 'tc-02 no GitHub',
+              href: 'https://github.com/pos-projetos-thiago/tc-02',
             },
             {
               label: 'README do projeto',
-              href: 'https://github.com/pos-projetos-thiago/tc-01/blob/dev/README.md',
+              href: 'https://github.com/pos-projetos-thiago/tc-02/blob/dev/README.md',
             },
           ],
         },
