@@ -9,6 +9,8 @@ export default function HomePage() {
   const [authModalVariant, setAuthModalVariant] = useState<'signup' | 'login' | null>(null);
   const [authModalKey, setAuthModalKey] = useState(0);
 
+  console.log('[LOG] 🏠 Shell Home RENDER');
+
   const handleAuthModalChange = useCallback((variant: 'signup' | 'login' | null) => {
     if (variant !== null) {
       setAuthModalKey((k) => k + 1);
