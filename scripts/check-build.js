@@ -5,9 +5,7 @@
  * Roda lint + build antes de commit para evitar erros no CI
  */
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { execSync } = require('child_process');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const chalk = require('chalk');
 
 console.log(chalk.blue('🔍 Verificando lint...'));

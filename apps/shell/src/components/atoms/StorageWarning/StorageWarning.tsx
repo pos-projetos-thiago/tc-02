@@ -1,24 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from './StorageWarning.module.scss';
 
-export const StorageWarning = () => {
-  const [showWarning, setShowWarning] = useState(false);
+function checkLocalStorageAvailable(): boolean {
+  try {
+    const test = 'test';
+    localStorage.setItem(test, test);
+    localStorage.removeItem(test);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
-  useEffect(() => {
-    // Test localStorage availability
-    let available = false;
-    try {
-      const test = 'test';
-      localStorage.setItem(test, test);
-      localStorage.removeItem(test);
-      available = true;
-    } catch {
-      available = false;
-    }
-    setShowWarning(!available);
-  }, []);
+export const StorageWarning = () => {
+  const [showWarning, setShowWarning] = useState(() => !checkLocalStorageAvailable());
 
   if (!showWarning) return null;
 
