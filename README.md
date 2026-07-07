@@ -3,24 +3,16 @@
 <div align="center">
 
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/pos-projetos-thiago/tc-02/ci.yml?style=for-the-badge&label=CI&logo=github)
-
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
-
 ![Single SPA](https://img.shields.io/badge/Single--SPA-Microfrontends-FF6B6B?style=for-the-badge)
-
 ![Material UI](https://img.shields.io/badge/MUI-7-007FFF?style=for-the-badge&logo=mui)
 ![Sass](https://img.shields.io/badge/Sass-Modules-CC6699?style=for-the-badge&logo=sass)
-
 ![Chart.js](https://img.shields.io/badge/Chart.js-Gráficos-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
-
 ![Jest](https://img.shields.io/badge/Jest-Testes-C21325?style=for-the-badge&logo=jest&logoColor=white)
-
 ![JWT](https://img.shields.io/badge/JWT-Autenticação-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
-
 ![Docker](https://img.shields.io/badge/Docker-Containers-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-
 ![Docusaurus](https://img.shields.io/badge/Docusaurus-Design%20System-3ECC5F?style=for-the-badge&logo=docusaurus&logoColor=white)
 
 </div>
