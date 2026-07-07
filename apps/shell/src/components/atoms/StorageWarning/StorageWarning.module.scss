@@ -1,0 +1,93 @@
+@import '../../../styles/colors';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+.warning {
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  color: white;
+  padding: 1.2rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+  max-width: 120rem;
+  margin: 0 auto;
+  padding: 0 2.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+
+  @include mobile {
+    padding: 0 1.2rem;
+    gap: 1.2rem;
+  }
+}
+
+.icon {
+  font-size: 2.4rem;
+  flex-shrink: 0;
+
+  @include mobile {
+    font-size: 2rem;
+  }
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+
+  h3 {
+    margin: 0 0 0.4rem 0;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+
+    @include mobile {
+      font-size: $font-size-base;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: $font-size-sm;
+    opacity: 0.95;
+    line-height: 1.4;
+
+    @include mobile {
+      font-size: 1.3rem;
+    }
+  }
+}
+
+.close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  &:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+
+  @include mobile {
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: 1.4rem;
+  }
+}

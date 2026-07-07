@@ -1,0 +1,645 @@
+@import '../../../styles/colors';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+.services {
+  background-color: $color-gray-300;
+  border-radius: 1.6rem;
+  padding: 0 0 1.2rem 0;
+  height: 100%;
+  min-height: 18rem;
+  border: 1px solid $color-gray-200;
+
+  @media (min-height: 1025px) {
+    padding-bottom: 1.8rem;
+  }
+
+  @include mobile {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    border-radius: 1.2rem;
+    min-height: 15rem;
+    margin-bottom: 1.6rem;
+    overflow-x: hidden;
+  }
+}
+
+.header {
+  margin-bottom: 1.2rem;
+}
+
+.title {
+  font-size: 2.3rem;
+  font-weight: $font-weight-bold;
+  color: $color-black;
+  margin-top: 2rem;
+  margin-left: 3.2rem;
+
+  @include tablet {
+    font-size: 2.1rem;
+    margin-top: 1.6rem;
+    margin-left: 2.4rem;
+  }
+
+  @include mobile {
+    font-size: 2rem;
+    margin-top: 1.6rem;
+    margin-left: 2.4rem;
+    margin-right: 2.4rem;
+  }
+}
+
+.transaction-title {
+  color: $color-text-secondary;
+}
+
+.transaction-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2.4rem;
+  margin-top: 2.4rem;
+  margin-left: 3.2rem;
+  margin-right: 3.2rem;
+
+  @include tablet {
+    align-items: flex-end;
+    gap: 1.6rem;
+    margin-top: 1.6rem;
+    margin-left: 2.4rem;
+    margin-right: 2.4rem;
+  }
+
+  @include mobile {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 2.4rem;
+    margin-top: 1.6rem;
+    margin-left: 1.6rem;
+    margin-right: 1.6rem;
+  }
+}
+
+.transaction-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  flex: 1;
+  max-width: 40rem;
+
+  @include tablet {
+    gap: 1.6rem;
+    max-width: 32rem;
+  }
+
+  @include mobile {
+    max-width: none;
+  }
+}
+
+.transaction-illustration {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+  @include mobile {
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+.illustration-image {
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  width: min(24rem, 100%);
+
+  @include tablet {
+    width: 24rem;
+  }
+
+  @include desktop {
+    width: 38rem;
+  }
+}
+
+.value-section {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+
+  @include tablet {
+    margin-top: 0.4rem;
+    gap: 0.8rem;
+  }
+
+  @include mobile {
+    margin-top: 0.4rem;
+  }
+}
+
+.value-title {
+  color: $color-text-secondary;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.service-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin: 0;
+  padding: 2.5rem 3.2rem;
+  min-height: 18rem;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    padding: 2rem 1.6rem;
+  }
+
+  li {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 3.2rem;
+  min-height: 15rem;
+  text-align: center;
+}
+
+.empty-message {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-black;
+  margin: 0 0 1rem 0;
+}
+
+.empty-subtitle {
+  font-size: $font-size-base;
+  color: $color-gray-500;
+  margin: 0;
+  max-width: 40rem;
+}
+
+.investment-total {
+  margin-top: 1rem;
+  margin-left: 3.2rem;
+  margin-right: 3.2rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+
+  @include tablet {
+    margin-top: 0.8rem;
+    margin-left: 2.4rem;
+    margin-right: 2.4rem;
+  }
+
+  @include mobile {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    width: 100%;
+    max-width: 100%;
+    margin: 1rem 0 0 0;
+    padding: 0 1.6rem;
+    box-sizing: border-box;
+  }
+}
+
+.total-label {
+  font-size: 2rem;
+  font-weight: $font-weight-regular;
+  color: $color-primary;
+  margin: 0;
+
+  @include tablet {
+    font-size: 1.8rem;
+  }
+
+  @include mobile {
+    text-align: center;
+    max-width: 100%;
+  }
+}
+
+.total-value {
+  font-size: 2rem;
+  font-weight: $font-weight-regular;
+  color: $color-primary;
+  margin: 0;
+
+  @include tablet {
+    font-size: 1.8rem;
+  }
+
+  @include mobile {
+    text-align: center;
+    max-width: 100%;
+    line-height: 1.3;
+    word-break: break-word;
+  }
+}
+
+.investment-categories {
+  display: flex;
+  gap: 3.5rem;
+  margin-top: 1rem;
+  margin-left: 3.2rem;
+  margin-right: 3.2rem;
+  justify-content: flex-start;
+
+  @include tablet {
+    gap: 2.4rem;
+    margin-top: 0.8rem;
+    margin-left: 2.4rem;
+    margin-right: 2.4rem;
+  }
+
+  @include mobile {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.6rem;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    margin-top: 1rem;
+    padding: 0 1.6rem;
+    box-sizing: border-box;
+  }
+}
+
+.investment-card {
+  width: 42rem;
+  height: 9rem;
+  padding: 1rem;
+  background-color: $color-primary;
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  @include tablet {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    max-width: 42rem;
+    height: 8rem;
+    padding: 0.8rem;
+  }
+
+  @include mobile {
+    flex: 0 1 auto;
+    align-self: stretch;
+    width: 100%;
+    min-width: 0;
+    max-width: min(42rem, 100%);
+    height: auto;
+    min-height: 8.5rem;
+    box-sizing: border-box;
+  }
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: $font-weight-regular;
+  color: $color-white;
+  margin: 0;
+
+  @include tablet {
+    font-size: 1.4rem;
+  }
+
+  @include mobile {
+    font-size: 1.4rem;
+    max-width: 100%;
+    padding: 0 0.4rem;
+    box-sizing: border-box;
+  }
+}
+
+.card-value {
+  font-size: 1.7rem;
+  font-weight: $font-weight-regular;
+  color: $color-white;
+  margin: 0;
+  margin-top: 1rem;
+
+  @include tablet {
+    font-size: 1.6rem;
+    margin-top: 0.8rem;
+  }
+
+  @include mobile {
+    font-size: 1.6rem;
+    max-width: 100%;
+    padding: 0 0.4rem;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+  }
+}
+
+.statistics-section {
+  margin-top: 1.5rem;
+
+  @include mobile {
+    margin-top: 1rem;
+    text-align: center;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+.statistics-header {
+  margin-top: 1rem;
+  margin-left: 3.2rem;
+  margin-right: 3.2rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+
+  @include tablet {
+    margin-top: 0.8rem;
+    margin-left: 2.4rem;
+    margin-right: 2.4rem;
+  }
+
+  @include mobile {
+    margin: 0;
+    margin-top: 1rem;
+    padding: 0 1.6rem;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+}
+
+.statistics-label {
+  font-size: 2rem;
+  font-weight: $font-weight-regular;
+  color: $color-primary;
+  margin: 0;
+
+  @include tablet {
+    font-size: 1.8rem;
+  }
+}
+
+.statistics-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 1.5rem;
+  margin-left: 3.2rem;
+  margin-right: 3.2rem;
+
+  @media (min-height: 900px) {
+    margin-top: 2rem;
+  }
+
+  @include tablet {
+    margin-top: 1.2rem;
+    margin-left: 2.4rem;
+    margin-right: 2.4rem;
+  }
+
+  @include mobile {
+    margin: 0;
+    margin-top: 1rem;
+    padding: 0 1.6rem;
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+}
+
+.statistics-card {
+  width: calc(42rem + 3.5rem + 42rem);
+  height: 11rem;
+  padding: 1rem;
+  background-color: $color-primary;
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 0;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+
+  @include tablet {
+    width: 100%;
+    max-width: calc(42rem + 3.5rem + 42rem);
+    height: 10.5rem;
+    padding: 0.8rem;
+  }
+
+  @include mobile {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 24rem;
+    height: auto;
+    padding: 0.8rem 0.4rem;
+    margin-left: auto;
+    margin-right: auto;
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+}
+
+.cards-container {
+  padding: 0 3.2rem;
+  
+  @media (max-width: 768px) {
+    padding: 0 1.6rem;
+  }
+}
+
+.card-section {
+  margin-top: 1.6rem;
+}
+
+.card-type-title {
+  font-size: 2rem;
+  font-weight: 300;
+  color: $color-text-secondary;
+  margin: 0;
+  margin-bottom: 1.6rem;
+}
+
+.card-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 3.2rem;
+  align-items: flex-start;
+  
+  @include mobile {
+    flex-direction: column;
+    gap: 2.4rem;
+  }
+}
+
+.card-display {
+  background-color: #004D61;
+  border-radius: 1.2rem;
+  width: 40rem;
+  height: 22rem;
+  position: relative;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  @include mobile {
+    width: 100%;
+    max-width: none;
+    height: 18rem;
+    margin: 0 auto;
+  }
+}
+
+.card-logo {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+}
+
+.logo-img {
+  width: 10rem;
+  height: auto;
+}
+
+.card-info {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+}
+
+.card-holder {
+  color: white;
+  font-size: 1.6rem;
+  font-weight: $font-weight-medium;
+  margin: 0;
+  margin-bottom: 0.8rem;
+}
+
+.card-number {
+  color: white;
+  font-size: 1.6rem;
+  font-weight: $font-weight-regular;
+  margin: 0;
+  letter-spacing: 0.3rem;
+}
+
+.card-actions-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  align-items: stretch;
+  justify-content: flex-start;
+  min-width: 28rem;
+  padding-top: 1rem;
+  
+  @include mobile {
+    align-items: stretch;
+    gap: 1.2rem;
+    min-width: auto;
+    width: 100%;
+    padding-top: 0;
+  }
+}
+
+.btn-configure {
+  background-color: #E8451C;
+  color: white;
+  border: none;
+  border-radius: 0.8rem;
+  padding: 1.6rem;
+  font-size: 1.6rem;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  min-width: 28rem;
+  min-height: 4.8rem;
+  
+  &:hover {
+    background-color: darken(#E8451C, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(232, 69, 28, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  @include mobile {
+    min-width: auto;
+    padding: 1.8rem 2.4rem;
+    font-size: 1.7rem;
+  }
+}
+
+.btn-block {
+  background-color: transparent;
+  color: #E8451C;
+  border: 2px solid #E8451C;
+  border-radius: 0.8rem;
+  padding: 1.6rem;
+  font-size: 1.6rem;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  min-width: 28rem;
+  min-height: 4.8rem;
+  
+  &:hover {
+    background-color: rgba(232, 69, 28, 0.08);
+    border-color: darken(#E8451C, 10%);
+    color: darken(#E8451C, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(232, 69, 28, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  @include mobile {
+    min-width: auto;
+    padding: 1.8rem 2.4rem;
+    font-size: 1.7rem;
+  }
+}
+
+.card-function {
+  color: $color-text-secondary;
+  font-size: 1.6rem;
+  font-weight: $font-weight-regular;
+  margin: 0;
+  text-align: center;
+  margin-top: 0.8rem;
+}

@@ -147,7 +147,13 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   // Load account data when user is authenticated
   const loadAccountData = useCallback(async () => {
-    if (!user || !token) return;
+    // ✅ FIX: Verificar explicitamente se token existe antes de prosseguir
+    if (!user || !token) {
+      console.log('⏳ Aguardando autenticação completa...', { user: !!user, token: !!token });
+      return;
+    }
+
+    console.log('🚀 Carregando dados da conta com token válido');
 
     try {
       setIsLoading(true);
@@ -159,8 +165,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       const uiTransactions = accountData.transactions.map(convertAPITransactionToUI);
       setTransactions(uiTransactions);
       
+      console.log('✅ Dados da conta carregados com sucesso');
+      
     } catch (error) {
-      console.error('Error loading account data:', error);
+      console.error('❌ Erro ao carregar dados da conta:', error);
       // Keep empty state on error
       setTransactions([]);
       setAccount(null);
@@ -171,10 +179,13 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   // Load data when user changes
   useEffect(() => {
+    // ✅ FIX: Garantir que o efeito é acionado quando token muda
     const initData = async () => {
-      if (user) {
+      if (user && token) {
+        console.log('🔄 useEffect disparado - iniciando carregamento dos dados');
         await loadAccountData();
       } else {
+        console.log('🧹 Limpando dados (usuário deslogado)');
         // Clear data when user logs out
         setTransactions([]);
         setAccount(null);
@@ -182,7 +193,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     };
 
     initData();
-  }, [user, loadAccountData]);
+  }, [user, token, loadAccountData]); // ✅ CRÍTICO: Incluir token nas dependências!
 
   // Add new transaction
   const addTransaction = useCallback(async (type: string, amount: number) => {

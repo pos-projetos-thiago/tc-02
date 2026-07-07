@@ -1,0 +1,57 @@
+@import '../../../styles/colors';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+.transaction-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1.6rem;
+  border-radius: 0.8rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba($color-gray-50, 0.8);
+    box-shadow: 0 2px 8px rgba($color-green, 0.08);
+    transform: translateY(-1px);
+  }
+}
+
+.month-name {
+  font-size: 1.3rem;
+  font-weight: $font-weight-semibold;
+  color: $color-green;
+  text-transform: capitalize;
+}
+
+.description-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transaction-description {
+  font-size: $font-size-base;
+  font-weight: $font-weight-regular;
+  color: $color-black;
+}
+
+.transaction-date {
+  font-size: 1.3rem;
+  font-weight: $font-weight-regular;
+  color: $color-gray-500;
+}
+
+.transaction-amount {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-black;
+}
+
+.transaction-divider {
+  width: 18rem;
+  height: 0.1rem;
+  background-color: $color-green;
+  opacity: 0.5;
+}

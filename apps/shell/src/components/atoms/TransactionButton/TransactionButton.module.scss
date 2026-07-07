@@ -1,0 +1,48 @@
+@import '../../../styles/colors';
+@import '../../../styles/breakpoints';
+
+button[data-component="transaction-button"].button {
+  width: 355px;
+  max-width: 100%;
+  height: 48px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background-color: $color-primary;
+  color: $color-white;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    background-color: darken($color-primary, 5%);
+    box-shadow: 0 4px 16px rgba(0, 77, 97, 0.2);
+    transform: translateY(-2px);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 77, 97, 0.25);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 77, 97, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}

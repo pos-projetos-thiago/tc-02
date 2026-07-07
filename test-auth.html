@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Autenticação - ByteBank</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f8f8;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .title {
+            color: #004D61;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .status-check {
+            background: #e8f4fd;
+            border: 1px solid #004D61;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .status-ok {
+            background: #e4ede3;
+            border: 1px solid #47A138;
+            color: #47A138;
+        }
+        
+        .status-error {
+            background: #fdeaea;
+            border: 1px solid #BF1313;
+            color: #BF1313;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            color: #856404;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .test-button {
+            background: #004D61;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        
+        .test-button:hover {
+            background: #003a4a;
+        }
+        
+        pre {
+            background: #f1f3f4;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            color: #004D61;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🏦 ByteBank - Teste de Conexão</div>
+        
+        <h1 class="title">Diagnóstico de Backend</h1>
+        
+        <div id="backend-status" class="status-check">
+            <h3>🔍 Verificando Backend...</h3>
+            <p>Testando conexão com http://localhost:4000</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Status da Implementação</h3>
+            <ul>
+                <li>✅ <strong>Modais de Auth:</strong> Implementados e funcionais</li>
+                <li>✅ <strong>Validação:</strong> Senha mín. 6 chars, campos obrigatórios</li>
+                <li>✅ <strong>Fallback Mode:</strong> Funciona sem backend para demo</li>
+                <li>🔄 <strong>Backend Real:</strong> Verificando disponibilidade...</li>
+            </ul>
+        </div>
+        
+        <div>
+            <h3>🧪 Testes Disponíveis</h3>
+            <button class="test-button" onclick="testBackendHealth()">Testar Backend</button>
+            <button class="test-button" onclick="testAuth()">Testar Autenticação</button>
+            <button class="test-button" onclick="clearStorage()">Limpar Dados</button>
+            <button class="test-button" onclick="openApp()">Abrir Aplicação</button>
+        </div>
+        
+        <div id="results" style="margin-top: 30px;"></div>
+    </div>
+
+    <script>
+        let backendAvailable = null;
+        
+        async function testBackendHealth() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<h4>🔍 Testando Backend...</h4>';
+            
+            try {
+                const response = await fetch('http://localhost:4000/health', {
+                    method: 'GET',
+                    signal: AbortSignal.timeout(5000)
+                });
+                
+                if (response.ok) {
+                    backendAvailable = true;
+                    document.getElementById('backend-status').className = 'status-check status-ok';
+                    document.getElementById('backend-status').innerHTML = `
+                        <h3>✅ Backend Conectado!</h3>
+                        <p>API disponível em http://localhost:4000</p>
+                        <p><strong>Os modais usarão o backend real</strong></p>
+                    `;
+                    resultsDiv.innerHTML = '<h4>✅ Backend funcionando perfeitamente!</h4>';
+                } else {
+                    throw new Error('Backend respondeu com erro');
+                }
+            } catch (error) {
+                backendAvailable = false;
+                document.getElementById('backend-status').className = 'status-check status-error';
+                document.getElementById('backend-status').innerHTML = `
+                    <h3>⚠️ Backend Indisponível</h3>
+                    <p>Não foi possível conectar com http://localhost:4000</p>
+                    <p><strong>Os modais usarão modo simulação</strong></p>
+                `;
+                resultsDiv.innerHTML = `
+                    <h4>⚠️ Backend indisponível - Modo Demo ativo</h4>
+                    <p>Erro: ${error.message}</p>
+                    <p><strong>A aplicação funcionará normalmente no modo simulação!</strong></p>
+                `;
+            }
+        }
+        
+        async function testAuth() {
+            const resultsDiv = document.getElementById('results');
+            
+            if (backendAvailable === null) {
+                await testBackendHealth();
+            }
+            
+            resultsDiv.innerHTML = `
+                <h4>🔐 Status de Autenticação</h4>
+                <p><strong>Modo:</strong> ${backendAvailable ? 'Backend Real' : 'Simulação Demo'}</p>
+                <p><strong>Validações:</strong> Ativas (senha 6+ chars, campos obrigatórios)</p>
+                <p><strong>Token atual:</strong> ${localStorage.getItem('auth_token') || 'Nenhum'}</p>
+                <p><strong>Usuário:</strong> ${localStorage.getItem('auth_user') || 'Não logado'}</p>
+            `;
+        }
+        
+        function clearStorage() {
+            localStorage.clear();
+            sessionStorage.clear();
+            document.getElementById('results').innerHTML = `
+                <h4>🧹 Dados Limpos!</h4>
+                <p>Todos os tokens e dados de usuário foram removidos</p>
+            `;
+        }
+        
+        function openApp() {
+            window.open('http://localhost:3010', '_blank');
+        }
+        
+        // Auto-test on load
+        window.onload = () => {
+            testBackendHealth();
+        };
+    </script>
+</body>
+</html>
