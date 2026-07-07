@@ -12,6 +12,7 @@
 ![Jest](https://img.shields.io/badge/Jest-Testes-C21325?style=for-the-badge&logo=jest&logoColor=white)
 ![Chart.js](https://img.shields.io/badge/Chart.js-Gráficos-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-Autenticação-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Containers-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 </div>
 
@@ -187,6 +188,80 @@ yarn dev
 
 ---
 
+## Docker
+
+O projeto está containerizado com Docker, permitindo executar frontend e backend de forma isolada. Todos os arquivos Docker ficam na **raiz do repositório**.
+
+### Estrutura
+
+```
+tc-02/
+├── Dockerfile                          # Imagem do frontend principal (porta 3000)
+├── docker-compose.yml                  # Frontend principal + backend + nginx
+├── docker-compose.microfrontends.yml   # Shell + dashboard + transactions + analytics + backend
+└── apps/
+    ├── shell/Dockerfile
+    ├── dashboard/Dockerfile
+    ├── transactions/Dockerfile
+    └── analytics/Dockerfile
+```
+
+> ⚠️ **Pré-requisito:** O repositório do backend deve estar clonado na **mesma pasta pai** que `tc-02`:
+> ```
+> pasta-pai/
+> ├── tc-02/               ← este repositório
+> └── tc02-bytebank-api/   ← backend (deve existir)
+> ```
+> ```bash
+> git clone https://github.com/pos-projetos-thiago/tc02-bytebank-api
+> ```
+
+> ⚠️ Os comandos Docker devem ser executados sempre a partir da **raiz do projeto** (`tc-02/`).
+
+### Opção A — Frontend principal + backend + nginx
+
+Requer que o repositório do backend (`tc02-bytebank-api`) esteja clonado na mesma pasta pai que `tc-02`.
+
+```bash
+# Na raiz: tc-02/
+docker-compose up -d
+
+# Acompanhar logs
+docker-compose logs -f
+
+# Parar
+docker-compose down
+```
+
+| Serviço | URL |
+|---------|-----|
+| Frontend (monólito) | http://localhost:3000 |
+| Backend API | http://localhost:4000 |
+| Nginx (proxy) | http://localhost:80 |
+
+### Opção B — Arquitetura de microfrontends
+
+```bash
+# Na raiz: tc-02/
+docker-compose -f docker-compose.microfrontends.yml up -d
+
+# Acompanhar logs
+docker-compose -f docker-compose.microfrontends.yml logs -f
+
+# Parar
+docker-compose -f docker-compose.microfrontends.yml down
+```
+
+| Serviço | URL |
+|---------|-----|
+| Shell Single SPA | http://localhost:3010 |
+| Dashboard | http://localhost:3001 |
+| Transactions | http://localhost:3002 |
+| Analytics | http://localhost:3003 |
+| Backend API | http://localhost:4000 |
+
+---
+
 ## Scripts disponíveis
 
 ### Aplicação principal
@@ -247,6 +322,7 @@ Backend rodando em **http://localhost:4000**
 | IA / OCR | Hugging Face API, @ai-sdk/google, @ai-sdk/openai |
 | PDF | jsPDF + html2canvas |
 | CI/CD | GitHub Actions |
+| Containers | Docker + Docker Compose |
 | Testes | Jest + React Testing Library |
 
 ---
