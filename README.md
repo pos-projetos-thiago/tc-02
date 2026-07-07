@@ -333,6 +333,6 @@ taskkill /PID <PID> /F
 
 <div align="center">
 
-**Desenvolvido para o Tech Challenge**
+**Desenvolvido com ❤️ e 🤘 para o Tech Challenge**
 
 </div>
