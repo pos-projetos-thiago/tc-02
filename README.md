@@ -4,14 +4,16 @@
 
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/pos-projetos-thiago/tc-02/ci.yml?style=for-the-badge&label=CI&logo=github)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
 ![Single SPA](https://img.shields.io/badge/Single--SPA-Microfrontends-FF6B6B?style=for-the-badge)
 ![Material UI](https://img.shields.io/badge/MUI-7-007FFF?style=for-the-badge&logo=mui)
 ![Sass](https://img.shields.io/badge/Sass-Modules-CC6699?style=for-the-badge&logo=sass)
-![Jest](https://img.shields.io/badge/Jest-Testes-C21325?style=for-the-badge&logo=jest&logoColor=white)
 ![Chart.js](https://img.shields.io/badge/Chart.js-Gráficos-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
+![Jest](https://img.shields.io/badge/Jest-Testes-C21325?style=for-the-badge&logo=jest&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-Autenticação-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Containers-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Docusaurus](https://img.shields.io/badge/Docusaurus-Design%20System-3ECC5F?style=for-the-badge&logo=docusaurus&logoColor=white)
 
 </div>
 
@@ -187,6 +189,55 @@ yarn dev
 
 ---
 
+## Docker
+
+O projeto está containerizado com Docker, permitindo executar frontend e backend de forma isolada. Todos os arquivos Docker ficam na **raiz do repositório**.
+
+### Estrutura
+
+```
+tc-02/
+├── Dockerfile                          # Imagem do frontend principal (porta 3000)
+├── docker-compose.yml                  # Frontend principal + backend + nginx
+└── apps/
+    ├── shell/Dockerfile
+    ├── dashboard/Dockerfile
+    ├── transactions/Dockerfile
+    └── analytics/Dockerfile
+```
+
+> ⚠️ **Pré-requisitos:**
+> - O **Docker Desktop** deve estar aberto e rodando
+> - O repositório do backend deve estar clonado na **mesma pasta pai** que `tc-02`:
+> ```
+> pasta-pai/
+> ├── tc-02/               ← este repositório
+> └── tc02-bytebank-api/   ← backend (deve existir)
+> ```
+> ```bash
+> git clone https://github.com/pos-projetos-thiago/tc02-bytebank-api
+> ```
+
+> ⚠️ Os comandos devem ser executados sempre a partir da **raiz do projeto** (`tc-02/`).
+
+```bash
+# Subir frontend + backend
+docker-compose up -d
+
+# Acompanhar logs
+docker-compose logs -f
+
+# Parar
+docker-compose down
+```
+
+| Serviço | URL |
+|---------|-----|
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:4000 |
+
+---
+
 ## Scripts disponíveis
 
 ### Aplicação principal
@@ -247,6 +298,7 @@ Backend rodando em **http://localhost:4000**
 | IA / OCR | Hugging Face API, @ai-sdk/google, @ai-sdk/openai |
 | PDF | jsPDF + html2canvas |
 | CI/CD | GitHub Actions |
+| Containers | Docker + Docker Compose |
 | Testes | Jest + React Testing Library |
 
 ---
@@ -333,6 +385,6 @@ taskkill /PID <PID> /F
 
 <div align="center">
 
-**Desenvolvido para o Tech Challenge**
+**Desenvolvido com ❤️ e 🤘 para o Tech Challenge**
 
 </div>
