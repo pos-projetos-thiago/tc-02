@@ -1,5 +1,7 @@
 # Dependencies
 node_modules/
+**/node_modules
+/docs/node_modules
 /.pnp
 .pnp.js
 
@@ -9,9 +11,13 @@ node_modules/
 # Next.js
 .next/
 out/
+**/.next/
+**/out/
 
 # Production
 /build
+**/build
+**/dist
 
 # Misc
 .DS_Store

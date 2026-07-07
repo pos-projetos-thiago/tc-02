@@ -11,7 +11,6 @@ const eslintConfig = defineConfig([
       "@typescript-eslint/no-require-imports": "off",
     },
   },
-  // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
@@ -20,6 +19,14 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Docusaurus docs
     "docs/**",
+    // node_modules (raiz e apps do monorepo)
+    "node_modules/**",
+    "apps/**/node_modules/**",
+    // builds das apps
+    "apps/**/.next/**",
+    "apps/**/out/**",
+    "apps/**/build/**",
+    "apps/**/dist/**",
   ]),
 ]);
 
