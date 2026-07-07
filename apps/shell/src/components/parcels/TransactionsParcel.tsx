@@ -19,6 +19,8 @@ export const TransactionsParcel: React.FC = () => {
   const router = useRouter();
 
   console.log('[LOG] 🧾 TransactionsParcel RENDER', { txCount: transactions.length });
+  
+  const customProps = useMemo(
     () => ({
       transactions,
       onEdit: (id: string, updates: Record<string, unknown>) =>

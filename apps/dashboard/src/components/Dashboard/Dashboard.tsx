@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { DashboardHero } from '../DashboardHero/DashboardHero';
+// import { DashboardHero } from '../DashboardHero/DashboardHero';
 import { DashboardNav } from '../DashboardNav';
 
 // Mock data for development
@@ -31,12 +31,16 @@ export const Dashboard = () => {
       </aside>
       
       <header style={{ gridColumn: '2', gridRow: '1' }}>
-        <DashboardHero
+        {/* <DashboardHero
           balance={balance}
           userName={userName}
           activeSection={activeSection}
           user={mockUser}
-        />
+        /> */}
+        <div style={{ padding: '2rem', background: '#f0f0f0', borderRadius: '8px' }}>
+          <h1>Olá, {userName}!</h1>
+          <p>Saldo: R$ {balance.toFixed(2)}</p>
+        </div>
       </header>
 
       <main style={{ gridColumn: '2', gridRow: '2', padding: '2rem' }}>
