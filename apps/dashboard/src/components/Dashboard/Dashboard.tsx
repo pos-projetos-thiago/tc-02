@@ -4,11 +4,6 @@ import { useState } from 'react';
 // import { DashboardHero } from '../DashboardHero/DashboardHero';
 import { DashboardNav } from '../DashboardNav';
 
-// Mock data for development
-const mockUser = {
-  email: 'usuario@exemplo.com'
-};
-
 export const Dashboard = () => {
   const [activeSection, setActiveSection] = useState('services');
   const [balance] = useState(2000);

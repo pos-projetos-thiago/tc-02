@@ -8,14 +8,16 @@ export const StorageWarning = () => {
 
   useEffect(() => {
     // Test localStorage availability
+    let available = false;
     try {
       const test = 'test';
       localStorage.setItem(test, test);
       localStorage.removeItem(test);
-      setShowWarning(false);
+      available = true;
     } catch {
-      setShowWarning(true);
+      available = false;
     }
+    setShowWarning(!available);
   }, []);
 
   if (!showWarning) return null;
