@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
   sassOptions: {
     silenceDeprecations: ['import', 'global-builtin', 'color-functions'],
   },
+  // Configurar Turbopack para não processar apps
+  turbopack: {
+    root: '.',
+  },
   async headers() {
     return [
       {

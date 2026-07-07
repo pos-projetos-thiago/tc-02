@@ -1,5 +1,5 @@
 {
-  "name": "tc-01",
+  "name": "tc-02",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -18,7 +18,16 @@
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
     "docker:rebuild": "docker-compose down && docker-compose up -d --build",
-    "docker:setup": "node scripts/docker-setup.js"
+    "docker:setup": "node scripts/docker-setup.js",
+    "mf:setup": "node scripts/setup-microfrontends.js",
+    "mf:dev": "docker-compose -f docker-compose.microfrontends.yml up -d",
+    "mf:down": "docker-compose -f docker-compose.microfrontends.yml down",
+    "mf:logs": "docker-compose -f docker-compose.microfrontends.yml logs -f",
+    "mf:rebuild": "docker-compose -f docker-compose.microfrontends.yml down && docker-compose -f docker-compose.microfrontends.yml up -d --build",
+    "mf:shell": "cd apps/shell && yarn dev",
+    "mf:dashboard": "cd apps/dashboard && yarn dev",
+    "mf:transactions": "cd apps/transactions && yarn dev",
+    "mf:analytics": "cd apps/analytics && yarn dev"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.82",

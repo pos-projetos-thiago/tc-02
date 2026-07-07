@@ -1,0 +1,86 @@
+@import '../../../styles/colors';
+@import '../../../styles/typography';
+@import '../../../styles/breakpoints';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.quickFilters {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+
+  @include mobile {
+    flex-direction: column;
+  }
+}
+
+.quickButton {
+  padding: 0.8rem 1.6rem;
+  border: 1px solid $color-gray-200;
+  border-radius: 0.8rem;
+  background-color: $color-white;
+  color: $color-text-secondary;
+  font-size: 1.3rem;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    border-color: $color-primary;
+    color: $color-primary;
+    background-color: rgba($color-primary, 0.05);
+    transform: translateY(-1px);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 1px 3px rgba($color-primary, 0.1);
+  }
+}
+
+.dateInputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.6rem;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.label {
+  font-size: 1.2rem;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+}
+
+.input {
+  padding: 0.8rem 1.2rem;
+  border: 1px solid $color-gray-200;
+  border-radius: 0.6rem;
+  font-size: 1.3rem;
+  color: $color-text-secondary;
+  background-color: $color-white;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+
+  &:hover {
+    border-color: $color-gray-300;
+  }
+}

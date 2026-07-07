@@ -1,0 +1,70 @@
+@import '@/shared/styles/colors';
+@import '@/shared/styles/typography';
+
+.toast {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.6rem;
+  border-radius: 0.8rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 40rem;
+  min-width: 25rem;
+  animation: slideIn 0.3s ease-out;
+}
+
+.success {
+  background-color: #10b981;
+  color: $color-white;
+}
+
+.error {
+  background-color: #ef4444;
+  color: $color-white;
+}
+
+.info {
+  background-color: $color-primary;
+  color: $color-white;
+}
+
+.message {
+  flex: 1;
+  font-size: $font-size-sm;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
