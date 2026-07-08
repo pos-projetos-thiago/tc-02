@@ -190,8 +190,9 @@ export function IntelligentDocumentUploader({
         if (t.category === 'investment') {
           const investmentType = (t as { investmentType?: string }).investmentType;
           if (investmentType === 'Bolsa') mappedType = 'investment-bolsa';
-          else if (investmentType === 'Renda Fixa') mappedType = 'investment-tesouro-direto';
+          else if (investmentType === 'Renda Fixa' || investmentType === 'Tesouro') mappedType = 'investment-tesouro-direto';
           else if (investmentType === 'Fundos') mappedType = 'investment-fundos';
+          else if (investmentType === 'Previdencia' || investmentType === 'Previdência') mappedType = 'investment-previdencia';
           else mappedType = 'investment';
         } else if (t.type === 'income') {
           mappedType = 'deposit';

@@ -434,14 +434,22 @@ async function analyzeWithSimpleRegex(
       console.log('- Valor numérico:', amount);
       
       if (!isNaN(amount) && amount > 0) {
+        // Usar a linha inteira para detectar o destino (o padrão 1 captura só "investir 10")
+        const lineStart = match.index <= 0 ? 0 : text.lastIndexOf('\n', match.index - 1) + 1;
+        const lineEnd = text.indexOf('\n', match.index);
+        const lineContext = text
+          .substring(lineStart, lineEnd === -1 ? text.length : lineEnd)
+          .toLowerCase();
+
         let investmentType = 'Bolsa';
-        
-        // Detectar tipo de investimento
-        if (fullMatch.includes('bolsa') || action.includes('bolsa')) investmentType = 'Bolsa';
-        else if (fullMatch.includes('renda') || action.includes('renda')) investmentType = 'Renda Fixa';
-        else if (fullMatch.includes('fundo') || action.includes('fundo')) investmentType = 'Fundos';
-        else if (fullMatch.includes('tesouro') || action.includes('tesouro')) investmentType = 'Tesouro';
-        else if (fullMatch.includes('poupança') || action.includes('poupança')) investmentType = 'Poupança';
+
+        // Detectar tipo de investimento a partir da linha completa
+        if (lineContext.includes('bolsa') || fullMatch.includes('bolsa') || action.includes('bolsa')) investmentType = 'Bolsa';
+        else if (lineContext.includes('previdencia') || lineContext.includes('previdência')) investmentType = 'Previdencia';
+        else if (lineContext.includes('fundo') || fullMatch.includes('fundo') || action.includes('fundo')) investmentType = 'Fundos';
+        else if (lineContext.includes('tesouro') || fullMatch.includes('tesouro') || action.includes('tesouro')) investmentType = 'Tesouro';
+        else if (lineContext.includes('renda') || fullMatch.includes('renda') || action.includes('renda')) investmentType = 'Renda Fixa';
+        else if (lineContext.includes('poupança') || fullMatch.includes('poupança') || action.includes('poupança')) investmentType = 'Poupança';
         
         console.log('- Tipo de investimento:', investmentType);
         
