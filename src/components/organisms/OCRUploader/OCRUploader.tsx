@@ -160,6 +160,7 @@ export function OCRUploader({
           multiple={multiple}
           accept="image/jpeg,image/jpg,image/png,image/webp"
           onChange={handleChange}
+          aria-label={multiple ? 'Selecionar imagens para análise OCR' : 'Selecionar imagem para análise OCR'}
         />
 
         {isProcessing ? (
@@ -195,7 +196,7 @@ export function OCRUploader({
         <div className={styles.results}>
           <div className={styles.resultsHeader}>
             <h4>Resultados do OCR</h4>
-            <button onClick={clearResults} className={styles.clearButton}>
+            <button type="button" onClick={clearResults} className={styles.clearButton}>
               Limpar
             </button>
           </div>

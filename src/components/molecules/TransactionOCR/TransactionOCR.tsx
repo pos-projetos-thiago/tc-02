@@ -163,7 +163,7 @@ export function TransactionOCR({
         <div className={styles.detectedTransaction}>
           <div className={styles.transactionHeader}>
             <h4>✨ Dados Detectados</h4>
-            <button onClick={clearTransaction} className={styles.clearButton}>
+            <button type="button" onClick={clearTransaction} className={styles.clearButton}>
               Limpar
             </button>
           </div>

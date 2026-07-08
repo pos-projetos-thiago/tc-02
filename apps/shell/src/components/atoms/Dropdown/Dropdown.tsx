@@ -86,17 +86,19 @@ export const Dropdown = ({
 
       {isOpen && (
         <div className={styles.menu} role="listbox">
-          <div
+          <button
+            type="button"
             className={`${styles.option} ${currentValue === '' ? styles.selected : ''}`}
             onClick={() => handleSelect('')}
             role="option"
             aria-selected={currentValue === ''}
           >
             {placeholder}
-          </div>
+          </button>
 
           {options.map((option) => (
-            <div
+            <button
+              type="button"
               key={option.value}
               className={`${styles.option} ${currentValue === option.value ? styles.selected : ''}`}
               onClick={() => handleSelect(option.value)}
@@ -104,7 +106,7 @@ export const Dropdown = ({
               aria-selected={currentValue === option.value}
             >
               {option.label}
-            </div>
+            </button>
           ))}
         </div>
       )}

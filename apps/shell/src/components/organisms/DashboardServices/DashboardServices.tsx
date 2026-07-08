@@ -281,8 +281,8 @@ export const DashboardServices = ({ userName = 'Usuário' }: DashboardServicesPr
                     </div>
                   </div>
                   <div className={styles['card-actions-side']}>
-                    <button className={styles['btn-configure']}>Configurar</button>
-                    <button className={styles['btn-block']}>Bloquear</button>
+                    <button type="button" className={styles['btn-configure']}>Configurar</button>
+                    <button type="button" className={styles['btn-block']}>Bloquear</button>
                     <p className={styles['card-function']}>Função: Débito/Crédito</p>
                   </div>
                 </div>

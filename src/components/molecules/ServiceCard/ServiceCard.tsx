@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import type { KeyboardEvent } from 'react';
 import styles from './ServiceCard.module.scss';
 
 export interface ServiceCardProps {
@@ -11,12 +12,21 @@ export interface ServiceCardProps {
 }
 
 export const ServiceCard = ({ title, description, icon, onClick }: ServiceCardProps) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (!onClick) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <article
       className={styles['service-card']}
       onClick={onClick}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? handleKeyDown : undefined}
     >
       <div className={styles['service-icon']}>
         <Image 
