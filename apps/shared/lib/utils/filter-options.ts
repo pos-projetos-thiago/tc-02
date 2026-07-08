@@ -6,7 +6,6 @@ export interface FilterOption {
 export const TRANSACTION_TYPE_FILTER_OPTIONS: FilterOption[] = [
   { value: 'deposit', label: 'Depósito' },
   { value: 'withdrawal', label: 'Saque' },
-  { value: 'transfer', label: 'Transferência' },
   { value: 'investment', label: 'Investimentos' },
 ];
 
