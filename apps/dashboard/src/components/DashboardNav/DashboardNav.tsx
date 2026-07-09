@@ -26,6 +26,7 @@ export const DashboardNav = ({ activeSection, onSectionChange }: DashboardNavPro
         {sections.map(section => (
           <li key={section.key}>
             <button
+              type="button"
               className={`${styles.menuItem} ${activeSection === section.key ? styles.active : ''}`}
               onClick={() => onSectionChange(section.key)}
             >

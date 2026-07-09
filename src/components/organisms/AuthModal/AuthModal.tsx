@@ -55,7 +55,6 @@ const AUTH_CONFIG = {
     imageAlt: 'Ilustração login',
     submitLabel: 'Acessar',
     buttonVariant: 'primary' as const,
-    forgotPasswordText: 'Esqueci a senha!',
     inputs: [
       {
         type: 'email' as const,
@@ -232,16 +231,7 @@ export const AuthModal = ({ isOpen, onClose, variant }: AuthModalProps) => {
                       }
                     />
                   )}
-                  {'forgotPasswordText' in config &&
-                    index === config.inputs.length - 1 && (
-                      <button
-                        type="button"
-                        className={styles["forgot-password"]}
-                        onClick={() => setError('Fluxo de recuperação de senha não está disponível nesta demonstração.')}
-                      >
-                        {config.forgotPasswordText}
-                      </button>
-                    )}
+
                 </div>
               );
             })}

@@ -44,9 +44,7 @@ export const useFilters = (transactions: Transaction[] = []) => {
     if (filters.type.length > 0) {
       result = result.filter(transaction => {
         if (transaction.type === 'investment') {
-          // Para investimentos, verificar subtipo ou investmentType
-          const investmentType = transaction.investmentType || transaction.subtype || 'investment';
-          return filters.type.includes(investmentType);
+          return filters.type.includes('investment');
         }
         return filters.type.includes(transaction.type);
       });
@@ -81,12 +79,12 @@ export const useFilters = (transactions: Transaction[] = []) => {
       });
     }
 
-    // Filtro por tipos de investimento
+    // Filtro por categorias de investimento
     if (filters.investmentTypes.length > 0 && filters.type.includes('investment')) {
       result = result.filter(transaction => {
-        if (transaction.type !== 'investment') return true;
-        const investmentType = transaction.investmentType || transaction.subtype;
-        return investmentType && filters.investmentTypes.includes(investmentType);
+        if (transaction.type !== 'investment') return false;
+        const investmentType = transaction.investmentType;
+        return investmentType != null && filters.investmentTypes.includes(investmentType);
       });
     }
 

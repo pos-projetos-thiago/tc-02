@@ -3,11 +3,11 @@ import { DashboardProvider } from '@/contexts/DashboardContextJWT';
 import { DashboardServices } from '@/components/organisms/DashboardServices/DashboardServices';
 
 // Mock simples
-jest.mock('@/hooks/useSupabaseAuth', () => ({
-  useSupabaseAuth: () => ({
-    user: { user_metadata: { full_name: 'João Silva' } },
-    loading: false,
-    signOut: jest.fn(),
+jest.mock('@/hooks/useJWTAuth', () => ({
+  useAuth: () => ({
+    user: { username: 'João Silva', email: 'joao@exemplo.com' },
+    isLoading: false,
+    token: 'mock-token',
   }),
 }));
 

@@ -190,8 +190,9 @@ export function IntelligentDocumentUploader({
         if (t.category === 'investment') {
           const investmentType = (t as { investmentType?: string }).investmentType;
           if (investmentType === 'Bolsa') mappedType = 'investment-bolsa';
-          else if (investmentType === 'Renda Fixa') mappedType = 'investment-tesouro-direto';
+          else if (investmentType === 'Renda Fixa' || investmentType === 'Tesouro') mappedType = 'investment-tesouro-direto';
           else if (investmentType === 'Fundos') mappedType = 'investment-fundos';
+          else if (investmentType === 'Previdencia' || investmentType === 'Previdência') mappedType = 'investment-previdencia';
           else mappedType = 'investment';
         } else if (t.type === 'income') {
           mappedType = 'deposit';
@@ -310,9 +311,9 @@ export function IntelligentDocumentUploader({
           multiple={multiple}
           accept=".pdf,.txt,.csv,.xlsx,.xls"
           onChange={handleChange}
+          aria-label={multiple ? 'Selecionar documentos financeiros' : 'Selecionar documento financeiro'}
           onClick={(e) => {
             e.stopPropagation();
-            // Permite o clique normal do input
           }}
         />
 
@@ -342,7 +343,7 @@ export function IntelligentDocumentUploader({
         <div className={styles.results}>
           <div className={styles.resultsHeader}>
             <h4>Documentos Processados</h4>
-            <button onClick={clearResults} className={styles.clearButton}>
+            <button type="button" onClick={clearResults} className={styles.clearButton}>
               Limpar
             </button>
           </div>

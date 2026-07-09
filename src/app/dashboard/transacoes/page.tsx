@@ -423,7 +423,6 @@ function TransacoesContent() {
                   <option value="">Selecione o tipo</option>
                   <option value="deposit">Depósito</option>
                   <option value="withdrawal">Saque</option>
-                  <option value="transfer">Transferência</option>
                   <option value="investment-fundos">Fundos de investimento</option>
                   <option value="investment-tesouro-direto">Tesouro Direto</option>
                   <option value="investment-previdencia">Previdência Privada</option>

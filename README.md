@@ -261,8 +261,6 @@ yarn build             # Build do shell
 yarn lint              # Verificar código
 ```
 
----
-
 ## Endpoints da API
 
 Backend rodando em **http://localhost:4000**

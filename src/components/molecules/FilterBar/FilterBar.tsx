@@ -4,6 +4,10 @@ import React, { useState, useRef } from 'react';
 import { Button } from '@/components/atoms/Button/Button';
 import { DateRangePicker } from '@/components/atoms/DateRangePicker';
 import { useFilterContext } from '@/contexts/FilterContext';
+import {
+  TRANSACTION_TYPE_FILTER_OPTIONS,
+  getCategoryFilterOptions,
+} from '@/lib/utils/filter-options';
 import styles from './FilterBar.module.scss';
 
 interface FilterBarProps {
@@ -15,19 +19,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ className = '' }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const transactionTypes = [
-    { value: 'deposit', label: 'Depósito' },
-    { value: 'withdrawal', label: 'Saque' },
-    { value: 'transfer', label: 'Transferência' },
-    { value: 'investment', label: 'Investimentos' },
-  ];
-
-  const investmentTypes = [
-    { value: 'fundos', label: 'Fundos' },
-    { value: 'tesouro', label: 'Tesouro' },
-    { value: 'previdencia', label: 'Previdência' },
-    { value: 'bolsa', label: 'Bolsa' },
-  ];
+  const categoryFilterOptions = getCategoryFilterOptions(filters.type);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateFilter('search', e.target.value);
@@ -38,6 +30,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({ className = '' }) => {
       ? [...filters.type, type]
       : filters.type.filter(t => t !== type);
     updateFilter('type', newTypes);
+
+    if (type === 'investment' && !checked) {
+      updateFilter('investmentTypes', []);
+    }
   };
 
   const handleInvestmentTypeChange = (type: string, checked: boolean) => {
@@ -107,7 +103,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ className = '' }) => {
           <div className={styles.filterGroup}>
             <h4 className={styles.filterTitle}>Tipo de Transação</h4>
             <div className={styles.checkboxGrid}>
-              {transactionTypes.map(type => (
+              {TRANSACTION_TYPE_FILTER_OPTIONS.map(type => (
                 <label key={type.value} className={styles.checkboxLabel}>
                   <input
                     type="checkbox"
@@ -121,11 +117,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({ className = '' }) => {
             </div>
           </div>
 
-          {filters.type.includes('investment') && (
+          {categoryFilterOptions.length > 0 && (
             <div className={styles.filterGroup}>
-              <h4 className={styles.filterTitle}>Tipos de Investimento</h4>
+              <h4 className={styles.filterTitle}>Categorias de Investimento</h4>
               <div className={styles.checkboxGrid}>
-                {investmentTypes.map(type => (
+                {categoryFilterOptions.map(type => (
                   <label key={type.value} className={styles.checkboxLabel}>
                     <input
                       type="checkbox"

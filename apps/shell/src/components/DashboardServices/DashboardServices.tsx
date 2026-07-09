@@ -375,10 +375,10 @@ export const DashboardServices = ({ services = defaultServices, userName = "Usu√
                   </div>
                   
                   <div className={styles['card-actions-side']}>
-                    <button className={styles['btn-configure']}>
+                    <button type="button" className={styles['btn-configure']}>
                       Configurar
                     </button>
-                    <button className={styles['btn-block']}>
+                    <button type="button" className={styles['btn-block']}>
                       Bloquear
                     </button>
                     <p className={styles['card-function']}>

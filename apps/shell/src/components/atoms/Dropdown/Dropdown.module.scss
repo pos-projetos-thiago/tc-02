@@ -41,8 +41,9 @@
     box-shadow: 0 3px 12px rgba(0, 77, 97, 0.1);
   }
 
-  &:focus {
-    outline: none;
+  &:focus-visible {
+    outline: 0.2rem solid #47A138;
+    outline-offset: 0.2rem;
     border-color: $color-primary;
     box-shadow: 0 0 0 2px rgba(0, 77, 97, 0.15);
   }
@@ -96,6 +97,11 @@
 }
 
 .option {
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  font-family: inherit;
   padding: 14px 18px;
   color: $color-text-secondary;
   font-size: 17px;

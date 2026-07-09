@@ -39,3 +39,14 @@ button {
   border: none;
   background: none;
 }
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex="0"]:focus-visible,
+[role="button"]:focus-visible {
+  outline: 0.2rem solid #47A138;
+  outline-offset: 0.2rem;
+}

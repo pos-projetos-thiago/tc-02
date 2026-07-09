@@ -104,6 +104,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
             return (
               <button
+                type="button"
                 key={page}
                 onClick={() => onPageChange(page)}
                 className={`${styles.pageButton} ${
