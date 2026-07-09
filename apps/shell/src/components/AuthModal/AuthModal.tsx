@@ -51,7 +51,6 @@ const AUTH_CONFIG = {
     imageAlt: 'Ilustração login',
     submitLabel: 'Acessar',
     buttonVariant: 'primary' as const,
-    forgotPasswordText: 'Esqueci a senha!',
     inputs: [
       {
         type: 'email' as const,
@@ -227,20 +226,7 @@ export function AuthModal({ isOpen, onClose, variant }: AuthModalProps) {
                       required
                     />
                   )}
-                  {'forgotPasswordText' in config &&
-                    index === config.inputs.length - 1 && (
-                      <button
-                        type="button"
-                        className={styles["forgot-password"]}
-                        disabled={isLoading}
-                        onClick={() => {
-                          // Aqui você pode implementar esqueci senha depois
-                          alert('Funcionalidade "Esqueci a senha" será implementada em breve!');
-                        }}
-                      >
-                        {config.forgotPasswordText}
-                      </button>
-                    )}
+
                 </div>
               );
             })}
