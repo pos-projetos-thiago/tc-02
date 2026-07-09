@@ -19,10 +19,10 @@ interface AuthContextType {
 }
 
 // API Base URL
-const API_BASE_URL = 'http://localhost:4000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 
 // ✅ FIX: Removido singleton backendAvailable e fallback demo-mode.
-// O login SEMPRE usa o backend real em http://localhost:4000.
+// O login SEMPRE usa o backend real.
 // Token demo não é aceito pela API e causava 401 em /account.
 
 // Auth Context
@@ -78,7 +78,7 @@ export function useJWTAuth(): AuthContextType {
     return response.json();
   };
 
-  // Login function — usa SEMPRE o backend real (http://localhost:4000)
+  // Login function — usa SEMPRE o backend real
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
@@ -119,7 +119,7 @@ export function useJWTAuth(): AuthContextType {
     }
   };
 
-  // Signup function — usa SEMPRE o backend real (http://localhost:4000)
+  // Signup function — usa SEMPRE o backend real
   const signup = async (username: string, email: string, password: string) => {
     try {
       setIsLoading(true);
