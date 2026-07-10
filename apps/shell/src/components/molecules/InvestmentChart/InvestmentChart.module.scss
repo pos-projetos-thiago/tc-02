@@ -53,4 +53,16 @@
     max-width: 200px;
     line-height: 1.3;
   }
+
+  @include mobile {
+    padding: 1rem;
+
+    p {
+      font-size: 1.3rem;
+    }
+
+    span {
+      font-size: 1.1rem;
+    }
+  }
 }

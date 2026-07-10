@@ -60,13 +60,18 @@ export const InvestmentChart = ({ transactions }: InvestmentChartProps) => {
       {} as Record<string, number>
     );
 
+    const colors = Object.keys(data).map(
+      (k) => INVESTMENT_COLORS[k as keyof typeof INVESTMENT_COLORS]
+    );
+
     return {
       labels: Object.keys(data).map((k) => INVESTMENT_LABELS[k as keyof typeof INVESTMENT_LABELS]),
       datasets: [{
         data: Object.values(data),
-        backgroundColor: Object.keys(data).map((k) => INVESTMENT_COLORS[k as keyof typeof INVESTMENT_COLORS]),
-        borderColor: Object.keys(data).map((k) => INVESTMENT_COLORS[k as keyof typeof INVESTMENT_COLORS]),
+        backgroundColor: colors,
+        borderColor: colors,
         borderWidth: 1,
+        hoverBorderWidth: 2,
         hoverOffset: 8,
       }],
     };
@@ -80,6 +85,7 @@ export const InvestmentChart = ({ transactions }: InvestmentChartProps) => {
       plugins: {
         legend: {
           position: isNarrow ? ('bottom' as const) : ('right' as const),
+          align: 'center' as const,
           labels: {
             padding: isNarrow ? 12 : 8,
             usePointStyle: true,
@@ -87,6 +93,7 @@ export const InvestmentChart = ({ transactions }: InvestmentChartProps) => {
             font: { size: isNarrow ? 11 : 13, family: 'inherit', weight: 'normal' as const },
             color: '#ffffff',
             boxWidth: isNarrow ? 10 : 12,
+            boxHeight: isNarrow ? 10 : 12,
           },
         },
         tooltip: {
@@ -96,9 +103,29 @@ export const InvestmentChart = ({ transactions }: InvestmentChartProps) => {
               return `${context.label}: ${formatted}`;
             },
           },
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleFont: {
+            size: 14,
+            weight: 'bold' as const,
+          },
+          bodyFont: {
+            size: 13,
+          },
+          cornerRadius: 8,
+          padding: 12,
         },
       },
+      layout: {
+        padding: isNarrow
+          ? { top: 4, bottom: 4, left: 2, right: 2 }
+          : { top: 10, bottom: 10, left: 10, right: 10 },
+      },
       cutout: isNarrow ? '58%' : '65%',
+      elements: {
+        arc: {
+          borderRadius: 6,
+        },
+      },
     };
   }, [isMobile]);
 
