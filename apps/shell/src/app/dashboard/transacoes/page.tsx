@@ -383,14 +383,11 @@ function TransacoesContent() {
                   className={styles.select}
                 >
                   <option value="">Selecione o tipo</option>
-                  <option value="deposit">Depósito</option>
                   <option value="withdrawal">Saque</option>
                   <option value="investment-fundos">Fundos de investimento</option>
                   <option value="investment-tesouro-direto">Tesouro Direto</option>
                   <option value="investment-previdencia">Previdência Privada</option>
                   <option value="investment-bolsa">Bolsa de Valores</option>
-                  <option value="investment-renda-fixa">Investimento - Renda Fixa</option>
-                  <option value="investment-renda-variavel">Investimento - Renda Variável</option>
                 </select>
               </div>
 
