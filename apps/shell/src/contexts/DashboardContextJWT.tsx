@@ -231,34 +231,50 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     }
   }, [account, loadAccountData, balance]);
 
-  // Edit transaction - calls API to update
+  // Edit transaction - calls API to update (PUT /account/transaction/:id)
   const editTransaction = useCallback(async (id: string, updates: Partial<Transaction>) => {
     if (!account) throw new Error('No account loaded');
-    
+
     try {
       setIsLoading(true);
-      
-      // Convert UI updates to API format
-      const apiUpdates: Record<string, unknown> = {};
-      if (updates.amount !== undefined) {
-        // Determine if it should be positive or negative based on transaction type
-        const transaction = transactions.find(t => t.id === id);
-        if (transaction?.type === 'deposit') {
-          apiUpdates.value = updates.amount;
-        } else {
-          apiUpdates.value = -Math.abs(updates.amount);
-        }
-      }
+
+      // Resolve the effective type: use the incoming update or fall back to the
+      // current transaction's type so we always know Credit vs Debit.
+      const currentTransaction = transactions.find(t => t.id === id);
+      const effectiveUIType = updates.type ?? currentTransaction?.type ?? 'deposit';
+
+      // Convert UI type to API type + description (same mapping used in addTransaction)
+      const { type: apiType, description } = convertUITypeToAPI(
+        // For investments with a specific sub-type keep the full key (e.g. "investment-bolsa")
+        updates.investmentType
+          ? `investment-${updates.investmentType}`
+          : effectiveUIType
+      );
+
+      const apiUpdates: Record<string, unknown> = {
+        // Always send type so the API record is fully updated
+        type: apiType,
+        from: description,
+      };
+
+      // Override description if explicitly provided
       if (updates.description !== undefined) {
         apiUpdates.from = updates.description;
       }
-      
-      // Call API to update
+
+      // Always send value with the correct sign for the resolved type
+      if (updates.amount !== undefined) {
+        apiUpdates.value = apiType === 'Credit'
+          ? Math.abs(updates.amount)
+          : -Math.abs(updates.amount);
+      }
+
+      // PUT /account/transaction/:id — never calls POST
       await updateTransactionAPI(id, apiUpdates);
-      
-      // Reload account data to get updated transactions
+
+      // Reload to reflect the updated data in the UI
       await loadAccountData();
-      
+
     } catch (error) {
       console.error('Error updating transaction:', error);
       throw error;
