@@ -21,6 +21,8 @@ interface TransactionFormData {
   amount: number;
   description?: string;
   date?: string;
+  /** Tipo composto para investimentos, ex: "investment-fundos" */
+  _compositeType?: string;
 }
 
 export default function OCRTransacoesPage() {
@@ -39,19 +41,60 @@ export default function OCRTransacoesPage() {
     setError(null);
     
     // Mapeia os dados do OCR para o formato esperado
-    const data = transactionData as { type?: string; amount?: number; description?: string; merchant?: string; date?: string };
-    
-    // Valida e converte o tipo para o formato correto
-    const validType = (data.type && ['deposit', 'withdrawal', 'transfer', 'investment'].includes(data.type)) 
-      ? data.type as 'deposit' | 'withdrawal' | 'transfer' | 'investment'
-      : 'transfer';
+    const data = transactionData as {
+      type?: string;
+      amount?: number;
+      description?: string;
+      merchant?: string;
+      date?: string;
+      investmentType?: string;
+      category?: string;
+    };
+
+    // Converte o tipo vindo do OCR/document-processor para o formato do contexto.
+    // O document-processor usa 'income' | 'expense' | 'transfer';
+    // o contexto usa 'deposit' | 'withdrawal' | 'transfer' | 'investment'.
+    const mapType = (raw?: string): 'deposit' | 'withdrawal' | 'transfer' | 'investment' => {
+      if (!raw) return 'transfer';
+      if (raw === 'income') return 'deposit';
+      if (raw === 'expense') {
+        // Se a categoria ou investmentType indicar investimento, mapear corretamente
+        if (data.category === 'investment' || data.investmentType) return 'investment';
+        return 'withdrawal';
+      }
+      if (['deposit', 'withdrawal', 'transfer', 'investment'].includes(raw)) {
+        return raw as 'deposit' | 'withdrawal' | 'transfer' | 'investment';
+      }
+      return 'transfer';
+    };
+
+    // Para investimentos, montar o tipo composto (ex: "investment-fundos") que
+    // o addTransaction do contexto sabe decodificar.
+    const resolvedType = mapType(data.type);
+    let finalType: string = resolvedType;
+    if (resolvedType === 'investment' && data.investmentType) {
+      // Normalizar para os valores aceitos pelo contexto
+      const investMap: Record<string, string> = {
+        'Fundos': 'investment-fundos',
+        'Tesouro': 'investment-tesouro-direto',
+        'Tesouro Direto': 'investment-tesouro-direto',
+        'Previdencia': 'investment-previdencia',
+        'Previdência Privada': 'investment-previdencia',
+        'Previdência': 'investment-previdencia',
+        'Bolsa': 'investment-bolsa',
+        'Renda Fixa': 'investment-tesouro-direto',
+      };
+      finalType = investMap[data.investmentType] ?? 'investment-fundos';
+    }
 
     const formattedTransaction: TransactionFormData = {
-      type: validType,
+      type: resolvedType,
       amount: data.amount || 0,
       description: data.description || data.merchant || 'Transação via OCR',
-      date: data.date
-    };
+      date: data.date,
+      // Guarda o tipo composto para uso em createTransaction
+      _compositeType: finalType !== resolvedType ? finalType : undefined,
+    } as TransactionFormData & { _compositeType?: string };
 
     setDetectedTransaction(formattedTransaction);
   }, []);
@@ -73,8 +116,10 @@ export default function OCRTransacoesPage() {
     setError(null);
 
     try {
-      // A função addTransaction espera apenas (type: string, amount: number)
-      await addTransaction(detectedTransaction.type, detectedTransaction.amount);
+      // Usa o tipo composto quando disponível (ex: "investment-fundos"),
+      // caso contrário usa o tipo simples.
+      const typeToSubmit = detectedTransaction._compositeType ?? detectedTransaction.type;
+      await addTransaction(typeToSubmit, detectedTransaction.amount);
       
       setSuccess('Transação criada com sucesso!');
       setDetectedTransaction(null);

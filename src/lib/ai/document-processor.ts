@@ -4,10 +4,20 @@
  */
 
 import { generateText } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
 // import pdfParse from 'pdf-parse'; // Removed due to export issues
 import * as XLSX from 'xlsx';
+
+// OpenRouter client — compatible with the OpenAI SDK, gives access to many models
+const openrouter = createOpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY ?? '',
+  headers: {
+    'HTTP-Referer': 'https://bytebank.app',
+    'X-Title': 'ByteBank',
+  },
+});
 
 // Tipos para o sistema
 export interface DocumentAnalysisResult {
@@ -42,18 +52,12 @@ export interface DocumentSummary {
   mainCategories: string[];
 }
 
-// Configuração da IA (modelos gratuitos)
+// Configuração da IA — Gemini como fallback via google SDK
 const AI_PROVIDERS = {
-  // Google Gemini (gratuito - 15 req/min)
   gemini: {
     model: google('gemini-1.5-flash'),
     name: 'Google Gemini Flash'
   },
-  // Hugging Face (você já tem token)
-  huggingface: {
-    model: 'microsoft/DialoGPT-large', // Modelo gratuito
-    name: 'Hugging Face'
-  }
 };
 
 /**
@@ -181,14 +185,26 @@ async function extractFromText(file: File): Promise<string> {
 }
 
 /**
- * Analisa o documento usando IA (com múltiplos fallbacks gratuitos)
+ * Analisa o documento usando IA (OpenRouter → Gemini → regex como último recurso)
  */
 async function analyzeDocumentWithAI(
   text: string, 
   fileName: string
 ): Promise<Omit<DocumentAnalysisResult, 'rawText'>> {
   
-  // Tentar primeiro com Google Gemini (gratuito!)
+  // Primeira tentativa: OpenRouter (usa a chave configurada no .env.local)
+  if (process.env.OPENROUTER_API_KEY) {
+    try {
+      console.log('🤖 Tentando OpenRouter...');
+      return await analyzeWithOpenRouter(text, fileName);
+    } catch (error) {
+      console.log('❌ OpenRouter falhou:', error instanceof Error ? error.message : String(error));
+    }
+  } else {
+    console.log('⚠️ Chave do OpenRouter não configurada (OPENROUTER_API_KEY)');
+  }
+
+  // Segunda tentativa: Google Gemini (gratuito - 15 req/min)
   if (process.env.GOOGLE_GENERATIVE_AI_API_KEY && 
       process.env.GOOGLE_GENERATIVE_AI_API_KEY !== 'coloque_sua_chave_gemini_aqui') {
     try {
@@ -197,23 +213,109 @@ async function analyzeDocumentWithAI(
     } catch (error) {
       console.log('❌ Gemini falhou:', error instanceof Error ? error.message : String(error));
     }
-  } else {
-    console.log('Chave do Google Gemini não configurada');
   }
 
-  // Fallback 2: OpenAI (se disponível)
-  if (process.env.OPENAI_API_KEY) {
-    try {
-      console.log('🤖 Tentando OpenAI...');
-      return await analyzeWithOpenAI(text, fileName);
-    } catch (error) {
-      console.log('❌ OpenAI falhou:', error instanceof Error ? error.message : String(error));
-    }
-  }
-
-  // Fallback 3: Análise regex (sempre funciona)
-  console.log('Usando análise local (sem IA externa)');
+  // Último recurso: análise local por regex
+  console.log('⚠️ Usando análise local (sem IA externa) — configure OPENROUTER_API_KEY no .env.local');
   return await analyzeWithSimpleRegex(text, fileName);
+}
+
+/**
+ * Análise com OpenRouter
+ * Modelo padrão: google/gemini-flash-1.5 (gratuito no OpenRouter)
+ * Outros bons modelos gratuitos: meta-llama/llama-3.1-8b-instruct, mistralai/mistral-7b-instruct
+ */
+async function analyzeWithOpenRouter(text: string, fileName: string) {
+  const prompt = `Você é um assistente financeiro do ByteBank. Analise o texto abaixo e extraia transações financeiras.
+
+TEXTO:
+${text}
+
+REGRAS OBRIGATÓRIAS:
+1. Retorne APENAS JSON válido, sem texto extra, sem markdown, sem blocos de código.
+2. Para o campo "type" use EXATAMENTE um destes valores:
+   - "deposit"    → depósito, entrada de dinheiro, recebimento
+   - "withdrawal" → saque, retirada, pagamento de conta
+   - "transfer"   → transferência, PIX, TED, DOC
+   - "investment" → qualquer tipo de investimento
+3. Para o campo "investmentType" (obrigatório quando type=investment), use EXATAMENTE um destes valores:
+   - "investment-tesouro-direto"  → Tesouro Direto, tesouro, renda fixa
+   - "investment-previdencia"     → Previdência Privada, previdência, PGBL, VGBL
+   - "investment-fundos"          → Fundos de Investimento, fundos, fundo
+   - "investment-bolsa"           → Bolsa de Valores, ações, bolsa, renda variável
+4. O campo "amount" deve ser sempre positivo.
+5. Se não houver data explícita, use a data de hoje: ${new Date().toLocaleDateString('pt-BR')}.
+
+FORMATO DE RESPOSTA:
+{
+  "transactions": [
+    {
+      "amount": 50.00,
+      "type": "investment",
+      "investmentType": "investment-tesouro-direto",
+      "description": "Investimento no Tesouro Direto",
+      "date": "${new Date().toLocaleDateString('pt-BR')}",
+      "confidence": 95
+    }
+  ]
+}`;
+
+  const { text: aiResponse } = await generateText({
+    model: openrouter('google/gemini-flash-1.5'),
+    prompt,
+    temperature: 0.1,
+  });
+
+  console.log('🤖 OpenRouter response:', aiResponse.substring(0, 300));
+
+  // Extrair JSON da resposta (remove possível markdown residual)
+  const clean = aiResponse.trim().replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+  const jsonStart = clean.indexOf('{');
+  const jsonEnd = clean.lastIndexOf('}') + 1;
+
+  if (jsonStart === -1 || jsonEnd === 0) {
+    throw new Error('Resposta não contém JSON válido');
+  }
+
+  const parsed = JSON.parse(clean.substring(jsonStart, jsonEnd));
+  const transactions: FinancialTransaction[] = (parsed.transactions ?? []).map(
+    (t: {
+      amount?: number;
+      type?: string;
+      investmentType?: string;
+      description?: string;
+      date?: string;
+      confidence?: number;
+    }) => ({
+      date: t.date ?? new Date().toLocaleDateString('pt-BR'),
+      amount: Math.abs(t.amount ?? 0),
+      // O campo type vem como deposit/withdrawal/transfer/investment — mapear para income/expense/transfer
+      type: (t.type === 'deposit' ? 'income' : t.type === 'investment' || t.type === 'withdrawal' ? 'expense' : 'transfer') as 'income' | 'expense' | 'transfer',
+      description: t.description ?? 'Transação detectada pela IA',
+      category: t.type === 'investment' ? 'investment' : t.type,
+      investmentType: t.investmentType,
+      confidence: t.confidence ?? 90,
+    })
+  );
+
+  const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const today = new Date().toLocaleDateString('pt-BR');
+
+  return {
+    success: transactions.length > 0,
+    documentType: detectDocumentType(text, fileName),
+    confidence: transactions.length > 0 ? 92 : 20,
+    transactions,
+    summary: {
+      totalTransactions: transactions.length,
+      totalIncome,
+      totalExpenses,
+      dateRange: { start: today, end: today },
+      mainCategories: [...new Set(transactions.map(t => t.category).filter(Boolean))] as string[],
+    },
+    error: transactions.length === 0 ? 'Nenhuma transação encontrada no texto' : undefined,
+  };
 }
 
 /**
@@ -283,89 +385,6 @@ IMPORTANTE: Responda APENAS com JSON válido, sem texto adicional.
 }
 
 /**
- * Análise com OpenAI
- */
-async function analyzeWithOpenAI(text: string, fileName: string) {
-  const prompt = `
-Você é um especialista em análise de documentos financeiros. Analise o seguinte documento e extraia informações financeiras estruturadas.
-
-DOCUMENTO: ${fileName}
-CONTEÚDO:
-${text}
-
-Instruções:
-1. Identifique o tipo de documento (extrato, recibo, fatura, planilha, etc.)
-2. Extraia TODAS as transações financeiras encontradas
-3. Para cada transação, identifique:
-   - Data (formato dd/mm/yyyy)
-   - Valor (sempre positivo)
-   - Tipo (income/expense/transfer)
-   - Descrição
-   - Categoria (se possível)
-   - Estabelecimento/merchant (se aplicável)
-4. Calcule um resumo financeiro
-5. Avalie sua confiança na análise (0-100%)
-
-Responda APENAS com JSON válido neste formato exato:
-{
-  "success": true,
-  "documentType": "extract|receipt|invoice|statement|spreadsheet|unknown",
-  "confidence": 95,
-  "transactions": [
-    {
-      "date": "15/06/2026",
-      "amount": 150.50,
-      "type": "expense",
-      "description": "Compra no supermercado",
-      "category": "alimentacao",
-      "merchant": "Supermercado ABC",
-      "confidence": 90
-    }
-  ],
-  "summary": {
-    "totalTransactions": 1,
-    "totalIncome": 0,
-    "totalExpenses": 150.50,
-    "dateRange": {
-      "start": "15/06/2026",
-      "end": "15/06/2026"
-    },
-    "mainCategories": ["alimentacao"]
-  }
-}
-`;
-
-  const { text: aiResponse } = await generateText({
-    model: openai('gpt-3.5-turbo'),
-    prompt,
-    temperature: 0.1,
-  });
-
-  console.log('🤖 Resposta da IA:', aiResponse.substring(0, 200) + '...');
-
-  const cleanResponse = aiResponse.trim();
-  const jsonStart = cleanResponse.indexOf('{');
-  const jsonEnd = cleanResponse.lastIndexOf('}') + 1;
-  
-  if (jsonStart === -1 || jsonEnd === 0) {
-    throw new Error('Resposta da IA não contém JSON válido');
-  }
-
-  const jsonResponse = cleanResponse.substring(jsonStart, jsonEnd);
-  const analysis = JSON.parse(jsonResponse);
-
-  if (!analysis.transactions) {
-    analysis.transactions = [];
-  }
-  
-  if (!analysis.summary) {
-    analysis.summary = createEmptySummary();
-  }
-
-  return analysis;
-}
-
-/**
  * Análise simples com regex (sempre funciona)
  */
 async function analyzeWithSimpleRegex(
@@ -380,12 +399,12 @@ async function analyzeWithSimpleRegex(
   const patterns = {
     // Investimentos: múltiplos padrões
     investments: [
-      // Padrão 1: "investir R$10" ou "aplicar R$20"
-      /(investir|aplicar)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
+      // Padrão 1: "investir R$10" ou "aplicar R$20" (tipo pode vir antes ou depois do valor)
+      /(investir|aplicar|invista)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
       // Padrão 2: "colocar R$10 para investir na bolsa"
       /colocar\s+r?\$?\s*(\d+(?:[.,]\d{2})?)\s+para\s+(investir|aplicar).*(bolsa|renda|fundo|tesouro|poupança|investimento)/gi,
       // Padrão 3: "investir na bolsa R$10"
-      /(investir|aplicar).*(bolsa|renda|fundo|tesouro|poupança|investimento)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
+      /(investir|aplicar|invista).*(bolsa|renda|fundo|tesouro|poupança|investimento)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
     ],
     
     // Transações normais: Depositar R$10,00 | Sacar R$2,00 | Pagar R$100 | etc
@@ -443,13 +462,15 @@ async function analyzeWithSimpleRegex(
 
         let investmentType = 'Bolsa';
 
-        // Detectar tipo de investimento a partir da linha completa
-        if (lineContext.includes('bolsa') || fullMatch.includes('bolsa') || action.includes('bolsa')) investmentType = 'Bolsa';
-        else if (lineContext.includes('previdencia') || lineContext.includes('previdência')) investmentType = 'Previdencia';
-        else if (lineContext.includes('fundo') || fullMatch.includes('fundo') || action.includes('fundo')) investmentType = 'Fundos';
-        else if (lineContext.includes('tesouro') || fullMatch.includes('tesouro') || action.includes('tesouro')) investmentType = 'Tesouro';
-        else if (lineContext.includes('renda') || fullMatch.includes('renda') || action.includes('renda')) investmentType = 'Renda Fixa';
-        else if (lineContext.includes('poupança') || fullMatch.includes('poupança') || action.includes('poupança')) investmentType = 'Poupança';
+        // Detectar tipo de investimento a partir da linha completa.
+        // A ordem importa: termos mais específicos primeiro.
+        const searchIn = (lineContext + ' ' + fullMatch).toLowerCase();
+        if (searchIn.includes('tesouro')) investmentType = 'Tesouro';
+        else if (searchIn.includes('previdencia') || searchIn.includes('previdência')) investmentType = 'Previdencia';
+        else if (searchIn.includes('fundo')) investmentType = 'Fundos';
+        else if (searchIn.includes('bolsa')) investmentType = 'Bolsa';
+        else if (searchIn.includes('renda')) investmentType = 'Renda Fixa';
+        else if (searchIn.includes('poupança')) investmentType = 'Poupança';
         
         console.log('- Tipo de investimento:', investmentType);
         
