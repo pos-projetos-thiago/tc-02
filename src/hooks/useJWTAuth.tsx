@@ -33,18 +33,23 @@ export function useJWTAuth(): AuthContextType {
   // Load token from localStorage on mount
   useEffect(() => {
     const initAuth = () => {
-      const savedToken = localStorage.getItem('auth_token');
-      const savedUser = localStorage.getItem('auth_user');
-      
-      if (savedToken && savedUser) {
-        setToken(savedToken);
-        try {
-          setUser(JSON.parse(savedUser));
-        } catch {
-          // Invalid saved data, clear it
-          localStorage.removeItem('auth_token');
-          localStorage.removeItem('auth_user');
+      try {
+        const savedToken = localStorage.getItem('auth_token');
+        const savedUser = localStorage.getItem('auth_user');
+        
+        if (savedToken && savedUser) {
+          setToken(savedToken);
+          try {
+            setUser(JSON.parse(savedUser));
+          } catch {
+            // Invalid saved data, clear it
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_user');
+          }
         }
+      } catch {
+        // localStorage is unavailable (e.g. Safari private mode blocks access)
+        console.warn('localStorage unavailable — session will not persist.');
       }
       
       setIsLoading(false);
@@ -103,8 +108,13 @@ export function useJWTAuth(): AuthContextType {
       // Save to state and localStorage
       setToken(authToken);
       setUser(userData);
-      localStorage.setItem('auth_token', authToken);
-      localStorage.setItem('auth_user', JSON.stringify(userData));
+      try {
+        localStorage.setItem('auth_token', authToken);
+        localStorage.setItem('auth_user', JSON.stringify(userData));
+      } catch {
+        // localStorage unavailable (e.g. Safari private mode) — session lives in memory only
+        console.warn('localStorage unavailable — session will not persist across reloads.');
+      }
 
     } catch (error) {
       console.error('Login error:', error);
@@ -146,14 +156,18 @@ export function useJWTAuth(): AuthContextType {
   const logout = () => {
     setUser(null);
     setToken(null);
-    // Limpar TODOS os dados de autenticação
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
-    localStorage.removeItem('temp_username');
-    // Limpar possíveis dados do Supabase ainda em cache
-    localStorage.removeItem('supabase.auth.token');
-    localStorage.removeItem('sb-auth-token');
-    sessionStorage.clear();
+    try {
+      // Limpar TODOS os dados de autenticação
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+      localStorage.removeItem('temp_username');
+      // Limpar possíveis dados do Supabase ainda em cache
+      localStorage.removeItem('supabase.auth.token');
+      localStorage.removeItem('sb-auth-token');
+      sessionStorage.clear();
+    } catch {
+      // localStorage unavailable — state already cleared above
+    }
   };
 
   return {
