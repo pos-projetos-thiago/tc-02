@@ -182,12 +182,24 @@ export function IntelligentDocumentUploader({
         let mappedType = 'transfer';
         
         if (t.category === 'investment') {
-          const investmentType = (t as { investmentType?: string }).investmentType;
-          if (investmentType === 'Bolsa') mappedType = 'investment-bolsa';
-          else if (investmentType === 'Renda Fixa' || investmentType === 'Tesouro') mappedType = 'investment-tesouro-direto';
-          else if (investmentType === 'Fundos') mappedType = 'investment-fundos';
-          else if (investmentType === 'Previdencia' || investmentType === 'Previdência') mappedType = 'investment-previdencia';
-          else mappedType = 'investment';
+          const investmentType = (t as { investmentType?: string }).investmentType ?? '';
+          
+          if (investmentType.startsWith('investment-')) {
+            // Formato novo — usa direto
+            mappedType = investmentType;
+          } else {
+            // Formato legado — converte
+            const legacyMap: Record<string, string> = {
+              'Bolsa': 'investment-bolsa',
+              'Tesouro': 'investment-tesouro-direto',
+              'Renda Fixa': 'investment-tesouro-direto',
+              'Fundos': 'investment-fundos',
+              'Previdencia': 'investment-previdencia',
+              'Previdência': 'investment-previdencia',
+              'Previdência Privada': 'investment-previdencia',
+            };
+            mappedType = legacyMap[investmentType] ?? 'investment-fundos';
+          }
         } else if (t.type === 'income') {
           mappedType = 'deposit';
         } else if (t.type === 'expense') {

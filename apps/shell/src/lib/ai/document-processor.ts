@@ -4,9 +4,19 @@
  */
 
 import { generateText } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
 import * as XLSX from 'xlsx';
+
+// OpenRouter client — compatible with the OpenAI SDK, gives access to many models
+const openrouter = createOpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY ?? '',
+  headers: {
+    'HTTP-Referer': 'https://bytebank.app',
+    'X-Title': 'ByteBank',
+  },
+});
 
 // Tipos para o sistema
 export interface DocumentAnalysisResult {
@@ -41,18 +51,12 @@ export interface DocumentSummary {
   mainCategories: string[];
 }
 
-// Configuração da IA (modelos gratuitos)
+// Configuração da IA — Gemini como fallback via google SDK
 const AI_PROVIDERS = {
-  // Google Gemini (gratuito - 15 req/min)
   gemini: {
     model: google('gemini-1.5-flash'),
     name: 'Google Gemini Flash'
   },
-  // Hugging Face (você já tem token)
-  huggingface: {
-    model: 'microsoft/DialoGPT-large', // Modelo gratuito
-    name: 'Hugging Face'
-  }
 };
 
 /**
@@ -63,10 +67,9 @@ export async function processFinancialDocument(
 ): Promise<DocumentAnalysisResult> {
   try {
     console.log(`Processando documento: ${file.name} (${file.type})`);
-    
-    // 1. Extrair texto do documento
+
     const extractedText = await extractTextFromFile(file);
-    
+
     if (!extractedText || extractedText.length < 10) {
       return {
         success: false,
@@ -78,16 +81,13 @@ export async function processFinancialDocument(
       };
     }
 
-    console.log(`Texto extraído: ${extractedText.length} caracteres`);
-
-    // 2. Usar IA para analisar o documento
     const analysis = await analyzeDocumentWithAI(extractedText, file.name);
-    
+
     return {
       ...analysis,
-      rawText: extractedText.substring(0, 1000) // Primeiro 1000 chars para debug
+      rawText: extractedText.substring(0, 1000)
     };
-    
+
   } catch (error) {
     console.error('Erro ao processar documento:', error);
     return {
@@ -101,9 +101,6 @@ export async function processFinancialDocument(
   }
 }
 
-/**
- * Extrai texto de diferentes tipos de arquivo
- */
 async function extractTextFromFile(file: File): Promise<string> {
   const fileType = file.type.toLowerCase();
   const fileName = file.name.toLowerCase();
@@ -112,518 +109,276 @@ async function extractTextFromFile(file: File): Promise<string> {
     if (fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
       return await extractFromPDF(file);
     }
-    
-    if (fileType.includes('spreadsheet') || 
-        fileType.includes('excel') || 
-        fileName.endsWith('.xlsx') || 
-        fileName.endsWith('.xls') ||
-        fileName.endsWith('.csv')) {
+    if (fileType.includes('spreadsheet') || fileType.includes('excel') ||
+        fileName.endsWith('.xlsx') || fileName.endsWith('.xls') || fileName.endsWith('.csv')) {
       return await extractFromSpreadsheet(file);
     }
-    
-    if (fileType.includes('text') || 
-        fileName.endsWith('.txt') ||
-        fileName.endsWith('.csv')) {
-      return await extractFromText(file);
-    }
-    
-    // Tentar como texto simples
     return await extractFromText(file);
-    
   } catch (error) {
     console.error('Erro na extração de texto:', error);
     throw new Error('Formato de arquivo não suportado ou corrompido');
   }
 }
 
-/**
- * Extrai texto de PDF
- */
 async function extractFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
-  
-  // Dynamic import to resolve module export issues
   const pdfParseModule = await import('pdf-parse');
-  // Handle both CommonJS and ESM exports
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pdfParse = (pdfParseModule as any).default || pdfParseModule;
-  
   const data = await pdfParse(buffer);
   return data.text;
 }
 
-/**
- * Extrai dados de planilhas (Excel/CSV)
- */
 async function extractFromSpreadsheet(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
   const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-  
   let extractedText = '';
-  
-  // Processa todas as abas
   workbook.SheetNames.forEach(sheetName => {
     const worksheet = workbook.Sheets[sheetName];
     const csvText = XLSX.utils.sheet_to_csv(worksheet);
     extractedText += `\n=== ${sheetName} ===\n${csvText}\n`;
   });
-  
   return extractedText;
 }
 
-/**
- * Extrai texto de arquivos de texto
- */
 async function extractFromText(file: File): Promise<string> {
   return await file.text();
 }
 
 /**
- * Analisa o documento usando IA (com múltiplos fallbacks gratuitos)
+ * Analisa o documento usando IA (OpenRouter → Gemini → regex como último recurso)
  */
 async function analyzeDocumentWithAI(
-  text: string, 
+  text: string,
   fileName: string
 ): Promise<Omit<DocumentAnalysisResult, 'rawText'>> {
-  
-  // Tentar primeiro com Google Gemini (gratuito!)
-  if (process.env.GOOGLE_GENERATIVE_AI_API_KEY && 
+
+  if (process.env.OPENROUTER_API_KEY) {
+    try {
+      console.log('🤖 Tentando OpenRouter...');
+      return await analyzeWithOpenRouter(text, fileName);
+    } catch (error) {
+      console.log('❌ OpenRouter falhou:', error instanceof Error ? error.message : String(error));
+    }
+  }
+
+  if (process.env.GOOGLE_GENERATIVE_AI_API_KEY &&
       process.env.GOOGLE_GENERATIVE_AI_API_KEY !== 'coloque_sua_chave_gemini_aqui') {
     try {
-      console.log('🤖 Tentando Google Gemini (gratuito)...');
+      console.log('🤖 Tentando Google Gemini...');
       return await analyzeWithGemini(text, fileName);
     } catch (error) {
       console.log('❌ Gemini falhou:', error instanceof Error ? error.message : String(error));
     }
-  } else {
-    console.log('Chave do Google Gemini não configurada');
   }
 
-  // Fallback 2: OpenAI (se disponível)
-  if (process.env.OPENAI_API_KEY) {
-    try {
-      console.log('🤖 Tentando OpenAI...');
-      return await analyzeWithOpenAI(text, fileName);
-    } catch (error) {
-      console.log('❌ OpenAI falhou:', error instanceof Error ? error.message : String(error));
-    }
-  }
-
-  // Fallback 3: Análise regex (sempre funciona)
-  console.log('Usando análise local (sem IA externa)');
+  console.log('⚠️ Usando análise local (sem IA externa)');
   return await analyzeWithSimpleRegex(text, fileName);
 }
 
-/**
- * Análise com Google Gemini (GRATUITO!)
- */
-async function analyzeWithGemini(text: string, fileName: string) {
-  const prompt = `
-Analise este documento financeiro e extraia dados estruturados.
+async function analyzeWithOpenRouter(text: string, fileName: string) {
+  const today = new Date().toLocaleDateString('pt-BR');
+  const prompt = `Você é um assistente financeiro do ByteBank. Analise o texto abaixo e extraia transações financeiras.
 
-ARQUIVO: ${fileName}
 TEXTO:
 ${text}
 
-Encontre TODAS as transações financeiras e retorne APENAS JSON válido:
+REGRAS OBRIGATÓRIAS:
+1. Retorne APENAS JSON válido, sem texto extra, sem markdown, sem blocos de código.
+2. Para o campo "type" use EXATAMENTE um destes valores:
+   - "deposit"    → depósito, entrada de dinheiro, recebimento
+   - "withdrawal" → saque, retirada, pagamento de conta
+   - "transfer"   → transferência, PIX, TED, DOC
+   - "investment" → qualquer tipo de investimento
+3. Para o campo "investmentType" (obrigatório quando type=investment), use EXATAMENTE um destes valores:
+   - "investment-tesouro-direto"  → Tesouro Direto, tesouro, renda fixa
+   - "investment-previdencia"     → Previdência Privada, previdência, PGBL, VGBL
+   - "investment-fundos"          → Fundos de Investimento, fundos, fundo
+   - "investment-bolsa"           → Bolsa de Valores, ações, bolsa, renda variável
+4. O campo "amount" deve ser sempre positivo.
+5. Se não houver data explícita, use a data de hoje: ${today}.
 
-{
-  "success": true,
-  "documentType": "extract|receipt|invoice|statement|spreadsheet|unknown",
-  "confidence": 90,
-  "transactions": [
-    {
-      "date": "16/06/2026",
-      "amount": 10.50,
-      "type": "expense",
-      "description": "Descrição da transação",
-      "category": "categoria",
-      "confidence": 85
-    }
-  ],
-  "summary": {
-    "totalTransactions": 1,
-    "totalIncome": 0.00,
-    "totalExpenses": 10.50,
-    "dateRange": { "start": "16/06/2026", "end": "16/06/2026" },
-    "mainCategories": ["categoria"]
-  }
-}
+FORMATO DE RESPOSTA:
+{"transactions":[{"amount":50.00,"type":"investment","investmentType":"investment-tesouro-direto","description":"Investimento no Tesouro Direto","date":"${today}","confidence":95}]}`;
 
-IMPORTANTE: Responda APENAS com JSON válido, sem texto adicional.
-`;
-
-  const result = await generateText({
-    model: AI_PROVIDERS.gemini.model,
+  const { text: aiResponse } = await generateText({
+    model: openrouter('google/gemini-flash-1.5'),
     prompt,
     temperature: 0.1,
   });
 
-  console.log('🤖 Gemini response:', result.text.substring(0, 200));
+  const clean = aiResponse.trim().replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+  const jsonStart = clean.indexOf('{');
+  const jsonEnd = clean.lastIndexOf('}') + 1;
+  if (jsonStart === -1 || jsonEnd === 0) throw new Error('Resposta não contém JSON válido');
 
-  // Parse JSON da resposta
+  const parsed = JSON.parse(clean.substring(jsonStart, jsonEnd));
+  const transactions: FinancialTransaction[] = (parsed.transactions ?? []).map(
+    (t: { amount?: number; type?: string; investmentType?: string; description?: string; date?: string; confidence?: number }) => ({
+      date: t.date ?? today,
+      amount: Math.abs(t.amount ?? 0),
+      type: (t.type === 'deposit' ? 'income' : t.type === 'investment' || t.type === 'withdrawal' ? 'expense' : 'transfer') as 'income' | 'expense' | 'transfer',
+      description: t.description ?? 'Transação detectada pela IA',
+      category: t.type === 'investment' ? 'investment' : t.type,
+      investmentType: t.investmentType,
+      confidence: t.confidence ?? 90,
+    })
+  );
+
+  const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+
+  return {
+    success: transactions.length > 0,
+    documentType: detectDocumentType(text, fileName),
+    confidence: transactions.length > 0 ? 92 : 20,
+    transactions,
+    summary: {
+      totalTransactions: transactions.length,
+      totalIncome,
+      totalExpenses,
+      dateRange: { start: today, end: today },
+      mainCategories: [...new Set(transactions.map(t => t.category).filter(Boolean))] as string[],
+    },
+    error: transactions.length === 0 ? 'Nenhuma transação encontrada no texto' : undefined,
+  };
+}
+
+async function analyzeWithGemini(text: string, fileName: string) {
+  const prompt = `Analise este documento financeiro e extraia dados estruturados.
+ARQUIVO: ${fileName}
+TEXTO: ${text}
+Retorne APENAS JSON válido com as transações encontradas.`;
+
+  const result = await generateText({ model: AI_PROVIDERS.gemini.model, prompt, temperature: 0.1 });
   const cleanResponse = result.text.trim();
   const jsonStart = cleanResponse.indexOf('{');
   const jsonEnd = cleanResponse.lastIndexOf('}') + 1;
-  
-  if (jsonStart === -1 || jsonEnd === 0) {
-    throw new Error('Resposta não contém JSON válido');
-  }
+  if (jsonStart === -1 || jsonEnd === 0) throw new Error('Resposta não contém JSON válido');
 
-  const jsonResponse = cleanResponse.substring(jsonStart, jsonEnd);
-  const analysis = JSON.parse(jsonResponse);
-
-  // Validações
+  const analysis = JSON.parse(cleanResponse.substring(jsonStart, jsonEnd));
   if (!analysis.transactions) analysis.transactions = [];
   if (!analysis.summary) analysis.summary = createEmptySummary();
-
   return analysis;
 }
 
 /**
- * Análise com OpenAI
- */
-async function analyzeWithOpenAI(text: string, fileName: string) {
-  const prompt = `
-Você é um especialista em análise de documentos financeiros. Analise o seguinte documento e extraia informações financeiras estruturadas.
-
-DOCUMENTO: ${fileName}
-CONTEÚDO:
-${text}
-
-Instruções:
-1. Identifique o tipo de documento (extrato, recibo, fatura, planilha, etc.)
-2. Extraia TODAS as transações financeiras encontradas
-3. Para cada transação, identifique:
-   - Data (formato dd/mm/yyyy)
-   - Valor (sempre positivo)
-   - Tipo (income/expense/transfer)
-   - Descrição
-   - Categoria (se possível)
-   - Estabelecimento/merchant (se aplicável)
-4. Calcule um resumo financeiro
-5. Avalie sua confiança na análise (0-100%)
-
-Responda APENAS com JSON válido neste formato exato:
-{
-  "success": true,
-  "documentType": "extract|receipt|invoice|statement|spreadsheet|unknown",
-  "confidence": 95,
-  "transactions": [
-    {
-      "date": "15/06/2026",
-      "amount": 150.50,
-      "type": "expense",
-      "description": "Compra no supermercado",
-      "category": "alimentacao",
-      "merchant": "Supermercado ABC",
-      "confidence": 90
-    }
-  ],
-  "summary": {
-    "totalTransactions": 1,
-    "totalIncome": 0,
-    "totalExpenses": 150.50,
-    "dateRange": {
-      "start": "15/06/2026",
-      "end": "15/06/2026"
-    },
-    "mainCategories": ["alimentacao"]
-  }
-}
-`;
-
-  const { text: aiResponse } = await generateText({
-    model: openai('gpt-3.5-turbo'),
-    prompt,
-    temperature: 0.1,
-  });
-
-  console.log('🤖 Resposta da IA:', aiResponse.substring(0, 200) + '...');
-
-  const cleanResponse = aiResponse.trim();
-  const jsonStart = cleanResponse.indexOf('{');
-  const jsonEnd = cleanResponse.lastIndexOf('}') + 1;
-  
-  if (jsonStart === -1 || jsonEnd === 0) {
-    throw new Error('Resposta da IA não contém JSON válido');
-  }
-
-  const jsonResponse = cleanResponse.substring(jsonStart, jsonEnd);
-  const analysis = JSON.parse(jsonResponse);
-
-  if (!analysis.transactions) {
-    analysis.transactions = [];
-  }
-  
-  if (!analysis.summary) {
-    analysis.summary = createEmptySummary();
-  }
-
-  return analysis;
-}
-
-/**
- * Análise simples com regex (sempre funciona)
+ * Análise simples com regex — fallback quando não há chave de IA.
+ * Processa cada linha individualmente.
  */
 async function analyzeWithSimpleRegex(
-  text: string, 
+  text: string,
   fileName: string
 ): Promise<Omit<DocumentAnalysisResult, 'rawText'>> {
-  
+
   const transactions: FinancialTransaction[] = [];
   const today = new Date().toLocaleDateString('pt-BR');
 
-  // Patterns melhorados
-  const patterns = {
-    // Investimentos: múltiplos padrões
-    investments: [
-      // Padrão 1: "investir R$10" ou "aplicar R$20"
-      /(investir|aplicar)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
-      // Padrão 2: "colocar R$10 para investir na bolsa"
-      /colocar\s+r?\$?\s*(\d+(?:[.,]\d{2})?)\s+para\s+(investir|aplicar).*(bolsa|renda|fundo|tesouro|poupança|investimento)/gi,
-      // Padrão 3: "investir na bolsa R$10"
-      /(investir|aplicar).*(bolsa|renda|fundo|tesouro|poupança|investimento)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
-    ],
-    
-    // Transações normais
-    transactions: /(depositar|sacar|pagar|comprar|transferir|receber)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
-    
-    // Valores soltos: R$ 123,45 ou 123.50
-    amounts: /r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
-    
-    // Datas
-    dates: /(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})/gi,
-  };
+  const lines = text
+    .replace(/;/g, '\n')
+    .replace(/\.\s+/g, '\n')
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l.length > 0);
 
-  // Primeiro: Extrair investimentos (prioridade)
-  console.log('Analisando texto para investimentos:', text);
-  let match;
-  
-  // Testar cada padrão de investimento
-  for (const pattern of patterns.investments) {
-    pattern.lastIndex = 0; // Reset do regex global
-    while ((match = pattern.exec(text)) !== null) {
-      let amount = 0;
-      let action = '';
-      const fullMatch = match[0];
-      
-      console.log('INVESTIMENTO DETECTADO!');
-      console.log('- Match completo:', fullMatch);
-      console.log('- Grupos capturados:', match);
-      
-      // Padrão 1: investir R$10
-      if (match[1] && match[2] && !match[3]) {
-        action = match[1].toLowerCase();
-        amount = parseFloat(match[2].replace(',', '.'));
-      }
-      // Padrão 2: colocar R$10 para investir na bolsa
-      else if (match[1] && match[2] && match[3]) {
-        action = `${match[2]} na ${match[3]}`.toLowerCase();
-        amount = parseFloat(match[1].replace(',', '.'));
-      }
-      // Padrão 3: investir na bolsa R$10
-      else if (match[1] && match[2] && match[3]) {
-        action = `${match[1]} na ${match[2]}`.toLowerCase();
-        amount = parseFloat(match[3].replace(',', '.'));
-      }
-      
-      console.log('- Ação:', action);
-      console.log('- Valor numérico:', amount);
-      
-      if (!isNaN(amount) && amount > 0) {
-        // Usar a linha inteira para detectar o destino (o padrão 1 captura só "investir 10")
-        const lineStart = match.index <= 0 ? 0 : text.lastIndexOf('\n', match.index - 1) + 1;
-        const lineEnd = text.indexOf('\n', match.index);
-        const lineContext = text
-          .substring(lineStart, lineEnd === -1 ? text.length : lineEnd)
-          .toLowerCase();
+  for (const line of lines) {
+    const lower = line.toLowerCase();
 
-        let investmentType = 'Bolsa';
+    const amountMatch = line.match(/r?\$?\s*(\d{1,3}(?:[.,]\d{3})*[.,]\d{2}|\d+[.,]\d{2})/i);
+    if (!amountMatch) continue;
+    const amount = parseFloat(amountMatch[1].replace(/\./g, '').replace(',', '.'));
+    if (isNaN(amount) || amount <= 0) continue;
 
-        // Detectar tipo de investimento a partir da linha completa
-        if (lineContext.includes('bolsa') || fullMatch.includes('bolsa') || action.includes('bolsa')) investmentType = 'Bolsa';
-        else if (lineContext.includes('previdencia') || lineContext.includes('previdência')) investmentType = 'Previdencia';
-        else if (lineContext.includes('fundo') || fullMatch.includes('fundo') || action.includes('fundo')) investmentType = 'Fundos';
-        else if (lineContext.includes('tesouro') || fullMatch.includes('tesouro') || action.includes('tesouro')) investmentType = 'Tesouro';
-        else if (lineContext.includes('renda') || fullMatch.includes('renda') || action.includes('renda')) investmentType = 'Renda Fixa';
-        else if (lineContext.includes('poupança') || fullMatch.includes('poupança') || action.includes('poupança')) investmentType = 'Poupança';
-        
-        console.log('- Tipo de investimento:', investmentType);
-        
-        const investment: FinancialTransaction = {
-          date: today,
-          amount,
-          type: 'expense' as const,
-          description: `Investimento - ${investmentType}`,
-          category: 'investment',
-          investmentType,
-          confidence: 90
-        };
-        
-        console.log('- Transação de investimento criada:', investment);
-        console.log('✅ INVESTIMENTO DETECTADO E PROCESSADO COM SUCESSO!');
-        
-        transactions.push(investment);
-      }
-    }
-  }
-  
-  // Segundo: Extrair transações normais
-  while ((match = patterns.transactions.exec(text)) !== null) {
-    const action = match[1].toLowerCase();
-    const amountStr = match[2].replace(',', '.');
-    const amount = parseFloat(amountStr);
-    
-    if (!isNaN(amount) && amount > 0) {
-      let type: 'income' | 'expense' | 'transfer' = 'transfer';
-      let description = `${match[1]} R$ ${amount.toFixed(2).replace('.', ',')}`;
-      
-      // Classificar por ação
-      if (action.includes('depositar') || action.includes('receber')) {
-        type = 'income';
-        description = `Depósito de R$ ${amount.toFixed(2).replace('.', ',')}`;
-      } else if (action.includes('sacar') || action.includes('pagar') || action.includes('comprar')) {
-        type = 'expense';
-        description = `${action.charAt(0).toUpperCase() + action.slice(1)} de R$ ${amount.toFixed(2).replace('.', ',')}`;
-      }
+    const isInvestment =
+      lower.includes('invest') || lower.includes('aplic') ||
+      lower.includes('tesouro') || lower.includes('previdência') ||
+      lower.includes('previdencia') || lower.includes('fundo') || lower.includes('bolsa');
+
+    if (isInvestment) {
+      let investmentType = 'investment-bolsa';
+      if (lower.includes('tesouro')) investmentType = 'investment-tesouro-direto';
+      else if (lower.includes('previdência') || lower.includes('previdencia')) investmentType = 'investment-previdencia';
+      else if (lower.includes('fundo')) investmentType = 'investment-fundos';
 
       transactions.push({
-        date: today,
-        amount,
-        type,
-        description,
-        category: getCategory(action),
-        confidence: 85
+        date: today, amount, type: 'expense',
+        description: `Investimento - ${investmentType}`,
+        category: 'investment', investmentType, confidence: 88,
       });
+      continue;
     }
-  }
 
-  // Se não encontrou transações específicas, buscar valores soltos
-  if (transactions.length === 0) {
-    const amounts = [...text.matchAll(patterns.amounts)];
-    amounts.forEach((match) => {
-      const amountStr = match[1].replace(',', '.');
-      const amount = parseFloat(amountStr);
-      
-      if (!isNaN(amount) && amount > 0) {
-        transactions.push({
-          date: today,
-          amount,
-          type: 'transfer',
-          description: `Transação de R$ ${amount.toFixed(2).replace('.', ',')}`,
-          category: 'outros',
-          confidence: 70
-        });
-      }
+    let type: 'income' | 'expense' | 'transfer' = 'transfer';
+    let description = line;
+
+    if (lower.includes('deposit') || lower.includes('receb') || lower.includes('entrada')) {
+      type = 'income'; description = `Depósito de R$ ${amount.toFixed(2).replace('.', ',')}`;
+    } else if (lower.includes('sac') || lower.includes('pag') || lower.includes('compra') || lower.includes('débito') || lower.includes('debito')) {
+      type = 'expense'; description = `Saque/Pagamento de R$ ${amount.toFixed(2).replace('.', ',')}`;
+    } else if (lower.includes('transfer') || lower.includes('pix') || lower.includes('ted')) {
+      type = 'transfer'; description = `Transferência de R$ ${amount.toFixed(2).replace('.', ',')}`;
+    }
+
+    transactions.push({
+      date: today, amount, type, description,
+      category: type === 'income' ? 'deposito' : type === 'expense' ? 'saque' : 'transferencia',
+      confidence: 80,
     });
   }
 
-  // Calcular resumo
-  const totalIncome = transactions
-    .filter(t => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
-    
-  const totalExpenses = transactions
-    .filter(t => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const categories = [...new Set(transactions.map(t => t.category).filter((cat): cat is string => Boolean(cat)))];
-
-  const summary: DocumentSummary = {
-    totalTransactions: transactions.length,
-    totalIncome,
-    totalExpenses,
-    dateRange: {
-      start: today,
-      end: today
-    },
-    mainCategories: categories
-  };
+  const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const categories = [...new Set(transactions.map(t => t.category).filter(Boolean))] as string[];
 
   return {
     success: transactions.length > 0,
     documentType: detectDocumentType(text, fileName),
     confidence: transactions.length > 0 ? 80 : 20,
     transactions,
-    summary,
-    error: transactions.length === 0 ? 'Nenhuma transação financeira encontrada no documento' : undefined
+    summary: {
+      totalTransactions: transactions.length,
+      totalIncome, totalExpenses,
+      dateRange: { start: today, end: today },
+      mainCategories: categories,
+    },
+    error: transactions.length === 0 ? 'Nenhuma transação financeira encontrada no documento' : undefined,
   };
 }
 
-/**
- * Detecta tipo de documento
- */
 function detectDocumentType(text: string, fileName: string): DocumentAnalysisResult['documentType'] {
   const lowerText = text.toLowerCase();
   const lowerFileName = fileName.toLowerCase();
-  
   if (lowerText.includes('extrato') || lowerText.includes('statement')) return 'extract';
   if (lowerText.includes('recibo') || lowerText.includes('comprovante')) return 'receipt';
   if (lowerText.includes('fatura') || lowerText.includes('invoice')) return 'invoice';
   if (lowerFileName.includes('.xlsx') || lowerFileName.includes('.csv')) return 'spreadsheet';
-  
   return 'unknown';
 }
 
-/**
- * Categoriza baseado na ação
- */
-function getCategory(action: string): string {
-  const lowerAction = action.toLowerCase();
-  
-  if (lowerAction.includes('comprar') || lowerAction.includes('pagar')) return 'compras';
-  if (lowerAction.includes('sacar')) return 'saque';
-  if (lowerAction.includes('depositar') || lowerAction.includes('receber')) return 'deposito';
-  if (lowerAction.includes('transferir')) return 'transferencia';
-  
-  return 'outros';
-}
-
-/**
- * Cria um resumo vazio padrão
- */
 function createEmptySummary(): DocumentSummary {
-  return {
-    totalTransactions: 0,
-    totalIncome: 0,
-    totalExpenses: 0,
-    dateRange: {},
-    mainCategories: []
-  };
+  return { totalTransactions: 0, totalIncome: 0, totalExpenses: 0, dateRange: {}, mainCategories: [] };
 }
 
-/**
- * Valida se um arquivo é suportado
- */
 export function isDocumentSupported(file: File): { supported: boolean; reason?: string } {
-  const maxSize = 50 * 1024 * 1024; // 50MB
+  const maxSize = 50 * 1024 * 1024;
+  const supportedExtensions = ['.pdf', '.txt', '.csv', '.xlsx', '.xls'];
   const supportedTypes = [
-    'application/pdf',
-    'text/plain',
-    'text/csv',
+    'application/pdf', 'text/plain', 'text/csv',
     'application/vnd.ms-excel',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'application/csv'
   ];
-  
-  const supportedExtensions = ['.pdf', '.txt', '.csv', '.xlsx', '.xls'];
-  
-  if (file.size > maxSize) {
-    return { supported: false, reason: 'Arquivo muito grande (máx. 50MB)' };
-  }
-  
+
+  if (file.size > maxSize) return { supported: false, reason: 'Arquivo muito grande (máx. 50MB)' };
+
   const fileName = file.name.toLowerCase();
   const hasValidExtension = supportedExtensions.some(ext => fileName.endsWith(ext));
   const hasValidType = supportedTypes.includes(file.type);
-  
+
   if (!hasValidExtension && !hasValidType) {
-    return { 
-      supported: false, 
-      reason: 'Formato não suportado. Use: PDF, TXT, CSV, Excel' 
-    };
+    return { supported: false, reason: 'Formato não suportado. Use: PDF, TXT, CSV, Excel' };
   }
-  
+
   return { supported: true };
 }
