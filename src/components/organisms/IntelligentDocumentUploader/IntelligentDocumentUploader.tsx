@@ -186,24 +186,27 @@ export function IntelligentDocumentUploader({
 
         let mappedType = 'transfer';
         
-        // Mapear baseado na categoria e tipo
+        // Mapear baseado na categoria e tipo.
+        // Aceita tanto o formato composto já correto ("investment-tesouro-direto")
+        // quanto nomes em português legados ("Tesouro", "Fundos", etc.)
         if (t.category === 'investment') {
           const investmentType = (t as { investmentType?: string }).investmentType ?? '';
           
-          // Aceita tanto o formato composto ("investment-tesouro-direto") quanto
-          // nomes em português legados ("Tesouro", "Fundos", etc.)
           if (investmentType.startsWith('investment-')) {
-            mappedType = investmentType; // já no formato correto
-          } else if (investmentType === 'Bolsa') {
-            mappedType = 'investment-bolsa';
-          } else if (investmentType === 'Tesouro' || investmentType === 'Renda Fixa') {
-            mappedType = 'investment-tesouro-direto';
-          } else if (investmentType === 'Fundos') {
-            mappedType = 'investment-fundos';
-          } else if (investmentType === 'Previdencia' || investmentType === 'Previdência') {
-            mappedType = 'investment-previdencia';
+            // Formato novo — usa direto
+            mappedType = investmentType;
           } else {
-            mappedType = 'investment-fundos'; // fallback seguro
+            // Formato legado — converte
+            const legacyMap: Record<string, string> = {
+              'Bolsa': 'investment-bolsa',
+              'Tesouro': 'investment-tesouro-direto',
+              'Renda Fixa': 'investment-tesouro-direto',
+              'Fundos': 'investment-fundos',
+              'Previdencia': 'investment-previdencia',
+              'Previdência': 'investment-previdencia',
+              'Previdência Privada': 'investment-previdencia',
+            };
+            mappedType = legacyMap[investmentType] ?? 'investment-fundos';
           }
         } else if (t.type === 'income') {
           mappedType = 'deposit';
