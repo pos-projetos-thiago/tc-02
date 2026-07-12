@@ -14,8 +14,10 @@ interface TransactionData {
   amount?: number;
   description?: string;
   date?: string;
-  type?: 'income' | 'expense';
+  type?: 'income' | 'expense' | 'transfer';
   merchant?: string;
+  investmentType?: string;
+  category?: string;
 }
 
 interface TransactionOCRProps {
@@ -34,73 +36,85 @@ export function TransactionOCR({
   const { processImage } = useSimpleOCR();
 
   /**
-   * Extrai dados da transação do texto OCR
+   * Extrai dados de transação de uma linha de texto.
+   * Processa cada linha individualmente para suportar múltiplas transações
+   * separadas por ";" ou quebra de linha.
    */
   const parseTransactionFromText = (text: string): TransactionData => {
-    const transaction: TransactionData = {};
+    const today = new Date().toLocaleDateString('pt-BR');
 
-    // Regex patterns melhorados para extrair informações
-    const patterns = {
-      // Valores monetários mais precisos
-      amount: /(?:R\$\s?|RS\s?)?(\d{1,3}(?:[.,]\d{3})*[.,]\d{2}|\d+[.,]\d{2})/g,
-      
-      // Datas mais abrangentes
-      date: /(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{2}[\/\-\.]\d{2})/g,
-      
-      // Tipos de transação mais específicos
-      transactionType: /(pix|ted|doc|transferencia|compra|pagamento|debito|credito|deposito|saque|boleto|cartao)/gi,
-      
-      // Estabelecimentos expandidos
-      merchant: /(mercado|farmacia|posto|gas|restaurante|loja|magazine|supermercado|shopping|bank|atm|ifood|uber|99|drogaria|padaria|acougue)/gi
-    };
+    // Normaliza separadores e quebra em linhas individuais
+    const lines = text
+      .replace(/;/g, '\n')
+      .replace(/\.\s+(?=[A-Z])/g, '\n')
+      .split('\n')
+      .map(l => l.trim())
+      .filter(l => l.length > 0);
 
-    // Extrai valor
-    const amountMatches = text.match(patterns.amount);
-    if (amountMatches) {
-      // Pega o maior valor encontrado (provavelmente o valor principal)
-      const amounts = amountMatches
-        .map(amount => parseFloat(amount.replace(/[^\d,.-]/g, '').replace(',', '.')))
-        .filter(num => !isNaN(num))
-        .sort((a, b) => b - a);
-      
-      if (amounts.length > 0) {
-        transaction.amount = amounts[0];
+    // Processa a primeira linha com valor monetário encontrada
+    for (const line of lines) {
+      const lower = line.toLowerCase();
+
+      // Extrai valor monetário
+      const amountMatch = line.match(/r?\$?\s*(\d{1,3}(?:[.,]\d{3})*[.,]\d{2}|\d+[.,]\d{2})/i);
+      if (!amountMatch) continue;
+      const amount = parseFloat(amountMatch[1].replace(/\./g, '').replace(',', '.'));
+      if (isNaN(amount) || amount <= 0) continue;
+
+      // Extrai data se houver
+      const dateMatch = line.match(/(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})/);
+      const date = dateMatch ? dateMatch[1] : today;
+
+      // Detecta investimento
+      const isInvestment =
+        lower.includes('invest') ||
+        lower.includes('aplic') ||
+        lower.includes('tesouro') ||
+        lower.includes('previdência') ||
+        lower.includes('previdencia') ||
+        lower.includes('fundo') ||
+        lower.includes('bolsa');
+
+      if (isInvestment) {
+        let investmentType = 'investment-bolsa';
+        let description = 'Investimento';
+
+        if (lower.includes('tesouro')) {
+          investmentType = 'investment-tesouro-direto';
+          description = 'Tesouro Direto';
+        } else if (lower.includes('previdência') || lower.includes('previdencia')) {
+          investmentType = 'investment-previdencia';
+          description = 'Previdência Privada';
+        } else if (lower.includes('fundo')) {
+          investmentType = 'investment-fundos';
+          description = 'Fundos de Investimento';
+        } else if (lower.includes('bolsa')) {
+          investmentType = 'investment-bolsa';
+          description = 'Bolsa de Valores';
+        }
+
+        return { amount, date, type: 'expense', description, investmentType, category: 'investment' };
       }
-    }
 
-    // Extrai data
-    const dateMatches = text.match(patterns.date);
-    if (dateMatches) {
-      transaction.date = dateMatches[0];
-    }
-
-    // Extrai tipo de transação
-    const typeMatches = text.match(patterns.transactionType);
-    if (typeMatches) {
-      const type = typeMatches[0].toLowerCase();
-      // Classifica como entrada ou saída baseado em palavras-chave
-      if (['deposito', 'credito', 'transferencia recebida'].includes(type)) {
-        transaction.type = 'income';
-      } else {
-        transaction.type = 'expense';
+      // Detecta depósito / saque / transferência
+      if (lower.includes('deposit') || lower.includes('receb') || lower.includes('entrada')) {
+        return { amount, date, type: 'income', description: 'Depósito' };
       }
+      if (lower.includes('sac') || lower.includes('retir')) {
+        return { amount, date, type: 'expense', description: 'Saque' };
+      }
+      if (lower.includes('transfer') || lower.includes('pix') || lower.includes('ted')) {
+        return { amount, date, type: 'transfer', description: 'Transferência' };
+      }
+      if (lower.includes('pag') || lower.includes('compra') || lower.includes('débito')) {
+        return { amount, date, type: 'expense', description: 'Pagamento' };
+      }
+
+      // Genérico
+      return { amount, date, type: 'expense', description: line.slice(0, 50) };
     }
 
-    // Extrai estabelecimento/descrição
-    const merchantMatches = text.match(patterns.merchant);
-    if (merchantMatches) {
-      transaction.merchant = merchantMatches[0];
-    }
-
-    // Usa as primeiras palavras como descrição se não houver merchant
-    if (!transaction.merchant) {
-      const words = text.split(/\s+/).slice(0, 5).join(' ');
-      transaction.description = words.length > 10 ? words : 'Transação via OCR';
-    } else {
-      transaction.description = `Compra - ${transaction.merchant}`;
-    }
-
-    return transaction;
+    return {};
   };
 
   const handleTextExtracted = (text: string) => {
