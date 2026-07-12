@@ -404,9 +404,9 @@ taskkill /PID <PID> /F
 
 | Aplicação                  | URL                                            |
 | -------------------------- | ---------------------------------------------- |
-| Monolito Next.js           | https://bytebank-monolito.vercel.app/          |
 | Microfrontend (Single SPA) | https://bytebank-microfrontend.vercel.app/     |
-| Backend Health Check       | https://bytebank-api-w1hs.onrender.com/healthz |
+| Monolito                   | https://bytebank-monolito.vercel.app/          |
+| Backend (Health Check)     | https://bytebank-api-w1hs.onrender.com/healthz |
 
 ---
 
