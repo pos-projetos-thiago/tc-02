@@ -26,6 +26,10 @@ Aplicação de gerenciamento financeiro pessoal desenvolvida para o **Tech Chall
 
 ## Visão geral
 
+<p align="center">
+  <img width="1904" alt="Bytebank" src="https://github.com/user-attachments/assets/937b089b-826b-491f-90f1-62685c9dd4b7" />
+</p>
+
 Bytebank é uma aplicação bancária digital que permite gerenciar movimentações financeiras, visualizar saldo, investimentos e extrato detalhado com filtros avançados.
 
 O projeto foi estruturado seguindo a proposta do Tech Challenge Fase 2, evoluindo a arquitetura para suportar separação modular:
@@ -41,12 +45,14 @@ Ambas as versões se conectam à mesma API backend e compartilham a mesma base d
 ## Funcionalidades
 
 **Autenticação**
+
 - Cadastro e login com e-mail e senha via JWT
 - Persistência de sessão em localStorage
 - Logout com limpeza completa da sessão
 - Modo de demonstração automático quando o backend não está disponível
 
 **Dashboard financeiro**
+
 - Saldo em conta com toggle de visibilidade
 - Navegação por seções: Serviços, Transferências, Investimentos, Cartões, Minha Conta
 - Gráfico de investimentos por categoria (Donut Chart com Chart.js)
@@ -54,6 +60,7 @@ Ambas as versões se conectam à mesma API backend e compartilham a mesma base d
 - Atualização de perfil do usuário (nome, e-mail, senha)
 
 **Extrato e transações**
+
 - Listagem completa de transações com data, tipo e valor
 - Filtros avançados: tipo de transação, tipo de investimento, faixa de valor, período com DateRangePicker
 - Busca textual em tempo real
@@ -63,11 +70,13 @@ Ambas as versões se conectam à mesma API backend e compartilham a mesma base d
 - Geração de extrato em PDF com resumo financeiro
 
 **Upload e processamento**
+
 - Upload de comprovantes com OCR via Hugging Face (extração de texto de imagens)
 - Processamento inteligente de documentos financeiros com IA (análise de recibos)
 - Suporte a drag and drop de arquivos
 
 **Interface**
+
 - Layout responsivo: mobile, tablet, desktop
 - Design system com Atomic Design (atoms, molecules, organisms)
 - SCSS Modules com tokens de cor, tipografia e breakpoints
@@ -123,11 +132,11 @@ A estrutura do projeto demonstra a transição de uma arquitetura monolítica pa
 
 ## Pré-requisitos
 
-| Ferramenta | Versão |
-|------------|--------|
-| Node.js | 18 ou 20 LTS |
-| Yarn | 1.x ou superior |
-| Git | Qualquer versão recente |
+| Ferramenta | Versão                  |
+| ---------- | ----------------------- |
+| Node.js    | 18 ou 20 LTS            |
+| Yarn       | 1.x ou superior         |
+| Git        | Qualquer versão recente |
 
 ---
 
@@ -152,19 +161,23 @@ O projeto pode ser executado de duas formas, representando as diferentes abordag
 Você precisa de **dois terminais abertos**.
 
 **Terminal 1 — Backend:**
+
 ```bash
 cd tc02-bytebank-api
 npm install
 npm run dev
 ```
+
 > Backend rodando em **http://localhost:4000**
 
 **Terminal 2 — Frontend:**
+
 ```bash
 cd tc-02
 yarn install
 yarn dev
 ```
+
 > Aplicação rodando em **http://localhost:3000**
 
 > **Arquitetura modular disponível:** O projeto também pode ser executado através do Shell Single SPA na porta **3010**, demonstrando a evolução arquitetural proposta no Tech Challenge Fase 2. Veja instruções na Opção 2 abaixo.
@@ -178,11 +191,13 @@ Esta opção demonstra a abordagem modular com **Single SPA** adotada para o Tec
 > **Pré-requisito:** O backend precisa estar rodando (Terminal 1 acima)
 
 **Terminal 3 — Shell:**
+
 ```bash
 cd tc-02/apps/shell
 yarn install
 yarn dev
 ```
+
 > Shell rodando em **http://localhost:3010**
 
 > **Modo demonstração:** Se o backend não estiver disponível, o shell entra automaticamente em modo de demonstração, permitindo explorar a interface com dados simulados.
@@ -207,13 +222,16 @@ tc-02/
 ```
 
 > ⚠️ **Pré-requisitos:**
+>
 > - O **Docker Desktop** deve estar aberto e rodando
 > - O repositório do backend deve estar clonado na **mesma pasta pai** que `tc-02`:
+>
 > ```
 > pasta-pai/
 > ├── tc-02/               ← este repositório
 > └── tc02-bytebank-api/   ← backend (deve existir)
 > ```
+>
 > ```bash
 > git clone https://github.com/pos-projetos-thiago/tc02-bytebank-api
 > ```
@@ -231,9 +249,9 @@ docker-compose logs -f
 docker-compose down
 ```
 
-| Serviço | URL |
-|---------|-----|
-| Frontend | http://localhost:3000 |
+| Serviço     | URL                   |
+| ----------- | --------------------- |
+| Frontend    | http://localhost:3000 |
 | Backend API | http://localhost:4000 |
 
 ---
@@ -265,16 +283,16 @@ yarn lint              # Verificar código
 
 Backend rodando em **http://localhost:4000**
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/user` | Cadastrar usuário |
-| POST | `/user/auth` | Login (retorna JWT) |
-| PUT | `/user/profile` | Atualizar perfil |
-| GET | `/account` | Buscar conta e transações |
-| POST | `/account/transaction` | Criar transação |
-| PUT | `/account/transaction/:id` | Editar transação |
-| DELETE | `/account/transaction/:id` | Deletar transação |
-| GET | `/health` | Health check |
+| Método | Endpoint                   | Descrição                 |
+| ------ | -------------------------- | ------------------------- |
+| POST   | `/user`                    | Cadastrar usuário         |
+| POST   | `/user/auth`               | Login (retorna JWT)       |
+| PUT    | `/user/profile`            | Atualizar perfil          |
+| GET    | `/account`                 | Buscar conta e transações |
+| POST   | `/account/transaction`     | Criar transação           |
+| PUT    | `/account/transaction/:id` | Editar transação          |
+| DELETE | `/account/transaction/:id` | Deletar transação         |
+| GET    | `/health`                  | Health check              |
 
 > O backend usa MongoDB em memória. Os dados persistem durante a execução e são perdidos ao reiniciar.
 
@@ -282,22 +300,22 @@ Backend rodando em **http://localhost:4000**
 
 ## Stack tecnológica
 
-| Área | Tecnologia |
-|------|------------|
-| Framework | Next.js 16 App Router |
-| Linguagem | TypeScript 5 |
-| UI Library | React 19 |
-| Arquitetura | Single SPA (evolução modular) |
-| Estilização | SCSS Modules |
-| Componentes | Material UI 7 |
-| Gráficos | Chart.js 4 + react-chartjs-2 |
-| Formulários | React Hook Form + Zod |
-| Autenticação | JWT + localStorage |
-| IA / OCR | Hugging Face API, @ai-sdk/google, @ai-sdk/openai |
-| PDF | jsPDF + html2canvas |
-| CI/CD | GitHub Actions |
-| Containers | Docker + Docker Compose |
-| Testes | Jest + React Testing Library |
+| Área         | Tecnologia                                       |
+| ------------ | ------------------------------------------------ |
+| Framework    | Next.js 16 App Router                            |
+| Linguagem    | TypeScript 5                                     |
+| UI Library   | React 19                                         |
+| Arquitetura  | Single SPA (evolução modular)                    |
+| Estilização  | SCSS Modules                                     |
+| Componentes  | Material UI 7                                    |
+| Gráficos     | Chart.js 4 + react-chartjs-2                     |
+| Formulários  | React Hook Form + Zod                            |
+| Autenticação | JWT + localStorage                               |
+| IA / OCR     | Hugging Face API, @ai-sdk/google, @ai-sdk/openai |
+| PDF          | jsPDF + html2canvas                              |
+| CI/CD        | GitHub Actions                                   |
+| Containers   | Docker + Docker Compose                          |
+| Testes       | Jest + React Testing Library                     |
 
 ---
 
@@ -305,24 +323,25 @@ Backend rodando em **http://localhost:4000**
 
 **Cores**
 
-| Token | Valor | Uso |
-|-------|-------|-----|
-| Primary | #004D61 | Ações, botões, links |
-| Accent | #FF5031 | Destaques, alertas |
-| Surface | #FFFFFF | Fundos de cards |
-| Background | #F5F5F5 | Fundo da página |
+| Token      | Valor   | Uso                  |
+| ---------- | ------- | -------------------- |
+| Primary    | #004D61 | Ações, botões, links |
+| Accent     | #FF5031 | Destaques, alertas   |
+| Surface    | #FFFFFF | Fundos de cards      |
+| Background | #F5F5F5 | Fundo da página      |
 
 **Tipografia**
+
 - Fonte: Inter (Google Fonts)
 - Pesos: 300, 400, 500, 600, 700
 
 **Breakpoints**
 
-| Nome | Faixa |
-|------|-------|
-| Mobile | até 719px |
-| Tablet | 720px – 1023px |
-| Desktop | 1024px+ |
+| Nome    | Faixa          |
+| ------- | -------------- |
+| Mobile  | até 719px      |
+| Tablet  | 720px – 1023px |
+| Desktop | 1024px+        |
 
 ---
 
@@ -334,6 +353,7 @@ yarn test:watch     # Executar em watch mode
 ```
 
 **Cobertura:**
+
 - Componentes do dashboard
 - Fluxo de autenticação
 - Interações com UI
@@ -343,12 +363,14 @@ yarn test:watch     # Executar em watch mode
 ## Solução de problemas
 
 **Módulo não encontrado na aplicação principal**
+
 ```bash
 cd tc-02
 yarn install
 ```
 
 **Módulo não encontrado no shell**
+
 ```bash
 cd tc-02/apps/shell
 yarn install
@@ -365,6 +387,7 @@ Verifique se está rodando em **http://localhost:4000/health**
 O shell entra automaticamente em modo demonstração quando o backend não está disponível.
 
 **Porta em uso (Windows)**
+
 ```bash
 netstat -ano | findstr :3000
 taskkill /PID <PID> /F
@@ -374,10 +397,16 @@ taskkill /PID <PID> /F
 
 ## Links
 
-| Recurso | URL |
-|---------|-----|
-| Repositório frontend | https://github.com/pos-projetos-thiago/tc-02 |
-| Repositório backend | https://github.com/pos-projetos-thiago/tc02-bytebank-api |
+| Recurso              | URL                                                      |
+| -------------------- | -------------------------------------------------------- |
+| Repositório frontend | https://github.com/pos-projetos-thiago/tc-02             |
+| Repositório backend  | https://github.com/pos-projetos-thiago/tc02-bytebank-api |
+
+| Aplicação                  | URL                                            |
+| -------------------------- | ---------------------------------------------- |
+| Monolito Next.js           | https://bytebank-monolito.vercel.app/          |
+| Microfrontend (Single SPA) | https://bytebank-microfrontend.vercel.app/     |
+| Backend Health Check       | https://bytebank-api-w1hs.onrender.com/healthz |
 
 ---
 
