@@ -73,18 +73,24 @@ export default function OCRTransacoesPage() {
     const resolvedType = mapType(data.type);
     let finalType: string = resolvedType;
     if (resolvedType === 'investment' && data.investmentType) {
-      // Normalizar para os valores aceitos pelo contexto
-      const investMap: Record<string, string> = {
-        'Fundos': 'investment-fundos',
-        'Tesouro': 'investment-tesouro-direto',
-        'Tesouro Direto': 'investment-tesouro-direto',
-        'Previdencia': 'investment-previdencia',
-        'Previdência Privada': 'investment-previdencia',
-        'Previdência': 'investment-previdencia',
-        'Bolsa': 'investment-bolsa',
-        'Renda Fixa': 'investment-tesouro-direto',
-      };
-      finalType = investMap[data.investmentType] ?? 'investment-fundos';
+      // Aceita tanto o formato já correto (vindo do regex novo: "investment-tesouro-direto")
+      // quanto o formato legado com nomes em PT (vindo do Gemini ou regex antigo)
+      const alreadyComposite = data.investmentType.startsWith('investment-');
+      if (alreadyComposite) {
+        finalType = data.investmentType;
+      } else {
+        const investMap: Record<string, string> = {
+          'Fundos': 'investment-fundos',
+          'Tesouro': 'investment-tesouro-direto',
+          'Tesouro Direto': 'investment-tesouro-direto',
+          'Previdencia': 'investment-previdencia',
+          'Previdência Privada': 'investment-previdencia',
+          'Previdência': 'investment-previdencia',
+          'Bolsa': 'investment-bolsa',
+          'Renda Fixa': 'investment-tesouro-direto',
+        };
+        finalType = investMap[data.investmentType] ?? 'investment-fundos';
+      }
     }
 
     const formattedTransaction: TransactionFormData = {

@@ -188,12 +188,23 @@ export function IntelligentDocumentUploader({
         
         // Mapear baseado na categoria e tipo
         if (t.category === 'investment') {
-          const investmentType = (t as { investmentType?: string }).investmentType;
-          if (investmentType === 'Bolsa') mappedType = 'investment-bolsa';
-          else if (investmentType === 'Renda Fixa' || investmentType === 'Tesouro') mappedType = 'investment-tesouro-direto';
-          else if (investmentType === 'Fundos') mappedType = 'investment-fundos';
-          else if (investmentType === 'Previdencia' || investmentType === 'Previdência') mappedType = 'investment-previdencia';
-          else mappedType = 'investment';
+          const investmentType = (t as { investmentType?: string }).investmentType ?? '';
+          
+          // Aceita tanto o formato composto ("investment-tesouro-direto") quanto
+          // nomes em português legados ("Tesouro", "Fundos", etc.)
+          if (investmentType.startsWith('investment-')) {
+            mappedType = investmentType; // já no formato correto
+          } else if (investmentType === 'Bolsa') {
+            mappedType = 'investment-bolsa';
+          } else if (investmentType === 'Tesouro' || investmentType === 'Renda Fixa') {
+            mappedType = 'investment-tesouro-direto';
+          } else if (investmentType === 'Fundos') {
+            mappedType = 'investment-fundos';
+          } else if (investmentType === 'Previdencia' || investmentType === 'Previdência') {
+            mappedType = 'investment-previdencia';
+          } else {
+            mappedType = 'investment-fundos'; // fallback seguro
+          }
         } else if (t.type === 'income') {
           mappedType = 'deposit';
         } else if (t.type === 'expense') {

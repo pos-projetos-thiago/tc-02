@@ -385,192 +385,117 @@ IMPORTANTE: Responda APENAS com JSON válido, sem texto adicional.
 }
 
 /**
- * Análise simples com regex (sempre funciona)
+ * Análise simples com regex — fallback quando não há chave de IA configurada.
+ * Processa cada linha individualmente para evitar contaminação entre transações.
  */
 async function analyzeWithSimpleRegex(
-  text: string, 
+  text: string,
   fileName: string
 ): Promise<Omit<DocumentAnalysisResult, 'rawText'>> {
-  
+
   const transactions: FinancialTransaction[] = [];
   const today = new Date().toLocaleDateString('pt-BR');
 
-  // Patterns melhorados
-  const patterns = {
-    // Investimentos: múltiplos padrões
-    investments: [
-      // Padrão 1: "investir R$10" ou "aplicar R$20" (tipo pode vir antes ou depois do valor)
-      /(investir|aplicar|invista)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
-      // Padrão 2: "colocar R$10 para investir na bolsa"
-      /colocar\s+r?\$?\s*(\d+(?:[.,]\d{2})?)\s+para\s+(investir|aplicar).*(bolsa|renda|fundo|tesouro|poupança|investimento)/gi,
-      // Padrão 3: "investir na bolsa R$10"
-      /(investir|aplicar|invista).*(bolsa|renda|fundo|tesouro|poupança|investimento)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
-    ],
-    
-    // Transações normais: Depositar R$10,00 | Sacar R$2,00 | Pagar R$100 | etc
-    transactions: /(depositar|sacar|pagar|comprar|transferir|receber)\s+r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
-    
-    // Valores soltos: R$ 123,45 ou 123.50
-    amounts: /r?\$?\s*(\d+(?:[.,]\d{2})?)/gi,
-    
-    // Datas
-    dates: /(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})/gi,
-  };
+  // Normaliza separadores de linha e quebra em sentenças/itens individuais
+  const lines = text
+    .replace(/;/g, '\n')
+    .replace(/\.\s+/g, '\n')
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l.length > 0);
 
-  // Primeiro: Extrair investimentos (prioridade)
-  console.log('Analisando texto para investimentos:', text);
-  let match;
-  
-  // Testar cada padrão de investimento
-  for (const pattern of patterns.investments) {
-    pattern.lastIndex = 0; // Reset do regex global
-    while ((match = pattern.exec(text)) !== null) {
-      let amount = 0;
-      let action = '';
-      const fullMatch = match[0];
-      
-      console.log('INVESTIMENTO DETECTADO!');
-      console.log('- Match completo:', fullMatch);
-      console.log('- Grupos capturados:', match);
-      
-      // Padrão 1: investir R$10
-      if (match[1] && match[2] && !match[3]) {
-        action = match[1].toLowerCase();
-        amount = parseFloat(match[2].replace(',', '.'));
-      }
-      // Padrão 2: colocar R$10 para investir na bolsa
-      else if (match[1] && match[2] && match[3]) {
-        action = `${match[2]} na ${match[3]}`.toLowerCase();
-        amount = parseFloat(match[1].replace(',', '.'));
-      }
-      // Padrão 3: investir na bolsa R$10
-      else if (match[1] && match[2] && match[3]) {
-        action = `${match[1]} na ${match[2]}`.toLowerCase();
-        amount = parseFloat(match[3].replace(',', '.'));
-      }
-      
-      console.log('- Ação:', action);
-      console.log('- Valor numérico:', amount);
-      
-      if (!isNaN(amount) && amount > 0) {
-        // Usar a linha inteira para detectar o destino (o padrão 1 captura só "investir 10")
-        const lineStart = match.index <= 0 ? 0 : text.lastIndexOf('\n', match.index - 1) + 1;
-        const lineEnd = text.indexOf('\n', match.index);
-        const lineContext = text
-          .substring(lineStart, lineEnd === -1 ? text.length : lineEnd)
-          .toLowerCase();
+  for (const line of lines) {
+    const lower = line.toLowerCase();
 
-        let investmentType = 'Bolsa';
+    // ── Extrai valor monetário da linha ─────────────────────────────────────
+    const amountMatch = line.match(/r?\$?\s*(\d{1,3}(?:[.,]\d{3})*[.,]\d{2}|\d+[.,]\d{2})/i);
+    if (!amountMatch) continue;
+    const amount = parseFloat(amountMatch[1].replace(/\./g, '').replace(',', '.'));
+    if (isNaN(amount) || amount <= 0) continue;
 
-        // Detectar tipo de investimento a partir da linha completa.
-        // A ordem importa: termos mais específicos primeiro.
-        const searchIn = (lineContext + ' ' + fullMatch).toLowerCase();
-        if (searchIn.includes('tesouro')) investmentType = 'Tesouro';
-        else if (searchIn.includes('previdencia') || searchIn.includes('previdência')) investmentType = 'Previdencia';
-        else if (searchIn.includes('fundo')) investmentType = 'Fundos';
-        else if (searchIn.includes('bolsa')) investmentType = 'Bolsa';
-        else if (searchIn.includes('renda')) investmentType = 'Renda Fixa';
-        else if (searchIn.includes('poupança')) investmentType = 'Poupança';
-        
-        console.log('- Tipo de investimento:', investmentType);
-        
-        const investment: FinancialTransaction = {
-          date: today,
-          amount,
-          type: 'expense' as const, // Investimento é saída de dinheiro
-          description: `Investimento - ${investmentType}`,
-          category: 'investment',
-          investmentType,
-          confidence: 90
-        };
-        
-      console.log('- Transação de investimento criada:', investment);
-      console.log('✅ INVESTIMENTO DETECTADO E PROCESSADO COM SUCESSO!');
-      
-      transactions.push(investment);
-      }
-    }
-  }
-  
-  // Segundo: Extrair transações normais
-  while ((match = patterns.transactions.exec(text)) !== null) {
-    const action = match[1].toLowerCase();
-    const amountStr = match[2].replace(',', '.');
-    const amount = parseFloat(amountStr);
-    
-    if (!isNaN(amount) && amount > 0) {
-      let type: 'income' | 'expense' | 'transfer' = 'transfer';
-      let description = `${match[1]} R$ ${amount.toFixed(2).replace('.', ',')}`;
-      
-      // Classificar por ação
-      if (action.includes('depositar') || action.includes('receber')) {
-        type = 'income';
-        description = `Depósito de R$ ${amount.toFixed(2).replace('.', ',')}`;
-      } else if (action.includes('sacar') || action.includes('pagar') || action.includes('comprar')) {
-        type = 'expense';
-        description = `${action.charAt(0).toUpperCase() + action.slice(1)} de R$ ${amount.toFixed(2).replace('.', ',')}`;
+    // ── Detecta investimento ─────────────────────────────────────────────────
+    const isInvestment =
+      lower.includes('invest') ||
+      lower.includes('aplic') ||
+      lower.includes('tesouro') ||
+      lower.includes('previdência') ||
+      lower.includes('previdencia') ||
+      lower.includes('fundo') ||
+      lower.includes('bolsa');
+
+    if (isInvestment) {
+      let investmentType = 'investment-bolsa'; // padrão
+
+      if (lower.includes('tesouro')) {
+        investmentType = 'investment-tesouro-direto';
+      } else if (lower.includes('previdência') || lower.includes('previdencia')) {
+        investmentType = 'investment-previdencia';
+      } else if (lower.includes('fundo')) {
+        investmentType = 'investment-fundos';
+      } else if (lower.includes('bolsa')) {
+        investmentType = 'investment-bolsa';
       }
 
       transactions.push({
         date: today,
         amount,
-        type,
-        description,
-        category: getCategory(action),
-        confidence: 85
+        type: 'expense',
+        description: `Investimento - ${investmentType}`,
+        category: 'investment',
+        investmentType, // já no formato "investment-tesouro-direto" etc.
+        confidence: 88,
       });
+      continue;
     }
-  }
 
-  // Se não encontrou transações específicas, buscar valores soltos
-  if (transactions.length === 0) {
-    const amounts = [...text.matchAll(patterns.amounts)];
-    amounts.forEach((match) => {
-      const amountStr = match[1].replace(',', '.');
-      const amount = parseFloat(amountStr);
-      
-      if (!isNaN(amount) && amount > 0) {
-        transactions.push({
-          date: today,
-          amount,
-          type: 'transfer',
-          description: `Transação de R$ ${amount.toFixed(2).replace('.', ',')}`,
-          category: 'outros',
-          confidence: 70
-        });
-      }
+    // ── Detecta depósito / saque / transferência ─────────────────────────────
+    let type: 'income' | 'expense' | 'transfer' = 'transfer';
+    let description = line;
+
+    if (lower.includes('deposit') || lower.includes('receb') || lower.includes('entrada')) {
+      type = 'income';
+      description = `Depósito de R$ ${amount.toFixed(2).replace('.', ',')}`;
+    } else if (
+      lower.includes('sac') ||
+      lower.includes('pag') ||
+      lower.includes('compra') ||
+      lower.includes('débito') ||
+      lower.includes('debito')
+    ) {
+      type = 'expense';
+      description = `Saque/Pagamento de R$ ${amount.toFixed(2).replace('.', ',')}`;
+    } else if (lower.includes('transfer') || lower.includes('pix') || lower.includes('ted')) {
+      type = 'transfer';
+      description = `Transferência de R$ ${amount.toFixed(2).replace('.', ',')}`;
+    }
+
+    transactions.push({
+      date: today,
+      amount,
+      type,
+      description,
+      category: type === 'income' ? 'deposito' : type === 'expense' ? 'saque' : 'transferencia',
+      confidence: 80,
     });
   }
 
-  // Calcular resumo
-  const totalIncome = transactions
-    .filter(t => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
-    
-  const totalExpenses = transactions
-    .filter(t => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const categories = [...new Set(transactions.map(t => t.category).filter((cat): cat is string => Boolean(cat)))];
-
-  const summary: DocumentSummary = {
-    totalTransactions: transactions.length,
-    totalIncome,
-    totalExpenses,
-    dateRange: {
-      start: today,
-      end: today
-    },
-    mainCategories: categories
-  };
+  const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const categories = [...new Set(transactions.map(t => t.category).filter(Boolean))] as string[];
 
   return {
     success: transactions.length > 0,
     documentType: detectDocumentType(text, fileName),
     confidence: transactions.length > 0 ? 80 : 20,
     transactions,
-    summary,
-    error: transactions.length === 0 ? 'Nenhuma transação financeira encontrada no documento' : undefined
+    summary: {
+      totalTransactions: transactions.length,
+      totalIncome,
+      totalExpenses,
+      dateRange: { start: today, end: today },
+      mainCategories: categories,
+    },
+    error: transactions.length === 0 ? 'Nenhuma transação financeira encontrada no documento' : undefined,
   };
 }
 
